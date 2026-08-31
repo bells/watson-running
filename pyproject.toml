@@ -1,8 +1,11 @@
 [project]
 name = "running_page"
 version = "2.5.1"
-description = "Default template for PDM package"
-authors = [{ name = "yihong0618", email = "zouzou0208@gmail.com" }]
+description = "Data pipeline and TUI for Watson Running."
+authors = [
+  { name = "Watson" },
+  { name = "yihong0618", email = "zouzou0208@gmail.com" },
+]
 dependencies = [
   "httpx",
   "gpxpy==1.6.2",

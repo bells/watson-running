@@ -1,8 +1,11 @@
 {
-  "name": "yihong.run",
-  "description": "Yi hong",
+  "name": "watson-running",
+  "description": "Watson's personal running platform.",
   "version": "1.0.0",
-  "author": "Yi Hong <zouzou0208@gmail.com>",
+  "author": "Watson",
+  "contributors": [
+    "Yi Hong <zouzou0208@gmail.com>"
+  ],
   "packageManager": "pnpm@8.9.0+sha256.8f5264ad1d100da11a6add6bb8a94c6f1e913f9e9261b2a551fabefad2ec0fec",
   "dependencies": {
     "@mapbox/mapbox-gl-language": "^1.0.1",
@@ -49,7 +52,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yihong0618/running_page"
+    "url": "https://github.com/bells/watson-running.git"
+  },
+  "homepage": "https://run.watsonzhu.cn/",
+  "bugs": {
+    "url": "https://github.com/bells/watson-running/issues"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.7.0",

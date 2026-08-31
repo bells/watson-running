@@ -18,7 +18,7 @@ const data: ISiteMetadataResult = {
   siteTitle: 'Watson Running Page',
   siteUrl: 'https://run.watsonzhu.cn/',
   logo: `${getBasePath()}/images/logo.png`,
-  description: 'Personal site and blog',
+  description: "Watson's personal running platform",
   navLinks: [
     {
       name: 'Summary',
@@ -30,7 +30,7 @@ const data: ISiteMetadataResult = {
     },
     {
       name: 'About',
-      url: 'https://github.com/bells/running_page',
+      url: 'https://github.com/bells/watson-running',
     },
   ],
 };
