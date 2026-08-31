@@ -1,4 +1,4 @@
-# running_page 协作指南
+# Watson Running 协作指南
 
 ## 适用范围
 
@@ -7,9 +7,12 @@
 ## 项目定位
 
 - 这是 Watson（bells）的个人运动主页，线上地址为 `https://run.watsonzhu.cn/`。
-- 仓库是 `yihong0618/running_page` 的长期维护分支；当前远端 `origin` 指向 `bells/running_page`，默认分支为 `master`。
+- 当前独立仓库是 `bells/watson-running`，默认分支为 `main`；项目从 Tag `v3.0-upstream-baseline` 开始独立演进。
+- 项目最初基于 `yihong0618/running_page`。必须保留原始 MIT License、版权信息、Git 历史与 attribution，不得声称全部代码从零开发。
+- Git remote 约定：`origin` 是当前项目，`legacy` 是迁移前的 `bells/running_page`，`upstream` 只用于历史参考。不要直接合并 `upstream/master`，未来引用上游实现必须作为独立变更进行评审。
 - 项目不是实时 API 应用。Python 负责同步、清洗和生成运动数据，React/Vite 把生成结果作为静态资源发布；页面通过构建产物 URL 加载 JSON，不存在运行时业务后端。
-- 上游功能和 Watson 的个性化改动长期共存。同步上游或重构时，先查 Git 历史和实际差异，保留个人数据、文案、地图设置、隐私处理与页面定制。
+- 历史来源与 Watson 的个性化改动长期共存。研究历史实现或重构时，先查 Git 历史和实际差异，保留个人数据、文案、地图设置、隐私处理与页面定制。
+- 未来 RunAgent 通过 REST / SSE 与 `bells/run-agent` 集成；Java 21、Spring Boot、Spring AI、Agent、Memory、RAG、MCP 与 Evaluation 留在独立后端仓库，不要合并进本仓库。
 
 ## 核心数据流
 
@@ -37,6 +40,8 @@
 - `src/themes/classic/`：Watson 当前使用的旧版多页面主题。`pages/index.tsx` 负责筛选和地图联动，`pages/total.tsx` 对应 `/summary`，地图、列表、年份与地区统计都在该主题目录内。
 - `src/themes/classic/utils/const.ts`：Classic 的地图供应商、隐私、单位和展示开关；真实瓦片加载仍依赖网络和供应商可用性。
 - `docs/theme-system.md`：主题扩展边界和新增主题流程。
+- `docs/run-agent-integration.md`：未来 RunAgent 的仓库职责、REST/SSE 合约、隐私与 v0.1 边界。
+- `docs/repository-independence.md`：独立仓库的 remote、分支、Secrets 与部署迁移约定。
 - `run_page/`：数据源适配器、数据库、格式转换及 SVG 生成器。
 - `.github/workflows/run_data_sync.yml`：数据同步、生成、提交和部署编排。
 - `GPX_OUT/`、`TCX_OUT/`、`FIT_OUT/`、`activities/`、`run_page/data.db`、`src/static/activities.json`、`assets/*.svg`：数据或生成资产，不是普通手写源码。
@@ -65,8 +70,9 @@
 ## 当前自动化边界
 
 - `.github/workflows/run_data_sync.yml` 当前声明 `RUN_TYPE: joyrun`，但文件中没有对应的 `joyrun_sync.py` 执行 step。不要假设定时任务会拉取 JoyRun 新数据；修改同步工作流前应先确认期望来源和现有 secrets。
-- 工作流可能执行 `git add .`、提交 `update new runs` 并直接推送 `master`。开始修改前检查工作树和远端状态，避免与自动生成提交互相覆盖。
+- 工作流可能执行 `git add .`、提交 `update new runs` 并推送当前触发分支。默认目标应为 `main`；开始修改前检查工作树、实际远端与 GitHub Actions 状态，避免与自动生成提交互相覆盖。
 - `SAVE_DATA_IN_GITHUB_CACHE=false` 时数据资产会进入 Git；切换缓存策略会改变数据持久化与部署行为，应作为发布/运维变更处理。
+- GitHub Pages 的 `PATH_PREFIX` 默认回退为仓库名路径；绑定 `run.watsonzhu.cn` 时 Repository Variable 必须设为 `/`。Secrets、Pages、Vercel 与 Domain 配置不会随 Git 历史自动迁移。
 
 ## CodeGraph 使用
 
@@ -119,3 +125,4 @@ ruff check .
 - 提交前只暂存本任务文件，先检查 `git status --short`、`git diff --check` 和 staged diff。
 - 用户说“提交代码”时，重跑相关检查、创建本地提交并报告 commit hash；除非明确要求，不要 push、打 tag 或归档任务。
 - 生成数据常产生很大的 diff。交付说明中区分手写源码、数据库/轨迹、JSON 和 SVG，并报告未完成的真实浏览器、外部平台或部署验证。
+- `legacy` 仓库在新仓库 CI、Secrets、Pages、Domain 与线上验证全部稳定之前不得归档；删除分支、Tag、remote 或旧仓库必须获得明确授权。
