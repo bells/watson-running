@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * *'
   push:
     branches:
-      - master
+      - main
     paths:
       - run_page/nike_sync.py
       - run_page/nike_to_strava_sync.py
@@ -209,7 +209,7 @@ jobs:
         if: env.RUN_TYPE == 'tulipsport'
         run: |
           python run_page/tulipsport_sync.py ${{ secrets.TULIPSPORT_TOKEN }} --with-gpx
- 
+
       - name: Run sync Oppo heytap script, note currently this script is not worked
         if: env.RUN_TYPE == 'oppo'
         run: |
@@ -281,7 +281,7 @@ jobs:
           git config --local user.name 'GitHub Action'
           git add .
           git commit -m 'update new runs' || echo 'nothing to commit'
-          git push || echo 'nothing to push'
+          git push origin "HEAD:${GITHUB_REF_NAME}" || echo 'nothing to push'
 
       - name: Set Output
         id: set_output

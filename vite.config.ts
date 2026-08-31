@@ -15,6 +15,14 @@ const colorClassMapping: { [key: string]: string } = {
   '#e1ed5e': 'svg-color-text',
 };
 
+const resolveBasePath = (pathPrefix: string | undefined) => {
+  const normalized = pathPrefix?.trim();
+  if (!normalized || normalized === '/') {
+    return '/';
+  }
+  return `/${normalized.replace(/^\/+|\/+$/g, '')}/`;
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -81,7 +89,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: process.env.PATH_PREFIX ? `${process.env.PATH_PREFIX}/` : '/',
+  base: resolveBasePath(process.env.PATH_PREFIX),
   define: {
     'import.meta.env.VERCEL': JSON.stringify(process.env.VERCEL),
   },
