@@ -59,6 +59,9 @@ build-backend = "pdm.backend"
 distribution = true
 packages = ["run_page"]
 
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
 [dependency-groups]
 dev = [
     "pytest>=9.0.3",
