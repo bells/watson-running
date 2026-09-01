@@ -28,6 +28,6 @@ haversine==2.8.0
 garth
 pycryptodome
 duckdb
-openai==3.5.0
+openai==3.6.0
 # cairosvg
 certifi==2025.1.31
