@@ -19,6 +19,7 @@ _site/
 .idea
 
 config.yaml
+!openspec/config.yaml
 .venv/
 .pdm-python
 

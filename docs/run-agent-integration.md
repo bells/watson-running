@@ -2,7 +2,9 @@
 
 ## Status
 
-This document defines a future integration boundary. RunAgent UI, AI analysis, tool calling, RAG, MCP, and evaluation are not implemented in Watson Running yet.
+`bells/run-agent` is Watson Running's corresponding backend, maintained and deployed as a separate repository. Watson Running currently loads generated static activity data and has not yet integrated that backend.
+
+This document defines repository responsibilities and the planned REST/SSE integration. RunAgent UI and AI integration are not implemented in Watson Running yet. The responsibilities and proposed scope below are not an inventory of implemented backend features; inspect the backend's current collaboration guide, source, and API contracts before implementing a client.
 
 ## Repository responsibilities
 

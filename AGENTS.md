@@ -4,15 +4,34 @@
 
 本文件适用于仓库根目录及所有子目录。开始任务前先阅读本文件；涉及具体模块时，再读取相邻源码、配置和上游文档，不要只凭文件名推断行为。
 
+### 分目录指南
+
+以下文件补充各模块的具体约定，未重复的规则继续遵循本文件。协作指令统一使用 `AGENTS.md` 文件名，避免再维护内容重复的 `Agent.md` 或 `AGENT.md`。
+
+- [前端指南](src/AGENTS.md)：共享层、两套主题、数据契约与浏览器验证。
+- [Python 指南](run_page/AGENTS.md)：同步、生成器、TUI 与隔离测试。
+- [自动化指南](.github/AGENTS.md)：CI、数据提交、Pages 与依赖更新。
+- [贡献流程](CONTRIBUTING.md)：本地准备、验证选择和交付要求。
+
+### 任务开始流程
+
+1. 阅读根级及目标目录的 `AGENTS.md`，按需查阅相关项目文档、已有决策和记忆；记忆中的状态应以当前源码与配置复核。
+2. 运行 `git status --short`、`git branch --show-current` 和 `git remote -v`，区分已有改动与本任务范围。初始化协作文件不代表需要重新初始化 Git、安装全部依赖或重新生成运动数据。
+3. 明确涉及前端、Python、数据资产还是部署；跨模块修改前检查 CodeGraph，数据或部署任务再检查相关远程运行状态。
+4. 先简述方案与验证范围，再实施最小完整变更。默认用中文交流，保留必要的英文技术名词；注释解释原因，避免复述代码。
+5. 完成后报告实际改动、执行过的检查和仍需验证的部分。文档中的计划、Workflow 声明和本地构建成功都不能替代线上验证。
+
 ## 项目定位
 
 - 这是 Watson（bells）的个人运动主页，线上地址为 `https://run.watsonzhu.cn/`。
 - 当前独立仓库是 `bells/watson-running`，默认分支为 `main`；项目从 Tag `v3.0-upstream-baseline` 开始独立演进。
 - 项目最初基于 `yihong0618/running_page`。必须保留原始 MIT License、版权信息、Git 历史与 attribution，不得声称全部代码从零开发。
 - Git remote 约定：`origin` 是当前项目，`legacy` 是迁移前的 `bells/running_page`，`upstream` 只用于历史参考。不要直接合并 `upstream/master`，未来引用上游实现必须作为独立变更进行评审。
-- 项目不是实时 API 应用。Python 负责同步、清洗和生成运动数据，React/Vite 把生成结果作为静态资源发布；页面通过构建产物 URL 加载 JSON，不存在运行时业务后端。
+- 上述是 remote 的角色约定，不代表每个 checkout 都已配置全部 remote；先以 `git remote -v` 核实，不因缺少历史 remote 自动添加或迁移。
+- 当前运动数据页面使用静态数据链路。Python 负责同步、清洗和生成运动数据，React/Vite 把生成结果作为静态资源发布；页面通过构建产物 URL 加载 JSON，本仓库不包含运行时业务后端。
 - 历史来源与 Watson 的个性化改动长期共存。研究历史实现或重构时，先查 Git 历史和实际差异，保留个人数据、文案、地图设置、隐私处理与页面定制。
-- 未来 RunAgent 通过 REST / SSE 与 `bells/run-agent` 集成；Java 21、Spring Boot、Spring AI、Agent、Memory、RAG、MCP 与 Evaluation 留在独立后端仓库，不要合并进本仓库。
+- `bells/run-agent` 是 Watson Running 对应的独立后端仓库。前后端计划通过 REST / SSE 集成；本仓库当前尚未实现该接入，不代表后端仓库不存在。Java 21、Spring Boot、Spring AI、Agent、Memory、RAG、MCP 与 Evaluation 归属后端，不要合并进本仓库。
+- 涉及后端接口时先阅读 `run-agent` 的协作说明、实际接口与契约，再实现对应 TypeScript 客户端；不要把本文中的规划当作后端已实现接口，也不要在前端另建平行后端。
 
 ## 核心数据流
 
@@ -40,9 +59,10 @@
 - `src/themes/classic/`：Watson 当前使用的旧版多页面主题。`pages/index.tsx` 负责筛选和地图联动，`pages/total.tsx` 对应 `/summary`，地图、列表、年份与地区统计都在该主题目录内。
 - `src/themes/classic/utils/const.ts`：Classic 的地图供应商、隐私、单位和展示开关；真实瓦片加载仍依赖网络和供应商可用性。
 - `docs/theme-system.md`：主题扩展边界和新增主题流程。
-- `docs/run-agent-integration.md`：未来 RunAgent 的仓库职责、REST/SSE 合约、隐私与 v0.1 边界。
+- `docs/run-agent-integration.md`：对应后端 RunAgent 的仓库职责、规划中的 REST/SSE 合约、隐私与 v0.1 集成边界。
 - `docs/repository-independence.md`：独立仓库的 remote、分支、Secrets 与部署迁移约定。
 - `run_page/`：数据源适配器、数据库、格式转换及 SVG 生成器。
+- `run_page/tui/`：Textual 本地活动浏览器，读取生成的活动 JSON；`data.py` 负责数据解析与聚合，`app.py` 负责交互，`braille.py` 负责终端轨迹绘制。
 - `.github/workflows/run_data_sync.yml`：数据同步、生成、提交和部署编排。
 - `GPX_OUT/`、`TCX_OUT/`、`FIT_OUT/`、`activities/`、`run_page/data.db`、`src/static/activities.json`、`assets/*.svg`：数据或生成资产，不是普通手写源码。
 
@@ -90,11 +110,15 @@
 
 前端环境：
 
+`package.json` 当前声明 Node `>=20` 和 pnpm `8.9.0`；本地优先使用 Node 24，并遵循 `packageManager` 指定的 pnpm 版本。依赖的实际 Node 下限还需检查锁文件中的 `engines`，不能仅凭项目的 `>=20` 推断所有 Node 20 小版本都可用。CI 覆盖 Node 20/22/24，Pages 使用 Node 20，而 Dockerfile 仍使用 Node 18；修改工具链时一起评估这些路径，不把 Docker 环境当作已验证可用。
+
 ```bash
 corepack enable
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
+
+冻结安装失败时先检查 pnpm 版本与锁文件是否匹配，不要把删除或重建锁文件当作初始化步骤。Python 本地版本参见 `.python-version`（当前 3.12）；依赖入口同时存在 `pyproject.toml`、`requirements*.txt`、`uv.lock` 与 `pdm.lock`，应按目标运行路径选用并审计一致性。
 
 前端非破坏性检查：
 
@@ -116,6 +140,7 @@ ruff check .
 ```
 
 - CI 还会运行 `python run_page/gpx_sync.py`，它属于数据路径检查，可能接触生成资产；本地执行前先确认任务范围和工作树。
+- TUI 的自动化回归入口是 `python3 -m unittest test_tui_app`，使用临时 JSON 和 Textual `run_test()`；`test_real.py` 和 `test_tui.py` 是交互调试脚本，不能代替自动化测试结果。
 - 仓库当前没有独立的前端单元测试套件。涉及筛选、统计、地图、主题、动画或数据生成时，应补充针对性测试；修改共享层或主题注册时，至少分别用 `theme_preset: classic` 和 `theme_preset: dashboard` 构建，之后恢复用户配置。无法自动覆盖的浏览器/地图行为要明确说明手工验证边界。
 - 只改文档时至少运行 `git diff --check`；改前端运行 check、非修复型 ESLint 和 build；改 Python 运行 Black、Ruff 与相关脚本的最小安全测试；改数据管道需额外审计生成 diff。
 
