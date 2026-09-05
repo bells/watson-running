@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '../Header';
 import getSiteMetadata from '@core/hooks/useSiteMetadata';
+
+const ChatAssistant = import.meta.env.DEV
+  ? lazy(() => import('../ChatAssistant'))
+  : null;
 
 const Layout = ({ children }: React.PropsWithChildren) => {
   const { siteTitle, description } = getSiteMetadata();
@@ -19,6 +23,11 @@ const Layout = ({ children }: React.PropsWithChildren) => {
         />
       </Helmet>
       <Header />
+      {ChatAssistant && (
+        <Suspense fallback={null}>
+          <ChatAssistant />
+        </Suspense>
+      )}
       <div className="mx-auto mb-16 max-w-screen-2xl p-4 lg:flex lg:p-16">
         {children}
       </div>

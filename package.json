@@ -23,8 +23,10 @@
     "react-ga4": "^3.0.1",
     "react-helmet-async": "^3.0.0",
     "react-map-gl": "^8.1.1",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.14.2",
     "recharts": "^3.8.1",
+    "remark-gfm": "^4.0.1",
     "vite": "^8.0.10",
     "vite-plugin-svgr": "^5.2.0"
   },
@@ -43,7 +45,8 @@
     "lint": "eslint src --ext .ts,.tsx --fix",
     "check": "prettier --check \"src/main.tsx\" \"src/**/*.{css,module.css,json,ts,tsx}\" \"*.{yaml,json,ts}\" \"assets/index.tsx\" \"eslint.config.mjs\"",
     "format": "prettier --write \"src/main.tsx\" \"src/**/*.{css,module.css,json,ts,tsx}\" \"*.{yaml,json,ts}\" \"assets/index.tsx\" \"eslint.config.mjs\"",
-    "ci": "pnpm run format && pnpm run lint && pnpm run build"
+    "ci": "pnpm run format && pnpm run lint && pnpm run build",
+    "test:chat": "node --test tests/run-agent-chat.test.mjs"
   },
   "engineStrict": true,
   "browserslist": "defaults, not ie 11",

@@ -30,7 +30,7 @@
 - 上述是 remote 的角色约定，不代表每个 checkout 都已配置全部 remote；先以 `git remote -v` 核实，不因缺少历史 remote 自动添加或迁移。
 - 当前运动数据页面使用静态数据链路。Python 负责同步、清洗和生成运动数据，React/Vite 把生成结果作为静态资源发布；页面通过构建产物 URL 加载 JSON，本仓库不包含运行时业务后端。
 - 历史来源与 Watson 的个性化改动长期共存。研究历史实现或重构时，先查 Git 历史和实际差异，保留个人数据、文案、地图设置、隐私处理与页面定制。
-- `bells/run-agent` 是 Watson Running 对应的独立后端仓库。前后端计划通过 REST / SSE 集成；本仓库当前尚未实现该接入，不代表后端仓库不存在。Java 21、Spring Boot、Spring AI、Agent、Memory、RAG、MCP 与 Evaluation 归属后端，不要合并进本仓库。
+- `bells/run-agent` 是 Watson Running 对应的独立后端仓库。Classic 已实现仅开发环境可见的 `/api/chat` 单轮聊天；版本化 REST / SSE 与数据接入仍为后续规划。Java 21、Spring Boot、Spring AI、Agent、Memory、RAG、MCP 与 Evaluation 归属后端，不要合并进本仓库。
 - 涉及后端接口时先阅读 `run-agent` 的协作说明、实际接口与契约，再实现对应 TypeScript 客户端；不要把本文中的规划当作后端已实现接口，也不要在前端另建平行后端。
 
 ## 核心数据流
@@ -59,7 +59,7 @@
 - `src/themes/classic/`：Watson 当前使用的旧版多页面主题。`pages/index.tsx` 负责筛选和地图联动，`pages/total.tsx` 对应 `/summary`，地图、列表、年份与地区统计都在该主题目录内。
 - `src/themes/classic/utils/const.ts`：Classic 的地图供应商、隐私、单位和展示开关；真实瓦片加载仍依赖网络和供应商可用性。
 - `docs/theme-system.md`：主题扩展边界和新增主题流程。
-- `docs/run-agent-integration.md`：对应后端 RunAgent 的仓库职责、规划中的 REST/SSE 合约、隐私与 v0.1 集成边界。
+- `docs/run-agent-integration.md`：对应后端 RunAgent 的仓库职责、当前开发聊天接入、后续 REST/SSE 规划与隐私边界。
 - `docs/repository-independence.md`：独立仓库的 remote、分支、Secrets 与部署迁移约定。
 - `run_page/`：数据源适配器、数据库、格式转换及 SVG 生成器。
 - `run_page/tui/`：Textual 本地活动浏览器，读取生成的活动 JSON；`data.py` 负责数据解析与聚合，`app.py` 负责交互，`braille.py` 负责终端轨迹绘制。
