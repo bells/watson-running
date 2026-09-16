@@ -49,6 +49,8 @@ jobs:
   sync:
     name: Sync
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       SAVE_DATA_IN_GITHUB_CACHE: ${{ steps.set_output.outputs.SAVE_DATA_IN_GITHUB_CACHE }}
       DATA_CACHE_PREFIX: ${{ steps.set_output.outputs.DATA_CACHE_PREFIX }}
@@ -297,6 +299,10 @@ jobs:
   publish_github_pages:
     if: needs.sync.result == 'success' && needs.sync.outputs.BUILD_GH_PAGES == 'true'
     name: Build and publish Github Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     uses: ./.github/workflows/gh-pages.yml
     with:
       save_data_in_github_cache: ${{needs.sync.outputs.SAVE_DATA_IN_GITHUB_CACHE == 'true'}}
