@@ -9,6 +9,7 @@ import time
 import warnings
 from collections import namedtuple
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from xml.dom import minidom
 from hashlib import md5
 from typing import List
@@ -28,6 +29,7 @@ from config import (
     start_point,
 )
 from generator import Generator
+from private_data import validate_joyrun_export
 from utils import adjust_time
 
 # struct body
@@ -209,7 +211,7 @@ class Joyrun:
             raise Exception(f'{login_data["ret"]}: {login_data["msg"]}')
         self.sid = login_data["data"]["sid"]
         self.uid = login_data["data"]["user"]["uid"]
-        print(f"your uid and sid are {str(self.uid)} {str(self.sid)}")
+        print("JoyRun login successful")
         self.__update_loginInfo()
 
     def get_runs_records_ids(self):
@@ -772,6 +774,15 @@ if __name__ == "__main__":
         default=10,
     )
     options = parser.parse_args()
+    try:
+        validate_joyrun_export(
+            os.getenv("RUNNING_DATA_DIR"),
+            Path(__file__).resolve().parent.parent,
+            os.getenv("IGNORE_START_END_RANGE"),
+            os.getenv("IGNORE_BEFORE_SAVING"),
+        )
+    except ValueError as error:
+        parser.error(str(error))
     if options.from_uid_sid:
         j = Joyrun.from_uid_sid(
             uid=str(options.phone_number_or_uid),

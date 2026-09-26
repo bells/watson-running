@@ -27,10 +27,9 @@ jobs:
         run: |
           pip install -r requirements-dev.txt
 
-      - name: Run GPX sync test
+      - name: Check private data path contract
         run: |
-          # make sure the gpx_sync.py script is executable
-          python run_page/gpx_sync.py
+          python -m unittest test_private_data_config
 
       - name: Check formatting (black)
         run: black . --diff --color && black . --check

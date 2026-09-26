@@ -28,5 +28,20 @@ route.svg
 
 .env
 
+# Private source data. Publish only reviewed JSON and SVG outputs.
+/run_page/data.db*
+/GPX_OUT/*
+!/GPX_OUT/.gitkeep
+/TCX_OUT/*
+!/TCX_OUT/.gitkeep
+/FIT_OUT/*
+!/FIT_OUT/.gitkeep
+/PNG_OUT/*
+/activities/*
+!/activities/.gitkeep
+/Workouts/*
+!/Workouts/.gitkeep
+/imported.json
+
 .codegraph/
 .playwright-cli/

@@ -38,7 +38,7 @@
 ```text
 运动平台 / GPX / TCX / FIT
         -> run_page/*_sync.py
-        -> run_page/data.db + GPX_OUT/TCX_OUT/FIT_OUT
+        -> RUNNING_DATA_DIR/data.db + 私有 GPX_OUT/TCX_OUT/FIT_OUT
         -> Generator.load() / gen_svg.py
         -> src/static/activities.json + assets/*.svg
         -> React/Vite
@@ -63,8 +63,8 @@
 - `docs/repository-independence.md`：独立仓库的 remote、分支、Secrets 与部署迁移约定。
 - `run_page/`：数据源适配器、数据库、格式转换及 SVG 生成器。
 - `run_page/tui/`：Textual 本地活动浏览器，读取生成的活动 JSON；`data.py` 负责数据解析与聚合，`app.py` 负责交互，`braille.py` 负责终端轨迹绘制。
-- `.github/workflows/run_data_sync.yml`：数据同步、生成、提交和部署编排。
-- `GPX_OUT/`、`TCX_OUT/`、`FIT_OUT/`、`activities/`、`run_page/data.db`、`src/static/activities.json`、`assets/*.svg`：数据或生成资产，不是普通手写源码。
+- `.github/workflows/run_data_sync.yml`：旧数据同步流程，当前已暂停。
+- `RUNNING_DATA_DIR` 是仓库外的原始数据主档；`src/static/activities.json` 和 `assets/*.svg` 是公开展示资产。仓库内旧的 `GPX_OUT/` 和 `run_page/data.db` 文件仅作为本地迁移基线保留，不再跟踪。详见 `docs/private-running-data.md`。
 
 ## 前端约定
 
@@ -82,16 +82,16 @@
 - Python 脚本是数据管道，不是 Tauri 后端，也不是页面运行时服务。
 - 新平台适配优先复用 `Generator`、`TrackLoader`、SQLAlchemy 模型和现有格式工具，不要另建平行数据模型。
 - 下载、全量重导、数据库迁移和数据清理可能改动数百个轨迹/生成文件；除非任务明确要求，不要运行这些命令。
-- 不要手工编辑 `run_page/data.db`、批量修改 GPX 或直接修补 `activities.json` 来掩盖生成器问题。先修数据源/生成逻辑，再重新生成并审计结果。
+- 不要手工编辑私有 `data.db`、批量修改 GPX 或直接修补 `activities.json` 来掩盖生成器问题。先修数据源/生成逻辑，再重新生成并审计结果。
 - 轨迹包含精确位置，仓库又会公开部署。更改 `IGNORE_BEFORE_SAVING`、`IGNORE_START_END_RANGE`、`IGNORE_POLYLINE`、`IGNORE_RANGE` 或地图隐私逻辑时，必须把隐私泄露视为高风险回归。
 - 数据刷新后至少核对：活动总数、最新活动时间、运动类型分布、数据库与 JSON 一致性，以及新增/删除的轨迹和 SVG 是否符合预期。
 - Python 版本存在真实差异：`pyproject.toml` 要求 3.12+，Python CI 覆盖 3.12-3.14，数据同步工作流使用 3.11，Dockerfile 仍使用 3.10。修改依赖或语法时先明确目标执行路径，不能只在本机版本通过就宣称全链路兼容。
 
 ## 当前自动化边界
 
-- `.github/workflows/run_data_sync.yml` 当前声明 `RUN_TYPE: joyrun`，但文件中没有对应的 `joyrun_sync.py` 执行 step。不要假设定时任务会拉取 JoyRun 新数据；修改同步工作流前应先确认期望来源和现有 secrets。
-- 工作流可能执行 `git add .`、提交 `update new runs` 并推送当前触发分支。默认目标应为 `main`；开始修改前检查工作树、实际远端与 GitHub Actions 状态，避免与自动生成提交互相覆盖。
-- `SAVE_DATA_IN_GITHUB_CACHE=false` 时数据资产会进入 Git；切换缓存策略会改变数据持久化与部署行为，应作为发布/运维变更处理。
+- `.github/workflows/run_data_sync.yml` 已暂停定时和推送触发，其同步 job 被禁用。旧脚本没有 JoyRun 执行 step，也无法从公开 checkout 读取新的私有主档；恢复前需一起设计私有存储、凭据、脱敏和发布验证。
+- 历史版本的工作流可能执行 `git add .` 并推送数据提交。恢复自动化前检查工作树、实际远端与 GitHub Actions 状态，避免与人工发布互相覆盖。
+- 公开仓库只提交经审核的展示数据。修改 GitHub 缓存策略会改变数据持久化与部署行为，应作为发布/运维变更处理。
 - GitHub Pages 的 `PATH_PREFIX` 默认回退为仓库名路径；绑定 `run.watsonzhu.cn` 时 Repository Variable 必须设为 `/`。Secrets、Pages、Vercel 与 Domain 配置不会随 Git 历史自动迁移。
 
 ## CodeGraph 使用
@@ -139,7 +139,7 @@ black . --check
 ruff check .
 ```
 
-- CI 还会运行 `python run_page/gpx_sync.py`，它属于数据路径检查，可能接触生成资产；本地执行前先确认任务范围和工作树。
+- CI 用隔离测试验证私有数据路径，不运行真实 GPX 导入；本地仍不要把 `gpx_sync.py` 当作只读测试。
 - TUI 的自动化回归入口是 `python3 -m unittest test_tui_app`，使用临时 JSON 和 Textual `run_test()`；`test_real.py` 和 `test_tui.py` 是交互调试脚本，不能代替自动化测试结果。
 - 仓库当前没有独立的前端单元测试套件。涉及筛选、统计、地图、主题、动画或数据生成时，应补充针对性测试；修改共享层或主题注册时，至少分别用 `theme_preset: classic` 和 `theme_preset: dashboard` 构建，之后恢复用户配置。无法自动覆盖的浏览器/地图行为要明确说明手工验证边界。
 - 只改文档时至少运行 `git diff --check`；改前端运行 check、非修复型 ESLint 和 build；改 Python 运行 Black、Ruff 与相关脚本的最小安全测试；改数据管道需额外审计生成 diff。
