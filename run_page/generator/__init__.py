@@ -2,6 +2,7 @@ import datetime
 import math
 import os
 import sys
+from pathlib import Path
 
 import arrow
 import polyline as polyline_codec
@@ -10,6 +11,7 @@ from gpxtrackposter import track_loader
 from sqlalchemy import func
 
 from polyline_processor import filter_out
+from private_data import validate_joyrun_export
 from synced_data_file_logger import save_synced_data_file_list
 
 from .db import Activity, init_db, update_or_create_activity
@@ -233,6 +235,13 @@ class Generator:
         self.session.commit()
 
     def load(self):
+        if os.getenv("RUNNING_DATA_DIR"):
+            validate_joyrun_export(
+                os.getenv("RUNNING_DATA_DIR"),
+                Path(__file__).resolve().parents[2],
+                os.getenv("IGNORE_START_END_RANGE"),
+                os.getenv("IGNORE_BEFORE_SAVING"),
+            )
         # if sub_type is not in the db, just add an empty string to it
         query = self.session.query(Activity).filter(Activity.distance > 0.1)
         if self.only_run:
@@ -282,23 +291,13 @@ class Generator:
             activity.streak = streak  # type: ignore
             activity.week_streak = week_streak  # type: ignore
             last_date = date
-            if not IGNORE_BEFORE_SAVING:
-                activity.summary_polyline = filter_out(activity.summary_polyline)  # type: ignore
             activity_list.append(activity.to_dict())
 
+        # Classify against source routes before public clipping removes short routes.
         activity_list = self._fix_indoor_locations(activity_list)
-
-        # Persist indoor subtype and virtual polyline back to DB so SVG generation can pick it up
         for a in activity_list:
-            if a.get("subtype") == "indoor":
-                db_activity = self.session.query(Activity).get(a["run_id"])
-                if db_activity:
-                    if db_activity.subtype != "indoor":
-                        db_activity.subtype = "indoor"
-                    poly = a.get("summary_polyline", "")
-                    if poly and not db_activity.summary_polyline:
-                        db_activity.summary_polyline = poly
-        self.session.commit()
+            if not IGNORE_BEFORE_SAVING:
+                a["summary_polyline"] = filter_out(a.get("summary_polyline"))
 
         return activity_list
 

@@ -2,8 +2,10 @@ import argparse
 import logging
 import os
 import sys
+from pathlib import Path
 
 from config import SQL_FILE
+from private_data import validate_joyrun_export
 from gpxtrackposter import (
     circular_drawer,
     github_drawer,
@@ -212,6 +214,16 @@ def main():
         drawer.create_args(args_parser)
 
     args = args_parser.parse_args()
+    if args.from_db and os.getenv("RUNNING_DATA_DIR"):
+        try:
+            validate_joyrun_export(
+                os.getenv("RUNNING_DATA_DIR"),
+                Path(__file__).resolve().parent.parent,
+                os.getenv("IGNORE_START_END_RANGE"),
+                os.getenv("IGNORE_BEFORE_SAVING"),
+            )
+        except ValueError as error:
+            args_parser.error(str(error))
 
     for _, drawer in drawers.items():
         drawer.fetch_args(args)
