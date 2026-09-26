@@ -5,6 +5,7 @@
 ## 模块职责
 
 - `*_sync.py` 负责各平台或文件格式的导入；先阅读目标适配器的参数、凭据来源、文件写入与主入口，再决定如何测试。
+- JoyRun 的历史主档使用仓库外的 `RUNNING_DATA_DIR`，其中保存 `data.db` 和原始 GPX；公开 JSON 仍写入 `src/static/`。本地路径与保护条件见 `docs/private-running-data.md`。
 - `generator/db.py` 定义 SQLAlchemy 模型、`ACTIVITY_KEYS`、数据库初始化和活动写入；`generator/__init__.py` 负责活动加载、统计、隐私处理与室内轨迹修复。
 - `gpxtrackposter/track_loader.py` 提供 `TrackLoader` 和 GPX/TCX/FIT 加载能力，`gen_svg.py` 编排图形生成；新增导入能力优先复用这些模块。
 - `tui/data.py` 解析 JSON、转换单位并聚合活动，`tui/app.py` 承载 Textual 交互，`tui/braille.py` 绘制终端轨迹。业务计算保持可独立测试。
@@ -16,6 +17,7 @@
 - 网络访问处理超时、认证失败、限流与重试；回归测试使用 mock 或固定响应，不依赖真实平台账户和在线地理编码。
 - 同步和生成脚本可能在导入或初始化时访问文件、数据库或网络，先审查副作用再导入测试。使用临时目录、临时数据库与合成轨迹，显式重定向输入输出路径。
 - 未明确要求数据操作时，不运行 `gpx_sync.py`、平台全量同步、`db_updater.py`、`gen_svg.py` 或 `pnpm run data:clean`。`--from-db` 仍可能写 JSON/SVG，不代表只读。
+- JoyRun 发布前必须检查私有数据目录和轨迹裁剪参数；不能把原始数据库或 GPX 再次加入公开 Git。室内跑步机活动可以没有 GPX，不应因此删除活动。
 - 隐私处理必须覆盖保存前、JSON 输出和展示链路；修复生成器后，再在获授权的数据范围内重新生成，不直接修补真实数据库、轨迹或 JSON。
 - 数据刷新需要报告活动数量、最新时间、类型分布、数据库/JSON 一致性，以及轨迹和 SVG 的增删变化；避免在交付日志中打印精确路线。
 

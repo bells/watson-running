@@ -1,28 +1,7 @@
-name: Run Data Sync
+name: Run Data Sync (paused)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
-  push:
-    branches:
-      - main
-    paths:
-      - run_page/nike_sync.py
-      - run_page/nike_to_strava_sync.py
-      - run_page/strava_sync.py
-      - run_page/gen_svg.py
-      - run_page/garmin_sync.py
-      - run_page/coros_sync.py
-      - run_page/keep_sync.py
-      - run_page/gpx_sync.py
-      - run_page/tcx_sync.py
-      - run_page/tcx_to_garmin_sync.py
-      - run_page/garmin_to_strava_sync.py
-      - run_page/keep_to_strava_sync.py
-      - run_page/oppo_sync.py
-      - run_page/intervals_icu_sync.py
-      - requirements.txt
 
 env:
   # please change to your own config.
@@ -48,6 +27,9 @@ env:
 jobs:
   sync:
     name: Sync
+    # The public checkout will no longer contain the source database.
+    # Resume only after private storage and publishing are reviewed together.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

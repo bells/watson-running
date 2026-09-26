@@ -93,11 +93,11 @@ Mapbox tokens included in client builds must be public tokens restricted by URL 
 The production URL remains <https://run.watsonzhu.cn/>.
 
 - GitHub Pages is built by [`.github/workflows/gh-pages.yml`](.github/workflows/gh-pages.yml).
-- Scheduled data generation is orchestrated by [`.github/workflows/run_data_sync.yml`](.github/workflows/run_data_sync.yml).
+- The former [data-sync workflow](.github/workflows/run_data_sync.yml) is paused while private ingestion and publishing are separated.
 - Repository Secrets are not transferred when Git history is pushed to another repository.
 - `PATH_PREFIX` can be supplied as a GitHub repository variable. Use `/watson-running` for the GitHub project URL and `/` after the custom domain is attached.
 
-The current workflow declares `RUN_TYPE: joyrun`, but it does not execute a JoyRun synchronization step. A successful scheduled workflow therefore must not be interpreted as proof that new JoyRun activities were downloaded.
+The source database and original GPX tracks now live in a private directory outside this public checkout. See [Private running history](docs/private-running-data.md) for the data boundary. The old `Run Data Sync` workflow is paused; it did not download JoyRun activities.
 
 See [repository independence and operations](docs/repository-independence.md) for remote roles, branch policy, deployment migration, and required Secret names.
 

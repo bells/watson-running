@@ -93,11 +93,11 @@ ruff check .
 生产地址继续使用 <https://run.watsonzhu.cn/>。
 
 - GitHub Pages 由 [`.github/workflows/gh-pages.yml`](.github/workflows/gh-pages.yml) 构建。
-- 定时数据生成由 [`.github/workflows/run_data_sync.yml`](.github/workflows/run_data_sync.yml) 编排。
+- 旧的 [数据同步 Workflow](.github/workflows/run_data_sync.yml) 已暂停，等待私有数据链路完成后重构。
 - 仅推送 Git 历史不会把 Repository Secrets 复制到新仓库。
 - 可以通过 GitHub Repository Variable 设置 `PATH_PREFIX`。GitHub Project Pages 使用 `/watson-running`，绑定自定义域名后使用 `/`。
 
-当前 Workflow 声明了 `RUN_TYPE: joyrun`，但没有实际执行 JoyRun 同步脚本。因此定时任务成功不能证明已经下载新的悦跑圈活动。
+原始数据库与 GPX 已转到仓库外的私有数据目录，公开仓库仅发布经审核的展示数据。迁移说明和后续同步边界见[私有跑步历史数据](docs/private-running-data.md)。旧的 `Run Data Sync` Workflow 已暂停；它原本没有执行 JoyRun 下载，不能用于确认新增活动。
 
 远程仓库角色、分支策略、部署迁移和 Secret 名称见 [仓库独立化与运维说明](docs/repository-independence.md)。
 

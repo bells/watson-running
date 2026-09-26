@@ -66,7 +66,7 @@ TULIPSPORT_TOKEN
 
 Only copy values through GitHub's Secret settings or an approved secret-management workflow. Never print values into logs or place them in files. Restrict public Mapbox tokens by the production and preview URLs.
 
-The active `RUN_TYPE` determines which provider Secrets are needed at runtime. `MAPBOX_TOKEN` is consumed by CI and Pages builds. The current `joyrun` declaration has no matching sync step, so it does not currently fetch new activities.
+The data-sync workflow is paused while the source database and tracks move out of the public checkout. Its former `joyrun` declaration had no matching sync step. `MAPBOX_TOKEN` remains consumed by CI and Pages builds. Resume automated provider access only after private storage, credentials, privacy filtering and publish checks are designed together.
 
 The legacy repository currently has `JOYRUN_USER` and `JOYRUN_PASSWORD` configured, but no current Workflow expression references either name. Do not copy them merely to make a run appear configured; first implement and review an explicit JoyRun sync step, then add the credentials through GitHub's Secret settings.
 
