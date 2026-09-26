@@ -33,22 +33,24 @@ Set the directory in the shell before running Python data commands:
 
 ```bash
 export RUNNING_DATA_DIR="$HOME/work/watson-running-data"
+export IGNORE_START_END_RANGE=500
 ```
 
 `run_page/config.py` redirects the database, original tracks and import log
 to this directory. Generated website JSON remains in `src/static/`. JoyRun
 sync refuses to run without an existing private database and GPX directory
-outside the repository. It also requires at least 1000 metres of start/end
-route clipping before writing public JSON. Review the other privacy settings
-and generated route changes before publishing; this minimum alone does not
-prove that every sensitive location is hidden.
+outside the repository. It also requires at least 500 metres of route travel
+to be clipped from each end when the route is long enough. Routes with less than
+about 1 km of recorded path remain unchanged, including their original start
+and end points. Review the generated routes before publishing; this policy does
+not hide every sensitive location.
 
 The private database keeps source routes. Indoor classification uses those
 routes before any public clipping; JSON and SVG generation apply the privacy
 filter to their own output without writing clipped or synthetic routes back
 to the database. A second generation run should leave the database unchanged.
 When using this private directory, both JSON and database-backed SVG generation
-require `IGNORE_START_END_RANGE` of at least 1000 metres.
+require `IGNORE_START_END_RANGE` of at least 500 metres.
 
 Keep an independent encrypted or off-device backup of the private directory.
 The copy in the Git checkout is only a temporary local baseline, not a backup

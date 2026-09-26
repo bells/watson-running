@@ -21,10 +21,10 @@ def route(points):
 
 
 class GeneratorPrivacyTests(unittest.TestCase):
-    def test_short_route_does_not_expose_original_endpoints(self):
+    def test_short_route_remains_visible_when_both_ends_cannot_be_clipped(self):
         source = route(31)
-        with patch.object(polyline_processor, "IGNORE_START_END_RANGE", 1.0):
-            self.assertIsNone(polyline_processor.filter_out(source))
+        with patch.object(polyline_processor, "IGNORE_START_END_RANGE", 0.5):
+            self.assertEqual(polyline_processor.filter_out(source), source)
 
     def test_public_clipping_does_not_change_source_or_misclassify_short_run(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -53,11 +53,11 @@ class GeneratorPrivacyTests(unittest.TestCase):
                 os.environ,
                 {"RUNNING_DATA_DIR": directory, "IGNORE_START_END_RANGE": "0"},
             ):
-                with self.assertRaisesRegex(ValueError, "at least 1000"):
+                with self.assertRaisesRegex(ValueError, "at least 500"):
                     generator.load()
 
             with (
-                patch.object(polyline_processor, "IGNORE_START_END_RANGE", 1.0),
+                patch.object(polyline_processor, "IGNORE_START_END_RANGE", 0.5),
                 patch.object(generator_module, "IGNORE_BEFORE_SAVING", False),
             ):
                 first = generator.load()
@@ -89,7 +89,7 @@ class GeneratorPrivacyTests(unittest.TestCase):
             summary_polyline=source,
         )
         with (
-            patch.object(polyline_processor, "IGNORE_START_END_RANGE", 1.0),
+            patch.object(polyline_processor, "IGNORE_START_END_RANGE", 0.5),
             patch.object(track_module, "IGNORE_BEFORE_SAVING", False),
         ):
             track = track_module.Track()

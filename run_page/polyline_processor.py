@@ -87,7 +87,8 @@ def start_end_hiding(polyline: List[Tuple[float]], distance: int) -> List[Tuple[
             break
 
     if start_index >= end_index:
-        return []
+        # Keep short routes visible when clipping both ends would remove the route.
+        return polyline
 
     return polyline[start_index : end_index + 1]
 

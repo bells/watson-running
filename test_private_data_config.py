@@ -38,17 +38,17 @@ class PrivateDataConfigTests(unittest.TestCase):
             (source / "GPX_OUT").mkdir()
 
             self.assertEqual(
-                validate_joyrun_export(str(source), ROOT, "1000", None), source
+                validate_joyrun_export(str(source), ROOT, "500", None), source
             )
-            with self.assertRaisesRegex(ValueError, "at least 1000"):
-                validate_joyrun_export(str(source), ROOT, "10", None)
+            with self.assertRaisesRegex(ValueError, "at least 500"):
+                validate_joyrun_export(str(source), ROOT, "499", None)
             with self.assertRaisesRegex(ValueError, "IGNORE_BEFORE_SAVING"):
-                validate_joyrun_export(str(source), ROOT, "1000", "False")
+                validate_joyrun_export(str(source), ROOT, "500", "False")
             with self.assertRaisesRegex(ValueError, "outside the public repository"):
-                validate_joyrun_export(str(source), source.parent, "1000", None)
+                validate_joyrun_export(str(source), source.parent, "500", None)
 
         with self.assertRaisesRegex(ValueError, "Set RUNNING_DATA_DIR"):
-            validate_joyrun_export(None, ROOT, "1000", None)
+            validate_joyrun_export(None, ROOT, "500", None)
 
 
 if __name__ == "__main__":

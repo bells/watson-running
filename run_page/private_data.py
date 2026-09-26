@@ -30,8 +30,8 @@ def validate_joyrun_export(
         raise ValueError(
             "IGNORE_START_END_RANGE must be an integer number of meters"
         ) from error
-    if radius < 1000:
+    if radius < 500:
         raise ValueError(
-            "Set IGNORE_START_END_RANGE to at least 1000 meters before exporting public data"
+            "Set IGNORE_START_END_RANGE to at least 500 meters before exporting public data"
         )
     return private_root
