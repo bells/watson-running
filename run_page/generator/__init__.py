@@ -14,7 +14,7 @@ from polyline_processor import filter_out
 from private_data import validate_joyrun_export
 from synced_data_file_logger import save_synced_data_file_list
 
-from .db import Activity, init_db, update_or_create_activity
+from .db import Activity, JoyrunDetail, init_db, update_or_create_activity
 
 IGNORE_BEFORE_SAVING = os.getenv("IGNORE_BEFORE_SAVING", False)
 
@@ -242,6 +242,17 @@ class Generator:
                 os.getenv("IGNORE_START_END_RANGE"),
                 os.getenv("IGNORE_BEFORE_SAVING"),
             )
+        detail_summaries = {
+            row.run_id: row
+            for row in self.session.query(
+                JoyrunDetail.run_id,
+                JoyrunDetail.source,
+                JoyrunDetail.calories_kcal,
+                JoyrunDetail.total_steps,
+                JoyrunDetail.average_cadence_spm,
+                JoyrunDetail.average_stride_m,
+            )
+        }
         # if sub_type is not in the db, just add an empty string to it
         query = self.session.query(Activity).filter(Activity.distance > 0.1)
         if self.only_run:
@@ -291,9 +302,20 @@ class Generator:
             activity.streak = streak  # type: ignore
             activity.week_streak = week_streak  # type: ignore
             last_date = date
-            activity_list.append(activity.to_dict())
+            item = activity.to_dict()
+            detail = detail_summaries.get(activity.run_id)
+            if detail:
+                item.update(
+                    source=detail.source,
+                    detail_available=True,
+                    calories_kcal=detail.calories_kcal,
+                    total_steps=detail.total_steps,
+                    average_cadence_spm=detail.average_cadence_spm,
+                    average_stride_m=detail.average_stride_m,
+                )
+            activity_list.append(item)
 
-        # Classify against source routes before public clipping removes short routes.
+        # Classify against source routes before public endpoint clipping.
         activity_list = self._fix_indoor_locations(activity_list)
         for a in activity_list:
             if not IGNORE_BEFORE_SAVING:

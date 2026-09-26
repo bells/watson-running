@@ -11,7 +11,7 @@
 
       // Get the base path from the current URL
       const segments = window.location.pathname.split('/');
-	    const basePath = segments.length > 2 ? '/' + segments[1] : '/';
+      const basePath = segments[1] === 'watson-running' ? '/watson-running/' : '/';
       // Redirect to index.html
       window.location.replace(window.location.origin + basePath);
     </script>

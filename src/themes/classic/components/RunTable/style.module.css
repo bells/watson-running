@@ -108,3 +108,14 @@
 .runDate {
   color: var(--color-run-date);
 }
+
+.detailLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.detailLink:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

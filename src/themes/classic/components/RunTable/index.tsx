@@ -140,6 +140,7 @@ const RunTable = ({
                 {k}
               </th>
             ))}
+            <th>详情</th>
           </tr>
         </thead>
         <tbody>

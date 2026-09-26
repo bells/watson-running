@@ -205,7 +205,9 @@ class Joyrun:
             f"{self.base_url}//user/login/phonecode",
             params=params,
             auth=self.auth.reload(params),
+            timeout=30,
         )
+        r.raise_for_status()
         login_data = r.json()
         if login_data["ret"] != "0":
             raise Exception(f'{login_data["ret"]}: {login_data["msg"]}')
@@ -215,6 +217,9 @@ class Joyrun:
         self.__update_loginInfo()
 
     def get_runs_records_ids(self):
+        return [record["fid"] for record in self.get_runs_records()]
+
+    def get_runs_records(self):
         payload = {
             "year": 0,  # as of the "year". when set to 2023, it means fetch records during currentYear ~ 2023. set to 0 means fetch all.
         }
@@ -222,10 +227,13 @@ class Joyrun:
             f"{self.base_url}/userRunList.aspx",
             data=payload,
             auth=self.auth.reload(payload),
+            timeout=30,
         )
-        if not r.ok:
-            raise Exception("get runs records error")
-        return [i["fid"] for i in r.json()["datas"]]
+        r.raise_for_status()
+        data = r.json()
+        if str(data.get("ret")) != "0" or not isinstance(data.get("datas"), list):
+            raise ValueError("JoyRun record list is unavailable")
+        return data["datas"]
 
     @staticmethod
     def parse_content_to_ponits(content):
@@ -537,8 +545,12 @@ class Joyrun:
             f"{self.base_url}/Run/GetInfo.aspx",
             data=payload,
             auth=self.auth.reload(payload),
+            timeout=30,
         )
+        r.raise_for_status()
         data = r.json()
+        if str(data.get("ret")) != "0" or not isinstance(data.get("runrecord"), dict):
+            raise ValueError("JoyRun activity detail is unavailable")
         return data
 
     def parse_raw_data_to_nametuple(

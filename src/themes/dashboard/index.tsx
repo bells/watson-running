@@ -18,6 +18,7 @@ import { ProfileCard } from '@/components/ProfileCard';
 import { PersonalBest } from '@/components/PersonalBest';
 import { TracksPage } from '@/components/TracksPage';
 import { ChinaMap } from '@/components/ChinaMap';
+import ActivityDetailPage from '@/components/ActivityDetailPage';
 
 type Page = 'home' | 'tracks';
 
@@ -43,6 +44,10 @@ function Dashboard() {
       (a) => extractProvince(a.location_country) === selectedProvince
     );
   }, [filtered, selectedProvince]);
+
+  if (/\/activity\/\d+\/?$/.test(window.location.pathname)) {
+    return <ActivityDetailPage />;
+  }
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]" data-filter={filter}>

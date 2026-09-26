@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Index from './pages/index';
 import Total from './pages/total';
+import ActivityDetailPage from '@/components/ActivityDetailPage';
 
 export default function ClassicTheme() {
   return (
@@ -13,6 +14,7 @@ export default function ClassicTheme() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/summary" element={<Total />} />
+            <Route path="/activity/:runId" element={<ActivityDetailPage />} />
             <Route path="*" element={<Index />} />
           </Routes>
         </Suspense>

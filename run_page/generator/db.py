@@ -9,6 +9,7 @@ from sqlalchemy import (
     Integer,
     Interval,
     String,
+    Text,
     create_engine,
     inspect,
     text,
@@ -82,6 +83,36 @@ class Activity(Base):
             out["week_streak"] = self.week_streak
 
         return out
+
+
+class JoyrunDetail(Base):
+    """Private JoyRun detail. Raw responses may contain precise locations."""
+
+    __tablename__ = "joyrun_details"
+
+    run_id = Column(Integer, primary_key=True)
+    source = Column(String)
+    heartrate_source = Column(String)
+    calories_kcal = Column(Float)
+    total_steps = Column(Integer)
+    sample_interval_seconds = Column(Integer)
+    moving_seconds = Column(Integer)
+    elapsed_seconds = Column(Integer)
+    average_cadence_spm = Column(Float)
+    average_stride_m = Column(Float)
+    min_heartrate = Column(Integer)
+    max_heartrate = Column(Integer)
+    average_heartrate = Column(Float)
+    min_altitude_m = Column(Float)
+    max_altitude_m = Column(Float)
+    splits_json = Column(Text)
+    step_samples_json = Column(Text)
+    heart_rate_samples_json = Column(Text)
+    altitude_samples_json = Column(Text)
+    pause_json = Column(Text)
+    raw_list_json = Column(Text)
+    raw_detail_json = Column(Text)
+    fetched_at = Column(String)
 
 
 def update_or_create_activity(session, run_activity):

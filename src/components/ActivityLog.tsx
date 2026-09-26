@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Activity, SportFilter } from '../types';
 import { formatDuration, formatPace } from '../hooks/useActivities';
 import { useLocale } from '../hooks/useLocale';
+import { activityDetailHref, isWatchSource } from '@core/activityDetail';
 
 interface ActivityLogProps {
   activities: Activity[];
@@ -145,6 +146,7 @@ export function ActivityLog({
               <th className="pb-3 font-medium">{t('duration')}</th>
               <th className="pb-3 font-medium">{t('pace')}</th>
               <th className="pb-3 font-medium">{t('hr')}</th>
+              <th className="pb-3 font-medium">详情</th>
             </tr>
           </thead>
           <tbody>
@@ -170,7 +172,14 @@ export function ActivityLog({
                     {typeIcon(a.type)} {a.type}
                   </span>
                 </td>
-                <td className="py-3">{a.name || t('run')}</td>
+                <td className="py-3">
+                  {a.name || t('run')}{' '}
+                  {isWatchSource(a.source) && (
+                    <span title={a.source ?? '手表记录'} aria-label="手表记录">
+                      ⌚
+                    </span>
+                  )}
+                </td>
                 <td className="py-3 font-mono font-medium">
                   {(a.distance / 1000).toFixed(1)}
                   <span className="ml-1 text-xs font-normal text-[var(--color-muted)]">
@@ -185,6 +194,19 @@ export function ActivityLog({
                 </td>
                 <td className="py-3 text-[var(--color-muted)]">
                   {a.average_heartrate ? Math.round(a.average_heartrate) : '--'}
+                </td>
+                <td className="py-3">
+                  {a.detail_available ? (
+                    <a
+                      href={activityDetailHref(a.run_id)}
+                      onClick={(event) => event.stopPropagation()}
+                      className="text-[var(--color-accent)] underline underline-offset-2 focus-visible:outline-2"
+                    >
+                      查看详情
+                    </a>
+                  ) : (
+                    '—'
+                  )}
                 </td>
               </tr>
             ))}

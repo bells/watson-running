@@ -12,7 +12,12 @@ export interface Activity {
   average_heartrate: number | null;
   average_speed: number; // m/s
   elevation_gain: number | null;
-  source?: string;
+  source?: string | null;
+  detail_available?: boolean;
+  calories_kcal?: number | null;
+  total_steps?: number | null;
+  average_cadence_spm?: number | null;
+  average_stride_m?: number | null;
   streak: number;
   week_streak?: number;
 }

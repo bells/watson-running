@@ -33,6 +33,12 @@ export interface Activity {
   average_speed: number;
   streak: number;
   week_streak?: number;
+  source?: string | null;
+  detail_available?: boolean;
+  calories_kcal?: number | null;
+  total_steps?: number | null;
+  average_cadence_spm?: number | null;
+  average_stride_m?: number | null;
 }
 
 const titleForShow = (run: Activity): string => {
