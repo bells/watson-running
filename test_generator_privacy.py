@@ -21,6 +21,11 @@ def route(points):
 
 
 class GeneratorPrivacyTests(unittest.TestCase):
+    def test_short_route_does_not_expose_original_endpoints(self):
+        source = route(31)
+        with patch.object(polyline_processor, "IGNORE_START_END_RANGE", 1.0):
+            self.assertIsNone(polyline_processor.filter_out(source))
+
     def test_public_clipping_does_not_change_source_or_misclassify_short_run(self):
         with tempfile.TemporaryDirectory() as directory:
             generator = generator_module.Generator(str(Path(directory) / "data.db"))
