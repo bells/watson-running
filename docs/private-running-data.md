@@ -43,6 +43,13 @@ route clipping before writing public JSON. Review the other privacy settings
 and generated route changes before publishing; this minimum alone does not
 prove that every sensitive location is hidden.
 
+The private database keeps source routes. Indoor classification uses those
+routes before any public clipping; JSON and SVG generation apply the privacy
+filter to their own output without writing clipped or synthetic routes back
+to the database. A second generation run should leave the database unchanged.
+When using this private directory, both JSON and database-backed SVG generation
+require `IGNORE_START_END_RANGE` of at least 1000 metres.
+
 Keep an independent encrypted or off-device backup of the private directory.
 The copy in the Git checkout is only a temporary local baseline, not a backup
 strategy.
