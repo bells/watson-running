@@ -119,9 +119,9 @@ def normalize_joyrun_detail(list_record, runrecord):
         samples.append(
             {
                 "moving_seconds": index * sample_interval,
-                "heart_rate_bpm": heart_rates[index]
-                if index < len(heart_rates)
-                else None,
+                "heart_rate_bpm": (
+                    heart_rates[index] if index < len(heart_rates) else None
+                ),
                 "altitude_m": altitudes[index] if index < len(altitudes) else None,
                 "steps": step_count,
                 "step_measure": step_measure,
@@ -142,22 +142,26 @@ def normalize_joyrun_detail(list_record, runrecord):
         "distance_m": distance_m,
         "moving_seconds": moving_seconds,
         "elapsed_seconds": elapsed_seconds,
-        "calories_kcal": round(calories / 1000, 1)
-        if calories is not None and calories >= 0
-        else None,
+        "calories_kcal": (
+            round(calories / 1000, 1)
+            if calories is not None and calories >= 0
+            else None
+        ),
         "total_steps": total_steps or None,
         "sample_interval_seconds": sample_interval,
-        "average_cadence_spm": round(total_steps * 60 / moving_seconds, 1)
-        if total_steps and moving_seconds
-        else None,
+        "average_cadence_spm": (
+            round(total_steps * 60 / moving_seconds, 1)
+            if total_steps and moving_seconds
+            else None
+        ),
         "average_stride_m": round(distance_m / total_steps, 3) if total_steps else None,
         "min_heart_rate_bpm": min(valid_heart_rates) if valid_heart_rates else None,
         "max_heart_rate_bpm": max(valid_heart_rates) if valid_heart_rates else None,
-        "average_heart_rate_bpm": round(
-            sum(valid_heart_rates) / len(valid_heart_rates), 1
-        )
-        if valid_heart_rates
-        else None,
+        "average_heart_rate_bpm": (
+            round(sum(valid_heart_rates) / len(valid_heart_rates), 1)
+            if valid_heart_rates
+            else None
+        ),
         "min_altitude_m": min(valid_altitudes) if valid_altitudes else None,
         "max_altitude_m": max(valid_altitudes) if valid_altitudes else None,
         "splits": splits,
