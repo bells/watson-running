@@ -1,4 +1,6 @@
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
+import { setWorkerUrl } from 'maplibre-gl';
+import mapLibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import React, {
   useRef,
   useCallback,
@@ -6,14 +8,20 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import Map, {
-  Layer,
-  Source,
-  FullscreenControl,
-  NavigationControl,
-  MapRef,
-  MapInstance,
+import MapboxMap, {
+  Layer as MapboxLayer,
+  Source as MapboxSource,
+  FullscreenControl as MapboxFullscreenControl,
+  NavigationControl as MapboxNavigationControl,
+  type MapRef as MapboxMapRef,
 } from 'react-map-gl/mapbox';
+import MapLibreMap, {
+  Layer as MapLibreLayer,
+  Source as MapLibreSource,
+  FullscreenControl as MapLibreFullscreenControl,
+  NavigationControl as MapLibreNavigationControl,
+  type MapRef as MapLibreMapRef,
+} from 'react-map-gl/maplibre';
 import useActivities from '../../hooks/useActivities';
 import {
   IS_CHINESE,
@@ -44,10 +52,53 @@ import styles from './style.module.css';
 import type { FeatureCollection } from 'geojson';
 import type { RPGeometry } from '../../static/run_countries';
 import './mapbox.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import LightsControl from './LightsControl';
 import { useMapTheme, useThemeChangeCounter } from '../../hooks/useTheme';
 
 const KEEP_WHEN_LIGHTS_OFF = ['runs2', 'runs2-indoor', 'animated-run'];
+const usesMapbox = MAP_TILE_VENDOR === 'mapbox';
+if (!usesMapbox) {
+  setWorkerUrl(mapLibreWorkerUrl);
+}
+const Map = usesMapbox ? MapboxMap : MapLibreMap;
+const Layer = usesMapbox ? MapboxLayer : MapLibreLayer;
+const Source = usesMapbox ? MapboxSource : MapLibreSource;
+const FullscreenControl = usesMapbox
+  ? MapboxFullscreenControl
+  : MapLibreFullscreenControl;
+const NavigationControl = usesMapbox
+  ? MapboxNavigationControl
+  : MapLibreNavigationControl;
+type MapRef = MapboxMapRef | MapLibreMapRef;
+interface MapInstance {
+  getStyle: () => { layers: MapStyleLayer[] };
+  setLayoutProperty: (
+    layerId: string,
+    name: 'visibility',
+    value: 'visible' | 'none'
+  ) => void;
+  getCenter: () => { lng: number; lat: number };
+  getZoom: () => number;
+  getBearing: () => number;
+  getPitch: () => number;
+  setCenter: (center: { lng: number; lat: number }) => void;
+  setZoom: (zoom: number) => void;
+  setBearing: (bearing: number) => void;
+  setPitch: (pitch: number) => void;
+  setStyle: (style: string) => void;
+  on: (event: string, listener: (event: { dataType?: string }) => void) => void;
+  off: (
+    event: string,
+    listener: (event: { dataType?: string }) => void
+  ) => void;
+  once: (event: string, listener: () => void) => void;
+  removeLayer: (id: string) => void;
+  resize: () => void;
+}
+
+const getMapInstance = (ref: MapRef): MapInstance =>
+  ref.getMap() as unknown as MapInstance;
 
 interface IRunMapProps {
   title: string;
@@ -96,8 +147,6 @@ const RunMap = ({
     [currentMapTheme]
   );
 
-  // Mapbox GL JS requires a token even when using other vendors
-  // Always use the MAPBOX_TOKEN from const.ts (user may have set their own token)
   const mapboxAccessToken = MAPBOX_TOKEN;
 
   /**
@@ -121,7 +170,7 @@ const RunMap = ({
   // Update map when theme changes
   useEffect(() => {
     if (mapRef.current) {
-      const map = mapRef.current.getMap();
+      const map = getMapInstance(mapRef.current);
       let restoreStyleTimer: ReturnType<typeof setTimeout> | undefined;
 
       // Save current map state before changing style
@@ -165,7 +214,7 @@ const RunMap = ({
 
   useEffect(() => {
     if (mapRef.current) {
-      const map = mapRef.current.getMap();
+      const map = getMapInstance(mapRef.current);
 
       // Track tile loading errors
       let tileErrorCount = 0;
@@ -221,21 +270,17 @@ const RunMap = ({
 
   // Memoize filter arrays to prevent recreating them on every render
   const filterProvinces = useMemo(() => {
-    const filtered = provinces.slice();
-    filtered.unshift('in', 'name');
-    return filtered;
+    return ['in', 'name', ...provinces] as ['in', 'name', ...string[]];
   }, [provinces]);
 
   const filterCountries = useMemo(() => {
-    const filtered = countries.slice();
-    filtered.unshift('in', 'name');
-    return filtered;
+    return ['in', 'name', ...countries] as ['in', 'name', ...string[]];
   }, [countries]);
 
   // Apply layer visibility when lights setting changes
   useEffect(() => {
     if (mapRef.current) {
-      const map = mapRef.current.getMap();
+      const map = getMapInstance(mapRef.current);
       // Add a small delay to ensure map is ready
       const visibilityTimer = setTimeout(() => {
         try {
@@ -249,11 +294,13 @@ const RunMap = ({
   }, [lights, switchLayerVisibility]);
 
   const mapRefCallback = useCallback(
-    (ref: MapRef) => {
+    (ref: MapRef | null) => {
       if (ref !== null) {
-        const map = ref.getMap();
-        if (map && IS_CHINESE && MAP_TILE_VENDOR === 'mapbox') {
-          map.addControl(new MapboxLanguage({ defaultLanguage: 'zh-Hans' }));
+        const map = getMapInstance(ref);
+        if (map && IS_CHINESE && usesMapbox) {
+          (ref as MapboxMapRef)
+            .getMap()
+            .addControl(new MapboxLanguage({ defaultLanguage: 'zh-Hans' }));
         }
         // all style resources have been downloaded
         // and the first visually complete rendering of the base style has occurred.
@@ -282,7 +329,7 @@ const RunMap = ({
         });
       }
       if (mapRef.current) {
-        const map = mapRef.current.getMap();
+        const map = getMapInstance(mapRef.current);
         switchLayerVisibility(map, lights);
       }
     },
@@ -382,7 +429,7 @@ const RunMap = ({
   useEffect(() => {
     const handleFullscreenChange = () => {
       if (mapRef.current) {
-        mapRef.current.getMap().resize();
+        getMapInstance(mapRef.current).resize();
       }
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -453,7 +500,7 @@ const RunMap = ({
       mapStyle={mapStyle}
       ref={mapRefCallback}
       cooperativeGestures={isTouchDevice()}
-      mapboxAccessToken={mapboxAccessToken}
+      {...(usesMapbox ? { mapboxAccessToken } : {})}
     >
       {mapError && (
         <div className={styles.mapErrorNotification}>

@@ -17,8 +17,7 @@ from generator import Generator
 from generator.db import Activity, Base, JoyrunDetail
 from joyrun_detail import normalize_joyrun_detail
 from joyrun_sync import Joyrun
-from private_data import validate_joyrun_export
-
+from private_data import require_private_database, validate_joyrun_export
 
 PUBLIC_DIR = Path(__file__).resolve().parent.parent / "public/activity-details"
 DETAIL_SUMMARY_KEYS = {
@@ -137,12 +136,14 @@ def main():
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--delay", type=float, default=0.7)
     args = parser.parse_args()
-    validate_joyrun_export(
+    private_root = validate_joyrun_export(
         os.getenv("RUNNING_DATA_DIR"),
         Path(__file__).resolve().parent.parent,
         os.getenv("IGNORE_START_END_RANGE"),
         os.getenv("IGNORE_BEFORE_SAVING"),
     )
+    require_private_database(Path(SQL_FILE), private_root)
+    os.umask(0o077)
     engine = create_engine(f"sqlite:///{SQL_FILE}")
     Base.metadata.create_all(engine, tables=[JoyrunDetail.__table__])
     session = sessionmaker(bind=engine)()

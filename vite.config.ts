@@ -101,6 +101,9 @@ export default defineConfig(({ mode }) => {
     },
     // Vite preview otherwise inherits server.proxy; chat is development-only.
     preview: { proxy: {} },
+    optimizeDeps: {
+      exclude: ['maplibre-gl'],
+    },
     base: resolveBasePath(process.env.PATH_PREFIX),
     define: {
       'import.meta.env.VERCEL': JSON.stringify(process.env.VERCEL),

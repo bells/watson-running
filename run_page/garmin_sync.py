@@ -59,7 +59,7 @@ class Garmin:
             else GARMIN_COM_URL_DICT
         )
         if auth_domain and str(auth_domain).upper() == "CN":
-            garth.configure(domain="garmin.cn", ssl_verify=False)
+            garth.configure(domain="garmin.cn")
         self.modern_url = self.URL_DICT.get("MODERN_URL")
         garth.client.loads(secret_string)
         if garth.client.oauth2_token.expired:

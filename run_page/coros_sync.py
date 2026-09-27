@@ -217,6 +217,7 @@ if __name__ == "__main__":
     is_only_running = options.only_run
     file_type = options.download_file_type
     file_type = file_type if file_type in ["gpx", "tcx", "fit"] else "fit"
+    # Coros expects this MD5 value in its login protocol; it is not stored here.
     encrypted_pwd = hashlib.md5(password.encode()).hexdigest()
 
     asyncio.run(
