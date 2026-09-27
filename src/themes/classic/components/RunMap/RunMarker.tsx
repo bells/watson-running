@@ -1,7 +1,11 @@
 import { ReactComponent as EndSvg } from '@assets/end.svg';
 import { ReactComponent as StartSvg } from '@assets/start.svg';
-import { Marker } from 'react-map-gl/mapbox';
+import { Marker as MapboxMarker } from 'react-map-gl/mapbox';
+import { Marker as MapLibreMarker } from 'react-map-gl/maplibre';
+import { MAP_TILE_VENDOR } from '../../utils/const';
 import styles from './style.module.css';
+
+const Marker = MAP_TILE_VENDOR === 'mapbox' ? MapboxMarker : MapLibreMarker;
 
 interface IRunMarkerProperties {
   startLon: number;

@@ -1,9 +1,6 @@
+import { MAPBOX_TOKEN } from '@core/config';
+
 // Constants
-const MAPBOX_TOKEN =
-  // For security reasons, please avoid using the default public token provided by Mapbox as much as possible.
-  // Instead, manually add a new token and apply URL restrictions.
-  // (please refer to https://github.com/yihong0618/running_page/issues/643#issuecomment-2042668580)
-  'pk.eyJ1IjoieWlob25nMDYxOCIsImEiOiJjbWYxdXR4YncwMTJtMm5zOTE4eTZpMGdtIn0.OnsXdwkZFztR8a5Ph_T-xg';
 const MUNICIPALITY_CITIES_ARR = [
   '北京市',
   '上海市',
@@ -233,8 +230,7 @@ export const MAP_TILE_STYLE_LIGHT = 'osm-bright';
 export const MAP_TILE_STYLE_DARK = 'dark-matter';
 
 // access token. you can apply a new one, it's free.
-// maptiler: Gt5R0jT8tuIYxW6sNrAg | sign up at https://cloud.maptiler.com/auth/widget
-// stadiamaps: 8a769c5a-9125-4936-bdcf-a6b90cb5d0a4 | sign up at https://client.stadiamaps.com/signup/
+// Obtain your own token from the chosen tile provider when required.
 // mapcn: empty
 export const MAP_TILE_ACCESS_TOKEN = '';
 

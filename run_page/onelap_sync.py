@@ -21,6 +21,7 @@ class Onelap:
         self.password = password
 
     def login(self):
+        # Onelap's login API specifies MD5 for both the signature and password field.
         nonce = uuid.uuid4().hex[:16]
         timestamp = str(int(time.time()))
         sign = hashlib.md5(

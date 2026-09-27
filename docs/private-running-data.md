@@ -52,6 +52,11 @@ to the database. A second generation run should leave the database unchanged.
 When using this private directory, both JSON and database-backed SVG generation
 require `IGNORE_START_END_RANGE` of at least 500 metres.
 
+JoyRun detail backfill also stores the original platform response in this
+database so public details can be regenerated. The backfill command requires
+`RUNNING_DATA_DIR` to be owner-only (`chmod 700`) and `data.db` to be owner-only
+(`chmod 600`); SQLite sidecar files are created with an owner-only umask.
+
 Keep an independent encrypted or off-device backup of the private directory.
 The copy in the Git checkout is only a temporary local baseline, not a backup
 strategy.

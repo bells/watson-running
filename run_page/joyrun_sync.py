@@ -58,7 +58,19 @@ TCX_TYPE_DICT = {
 
 
 def get_md5_data(data):
+    # JoyRun requires MD5 for its request signature; this is not password storage.
     return md5(str(data).encode("utf-8")).hexdigest().upper()
+
+
+def parse_heart_rate_samples(raw_samples):
+    if not raw_samples:
+        return None
+    try:
+        return ast.literal_eval(raw_samples)
+    except (ValueError, SyntaxError):
+        # Error messages from the parser can contain the private sample values.
+        print("Heart rate samples could not be parsed")
+        return None
 
 
 def download_joyrun_gpx(gpx_data, joyrun_id):
@@ -581,14 +593,7 @@ class Joyrun:
             if with_tcx and str(joyrun_id) not in old_gpx_ids:
                 tcx_data = self.parse_points_to_tcx(run_data)
                 download_joyrun_tcx(tcx_data, str(joyrun_id))
-        try:
-            heart_rate_list = (
-                ast.literal_eval(run_data["heartrate"])
-                if run_data["heartrate"]
-                else None
-            )
-        except (ValueError, SyntaxError) as e:
-            print(f"Heart Rate: can not parse for {run_data['heartrate']}: {e}")
+        heart_rate_list = parse_heart_rate_samples(run_data["heartrate"])
 
         heart_rate = None
         if heart_rate_list:

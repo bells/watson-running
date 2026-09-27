@@ -5,8 +5,8 @@
 
 # Mapbox public access token（https://account.mapbox.com）
 # Migrated from src/themes/classic/utils/const.ts
-# For security, this token is managed via GitHub Actions secret (MAPBOX_TOKEN)
-# Users should replace with their own token in GitHub Actions secrets
+# The public token is injected as VITE_MAPBOX_TOKEN during GitHub Pages builds.
+# It is included in the browser bundle; restrict it to your site's URLs in Mapbox.
 # See https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
 mapbox_token: ''
 
