@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { useRunAgentChat } from '@core/hooks/useRunAgentChat';
 import { CHAT_MAX_LENGTH } from '@core/services/runAgentChat';
 import styles from './style.module.css';
+import { StatusPanel } from '@core/components/StatusPanel';
 
 const examples = ['一周跑几次比较合适？', '跑前热身应该怎么做？'];
 const markdownComponents = {
@@ -133,7 +134,8 @@ export default function ChatAssistant() {
             </div>
           </header>
           <p id="runagent-notice" className={styles.notice}>
-            当前为单轮问答，暂未读取个人跑步记录。
+            开发环境 ·
+            每次仅发送当前问题，对话仅保留在本页。个人数据是否可用由服务端决定。
           </p>
           <div
             ref={listRef}
@@ -201,13 +203,19 @@ export default function ChatAssistant() {
                 </div>
               </article>
             ))}
-            <p role="status" className={styles.status}>
-              {chat.pending
-                ? '正在思考…'
-                : chat.messages.at(-1)?.role === 'assistant'
-                  ? '回答已就绪'
-                  : ''}
-            </p>
+            {chat.pending ? (
+              <StatusPanel
+                kind="loading"
+                title="正在思考…"
+                description="最长等待 60 秒。可以取消等待后编辑问题。"
+                actionLabel="取消等待"
+                onAction={chat.cancel}
+              />
+            ) : (
+              <p role="status" className={styles.status}>
+                {chat.messages.at(-1)?.role === 'assistant' ? '回答已就绪' : ''}
+              </p>
+            )}
           </div>
           {readingEarlier && (
             <button
@@ -226,9 +234,11 @@ export default function ChatAssistant() {
             }}
           >
             {chat.error && (
-              <p role="alert" className={styles.error}>
-                {chat.error}
-              </p>
+              <StatusPanel
+                kind="error"
+                title="回答暂不可用"
+                description={chat.error}
+              />
             )}
             <label htmlFor="runagent-question" className={styles.inputLabel}>
               你的问题

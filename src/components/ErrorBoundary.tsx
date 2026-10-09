@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { resetActivityData } from '../hooks/useActivities';
+import { StatusPanel } from '../core/components/StatusPanel';
 
 interface Props {
   children: ReactNode;
@@ -36,29 +37,15 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          className="flex min-h-screen flex-col items-center justify-center gap-3"
-          style={{
-            backgroundColor: 'var(--color-bg, #0d1117)',
-            color: 'var(--color-muted, #8b949e)',
-          }}
-        >
-          <p
-            className="text-base font-medium"
-            style={{ color: 'var(--color-text, #e6edf3)' }}
-          >
-            Failed to load activities
-          </p>
-          <p className="text-xs">{this.state.message}</p>
-          <button
-            type="button"
-            onClick={this.handleRetry}
-            className="mt-1 rounded-md px-4 py-1.5 text-sm font-medium text-white"
-            style={{ backgroundColor: 'var(--color-accent, #a855f7)' }}
-          >
-            Retry
-          </button>
-        </div>
+        <main className="flex min-h-screen items-center justify-center bg-[var(--running-surface)] p-6">
+          <StatusPanel
+            kind="error"
+            title="跑步记录加载失败"
+            description={this.state.message}
+            actionLabel="重试加载"
+            onAction={this.handleRetry}
+          />
+        </main>
       );
     }
     return this.props.children;

@@ -110,11 +110,11 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@config': path.resolve(__dirname, 'config.yml'),
-        '@core': path.resolve(__dirname, './src/core'),
-        '@themes': path.resolve(__dirname, './src/themes'),
-        '@assets': path.resolve(__dirname, './assets'),
+        '@': path.resolve(import.meta.dirname, './src'),
+        '@config': path.resolve(import.meta.dirname, 'config.yml'),
+        '@core': path.resolve(import.meta.dirname, './src/core'),
+        '@themes': path.resolve(import.meta.dirname, './src/themes'),
+        '@assets': path.resolve(import.meta.dirname, './assets'),
       },
     },
     build: {

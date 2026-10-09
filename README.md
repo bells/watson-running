@@ -51,13 +51,13 @@ See [RunAgent integration boundary](docs/run-agent-integration.md) for the plann
 
 Requirements:
 
-- Node.js 20 or newer
-- pnpm 8.9.0 through Corepack
+- Node.js 24
+- pnpm 12.6.0 through Corepack
 - Python 3.12 or newer for the declared Python package and CI path
 
 ```bash
 corepack enable
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 

@@ -1,43 +1,13 @@
 .page {
-  --detail-bg: #f7f8fa;
-  --detail-ink: #202a33;
-  --detail-muted: #687783;
-  --detail-rule: #dce3e8;
-  --detail-card: #fff;
+  --detail-bg: var(--running-surface);
+  --detail-ink: var(--running-text);
+  --detail-muted: var(--running-muted);
+  --detail-rule: var(--running-border);
+  --detail-card: var(--running-surface-raised);
   min-height: 100vh;
   background: var(--detail-bg);
   color: var(--detail-ink);
-  font-family:
-    system-ui,
-    -apple-system,
-    'PingFang SC',
-    sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  .page {
-    --detail-bg: #14191d;
-    --detail-ink: #e6edf2;
-    --detail-muted: #a6b2ba;
-    --detail-rule: #37424a;
-    --detail-card: #202830;
-  }
-}
-
-:global([data-theme='light']) .page {
-  --detail-bg: #f7f8fa;
-  --detail-ink: #202a33;
-  --detail-muted: #687783;
-  --detail-rule: #dce3e8;
-  --detail-card: #fff;
-}
-:global([data-theme='dark']) .page,
-:global(.dark) .page {
-  --detail-bg: #14191d;
-  --detail-ink: #e6edf2;
-  --detail-muted: #a6b2ba;
-  --detail-rule: #37424a;
-  --detail-card: #202830;
+  font-family: var(--running-font-sans);
 }
 
 .shell {
@@ -65,7 +35,7 @@
   text-decoration: underline;
 }
 .nav a:focus-visible {
-  outline: 2px solid #397db0;
+  outline: 2px solid var(--running-focus);
   outline-offset: 5px;
 }
 .hero {
@@ -83,11 +53,11 @@
 }
 .hero h1 {
   margin: 0;
-  font-size: clamp(68px, 11vw, 138px);
+  font-size: clamp(58px, 8vw, 96px);
   font-weight: 650;
   font-variant-numeric: tabular-nums;
   line-height: 0.96;
-  letter-spacing: -0.075em;
+  letter-spacing: -0.03em;
 }
 .hero h1 small {
   font-size: 0.2em;
@@ -104,12 +74,12 @@
   height: 178px;
   flex: none;
   border-radius: 50%;
-  border: 2px solid #397db0;
+  border: 2px solid var(--running-accent);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #397db0;
+  color: var(--running-accent);
   gap: 4px;
   transform: rotate(-9deg);
 }
@@ -200,7 +170,7 @@
   display: block;
   height: 10px;
   max-width: 100%;
-  background: #397db0;
+  background: var(--running-accent);
   border-radius: 2px;
 }
 .split strong {
@@ -328,4 +298,15 @@
     scroll-behavior: auto !important;
     animation: none !important;
   }
+}
+
+.nav button {
+  min-height: 44px;
+  padding: 8px 12px;
+  color: var(--running-accent);
+  cursor: pointer;
+}
+.chartCard h2 small {
+  font-weight: 400;
+  color: var(--running-muted);
 }

@@ -92,37 +92,35 @@
 
 .mapErrorNotification {
   position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ff4444;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  inset: 70px 16px 16px;
+  overflow: auto;
+  background: var(--running-surface-raised);
+  color: var(--running-text);
+  padding: 16px;
+  border: 1px solid var(--running-border);
+  border-radius: 12px;
   z-index: 1000;
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
   align-items: center;
   font-size: 14px;
+  text-align: center;
 }
 
-.mapErrorNotification button,
-.mapErrorNotification a {
-  background: white;
-  color: #ff4444;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+.mapErrorNotification button {
+  background: var(--running-accent-fill);
+  color: #202a33;
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 6px;
   cursor: pointer;
-  text-decoration: none;
   font-weight: 600;
-  transition: opacity 0.2s;
 }
 
-.mapErrorNotification button:hover,
-.mapErrorNotification a:hover {
-  opacity: 0.8;
+.mapErrorNotification button:hover {
+  filter: brightness(0.96);
 }
 
 /* Base styles for map controls */
@@ -142,4 +140,15 @@
   box-sizing: border-box;
   background-color: transparent;
   cursor: pointer;
+}
+
+.button button {
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.noRoutes {
+  position: relative;
+  padding: 74px 16px 16px;
 }

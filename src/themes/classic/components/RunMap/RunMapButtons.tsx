@@ -20,11 +20,14 @@ const RunMapButtons = ({
           className={
             styles.button + ` ${year === thisYear ? styles.selected : ''}`
           }
-          onClick={() => {
-            changeYear(year);
-          }}
         >
-          {year}
+          <button
+            type="button"
+            aria-pressed={year === thisYear}
+            onClick={() => changeYear(year)}
+          >
+            {year === 'Total' ? '全部' : year}
+          </button>
         </li>
       ))}
     </ul>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -10,12 +10,21 @@ import {
 } from 'recharts';
 import {
   activityDetailUrl,
+  isActivityDetail,
   formatDuration,
   formatPace,
   type ActivityDetail,
   type ActivitySample,
 } from '@core/activityDetail';
 import styles from './ActivityDetailPage.module.css';
+import { StatusPanel } from '@core/components/StatusPanel';
+import { useTheme } from '@core/hooks/useTheme';
+import { getActivityData } from '@core/hooks/useActivities';
+import {
+  formatDistanceMeters,
+  formatPaceFromSpeed,
+  formatDurationShort,
+} from '@core/activityDisplay';
 
 interface DetailState {
   detail: ActivityDetail | null;
@@ -23,10 +32,30 @@ interface DetailState {
 }
 
 const chartDefinitions = [
-  { key: 'heart_rate_bpm', title: '心率', unit: 'bpm', color: '#db5964' },
-  { key: 'cadence_spm', title: '步频', unit: '步/分', color: '#397db0' },
-  { key: 'stride_m_estimate', title: '估算步幅', unit: '米', color: '#998035' },
-  { key: 'altitude_m', title: '海拔', unit: '米', color: '#57876d' },
+  {
+    key: 'heart_rate_bpm',
+    title: '心率',
+    unit: 'bpm',
+    color: 'var(--running-chart-heart)',
+  },
+  {
+    key: 'cadence_spm',
+    title: '步频',
+    unit: '步/分',
+    color: 'var(--running-chart-cadence)',
+  },
+  {
+    key: 'stride_m_estimate',
+    title: '估算步幅',
+    unit: '米',
+    color: 'var(--running-warning)',
+  },
+  {
+    key: 'altitude_m',
+    title: '海拔',
+    unit: '米',
+    color: 'var(--running-chart-elevation)',
+  },
 ] as const;
 
 const splitBarWidth = (
@@ -46,10 +75,23 @@ function MetricChart({
   samples: ActivitySample[];
   metric: (typeof chartDefinitions)[number];
 }) {
-  const hasValues = samples.some((sample) => sample[metric.key] !== null);
+  const values = samples
+    .map((sample) => sample[metric.key])
+    .filter(
+      (value): value is number => value !== null && Number.isFinite(value)
+    );
+  const hasValues = values.length > 0;
   return (
     <section className={styles.chartCard}>
-      <h2>{metric.title}</h2>
+      <h2>
+        {metric.title} <small>({metric.unit})</small>
+      </h2>
+      {hasValues && (
+        <p className={styles.note}>
+          采样范围 {Math.min(...values).toFixed(1)}–
+          {Math.max(...values).toFixed(1)} {metric.unit}
+        </p>
+      )}
       {hasValues ? (
         <div className={styles.chart}>
           <ResponsiveContainer
@@ -119,12 +161,52 @@ function getRunId(): number | null {
   return Number.isSafeInteger(value) ? value : null;
 }
 
+function ActivityOverview({ runId }: { runId: number }) {
+  const run = getActivityData().find((activity) => activity.run_id === runId);
+  if (!run) return null;
+  return (
+    <section className={styles.section} aria-label="已有运动概览">
+      <h2>{run.name || '运动记录'}</h2>
+      <p className={styles.note}>
+        {run.start_date_local} · {formatDistanceMeters(run.distance)} km ·{' '}
+        {formatDurationShort(run.moving_time)} ·{' '}
+        {formatPaceFromSpeed(run.average_speed)} /km
+      </p>
+    </section>
+  );
+}
+
+function returnPath(defaultPath: string): string {
+  const historyState: unknown = window.history.state;
+  if (
+    typeof historyState !== 'object' ||
+    historyState === null ||
+    !('usr' in historyState)
+  )
+    return defaultPath;
+  const userState = historyState.usr;
+  if (
+    typeof userState !== 'object' ||
+    userState === null ||
+    !('returnTo' in userState)
+  )
+    return defaultPath;
+  const path = userState.returnTo;
+  return typeof path === 'string' &&
+    path.startsWith(import.meta.env.BASE_URL) &&
+    !path.startsWith('//')
+    ? path
+    : defaultPath;
+}
+
 export default function ActivityDetailPage() {
+  const { dark, toggle } = useTheme();
   const runId = getRunId();
   const [state, setState] = useState<DetailState>({
     detail: null,
     error: null,
   });
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (runId === null) return;
@@ -139,13 +221,13 @@ export default function ActivityDetailPage() {
               : '详细数据加载失败。'
           );
         }
-        return response.json() as Promise<ActivityDetail>;
+        return response.json() as Promise<unknown>;
       })
       .then((detail) => {
-        if (detail.schema_version !== 1 || detail.run_id !== runId) {
+        if (!isActivityDetail(detail) || detail.run_id !== runId) {
           throw new Error('详细数据与当前记录不匹配。');
         }
-        setState({ detail, error: null });
+        if (!controller.signal.aborted) setState({ detail, error: null });
       })
       .catch((error: unknown) => {
         if (controller.signal.aborted) return;
@@ -155,10 +237,10 @@ export default function ActivityDetailPage() {
         });
       });
     return () => controller.abort();
-  }, [runId]);
+  }, [runId, retryCount]);
 
   const { detail, error } = state;
-  const homeUrl = import.meta.env.BASE_URL;
+  const homeUrl = returnPath(import.meta.env.BASE_URL);
   const fastestSplitPace = detail
     ? Math.min(
         ...detail.splits
@@ -171,16 +253,38 @@ export default function ActivityDetailPage() {
       <div className={styles.shell}>
         <nav className={styles.nav} aria-label="页面导航">
           <a href={homeUrl}>← 返回跑步记录</a>
-          <span>WATSON / RUN DATA</span>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={`Switch to ${dark ? 'light' : 'dark'} theme`}
+          >
+            {dark ? '浅色模式' : '深色模式'}
+          </button>
         </nav>
         {runId === null || error ? (
-          <div className={styles.message} role="status">
-            {error ?? '无效的运动记录。'}
-          </div>
+          <>
+            {runId !== null && (
+              <Suspense fallback={null}>
+                <ActivityOverview runId={runId} />
+              </Suspense>
+            )}
+            <StatusPanel
+              kind="error"
+              title={runId === null ? '无效的运动记录' : '运动详情暂不可用'}
+              description={error ?? '请从记录列表选择一条运动。'}
+              actionLabel={runId === null ? undefined : '重试加载'}
+              onAction={
+                runId === null
+                  ? undefined
+                  : () => {
+                      setState({ detail: null, error: null });
+                      setRetryCount((count) => count + 1);
+                    }
+              }
+            />
+          </>
         ) : !detail ? (
-          <div className={styles.message} role="status">
-            正在加载运动详情…
-          </div>
+          <StatusPanel kind="loading" title="正在加载运动详情…" />
         ) : (
           <>
             <header className={styles.hero}>

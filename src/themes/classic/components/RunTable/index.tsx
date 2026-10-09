@@ -7,7 +7,14 @@ import {
   RunIds,
 } from '../../utils/utils';
 import { SHOW_ELEVATION_GAIN } from '../../utils/const';
-import { DIST_UNIT } from '../../utils/utils';
+import {
+  DIST_UNIT,
+  titleForRun,
+  formatPace,
+  formatRunTime,
+} from '../../utils/utils';
+import { Link, useLocation } from 'react-router-dom';
+import { sportDisplayName, routeDisplayStatus } from '@core/activityDisplay';
 
 import RunRow from './RunRow';
 import styles from './style.module.css';
@@ -34,6 +41,7 @@ const RunTable = ({
   runIndex,
   setRunIndex,
 }: IRunTableProperties) => {
+  const location = useLocation();
   const [sortState, setSortState] = useState<SortState | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
@@ -55,7 +63,11 @@ const RunTable = ({
           ((a.elevation_gain ?? 0) - (b.elevation_gain ?? 0)) * multiplier;
       }
       if (key === 'Pace') {
-        return (a, b) => (a.average_speed - b.average_speed) * multiplier;
+        return (a, b) => {
+          if (!a.average_speed) return b.average_speed ? 1 : 0;
+          if (!b.average_speed) return -1;
+          return (1000 / a.average_speed - 1000 / b.average_speed) * multiplier;
+        };
       }
       if (key === 'BPM') {
         return (a, b) =>
@@ -105,8 +117,10 @@ const RunTable = ({
       setSortState((currentState) => {
         const initialDirection = key === 'Date' ? 'ascending' : 'descending';
         const nextDirection =
-          currentState?.key === key && currentState.direction === 'descending'
-            ? 'ascending'
+          currentState?.key === key
+            ? currentState.direction === 'descending'
+              ? 'ascending'
+              : 'descending'
             : initialDirection;
 
         return { key, direction: nextDirection };
@@ -124,6 +138,34 @@ const RunTable = ({
 
   return (
     <div className={styles.tableContainer}>
+      <div className={styles.sortControls}>
+        <label htmlFor="record-sort">记录排序</label>
+        <select
+          id="record-sort"
+          value={sortState?.key ?? 'Date'}
+          onChange={(event) => handleClick(event.target.value)}
+        >
+          {sortKeys.map((key) => (
+            <option key={key} value={key}>
+              {key === DIST_UNIT
+                ? '距离'
+                : ({
+                    Pace: '配速',
+                    BPM: '心率',
+                    Time: '时长',
+                    Date: '日期',
+                    Elev: '爬升',
+                  }[key] ?? key)}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => handleClick(sortState?.key ?? 'Date')}
+        >
+          {sortState?.direction === 'ascending' ? '升序 ↑' : '降序 ↓'}
+        </button>
+      </div>
       <table className={styles.runTable} cellSpacing="0" cellPadding="0">
         <thead>
           <tr>
@@ -135,9 +177,10 @@ const RunTable = ({
                   sortState?.key === k ? sortState.direction : undefined
                 }
                 className={styles.sortableHeader}
-                onClick={() => handleClick(k)}
               >
-                {k}
+                <button type="button" onClick={() => handleClick(k)}>
+                  {k}
+                </button>
               </th>
             ))}
             <th>详情</th>
@@ -160,6 +203,72 @@ const RunTable = ({
         </tbody>
       </table>
 
+      <div className={styles.mobileRecords}>
+        {currentPageRuns.map((run) => {
+          const index = runIndexById.get(run.run_id) ?? -1;
+          const selected = runIndex === index;
+          return (
+            <article
+              key={run.run_id}
+              className={selected ? styles.mobileSelected : ''}
+            >
+              <p className={styles.runDate}>
+                {run.start_date_local.slice(0, 16)} ·{' '}
+                {sportDisplayName(run.type)}
+              </p>
+              <button
+                type="button"
+                className={styles.recordTitle}
+                aria-pressed={selected}
+                onClick={() => {
+                  setRunIndex(selected ? -1 : index);
+                  locateActivity(selected ? [] : [run.run_id]);
+                }}
+              >
+                {titleForRun(run)} · {selected ? '取消定位' : '地图定位'}
+              </button>
+              <dl>
+                <div>
+                  <dt>距离</dt>
+                  <dd>{(run.distance / 1000).toFixed(2)} km</dd>
+                </div>
+                <div>
+                  <dt>配速</dt>
+                  <dd>{formatPace(run.average_speed)} /km</dd>
+                </div>
+                <div>
+                  <dt>时长</dt>
+                  <dd>{formatRunTime(run.moving_time)}</dd>
+                </div>
+                <div>
+                  <dt>心率</dt>
+                  <dd>{run.average_heartrate?.toFixed(0) ?? '—'} bpm</dd>
+                </div>
+              </dl>
+              <div className={styles.recordFooter}>
+                <span>
+                  {routeDisplayStatus(run) === 'missing'
+                    ? '没有公开路线'
+                    : '有公开路线'}
+                </span>
+                {run.detail_available ? (
+                  <Link
+                    to={`/activity/${run.run_id}`}
+                    state={{
+                      returnTo: `${import.meta.env.BASE_URL.replace(/\/$/, '')}${location.pathname}${location.search}#run_${run.run_id}`,
+                    }}
+                    className={styles.detailLink}
+                  >
+                    查看详情 ↗
+                  </Link>
+                ) : (
+                  <span>暂无详细数据</span>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-gray-200 pt-4 dark:border-gray-700">
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
           <label htmlFor="run-table-page-size">每页显示</label>
@@ -167,7 +276,7 @@ const RunTable = ({
             id="run-table-page-size"
             value={pageSize}
             onChange={handlePageSizeChange}
-            className="rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className="rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:ring-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>
@@ -184,7 +293,7 @@ const RunTable = ({
               type="button"
               onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
               disabled={safeCurrentPage === 1}
-              className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="flex h-11 w-11 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               aria-label="上一页"
             >
               <svg
@@ -213,7 +322,7 @@ const RunTable = ({
                 setCurrentPage((page) => Math.min(totalPages, page + 1))
               }
               disabled={safeCurrentPage === totalPages}
-              className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="flex h-11 w-11 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               aria-label="下一页"
             >
               <svg

@@ -6,7 +6,7 @@
 
 | 文件 | 行为与验证边界 |
 | --- | --- |
-| `workflows/ci.yml` | Python 3.12–3.14 与 Node 20/22/24 矩阵；Python 检查私有数据路径，Node 执行带 `--fix` 的 lint。 |
+| `workflows/ci.yml` | Python 3.12–3.14 与 Node 24；Python 检查私有数据路径，Node 执行格式、类型、非修复型 lint、聊天/展示/汇总/契约测试与构建。 |
 | `workflows/run_data_sync.yml` | 已暂停；保留旧同步配置供后续重构参考，当前不执行数据或部署步骤。 |
 | `workflows/gh-pages.yml` | checkout 仓库默认分支，构建 `dist/` 并发布 Pages；不能假设手动触发时会部署所选功能分支。 |
 | `dependabot.yml` | 分别维护 GitHub Actions、npm、pip 和 uv 更新；合并一个生态的依赖 PR 不代表其他入口同步更新。 |

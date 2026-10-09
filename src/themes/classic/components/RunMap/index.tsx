@@ -1,6 +1,6 @@
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import { setWorkerUrl } from 'maplibre-gl';
-import mapLibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
+import mapLibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import React, {
   useRef,
   useCallback,
@@ -49,6 +49,7 @@ import { RouteAnimator } from '../../utils/routeAnimation';
 import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
 import styles from './style.module.css';
+import { StatusPanel } from '@core/components/StatusPanel';
 import type { FeatureCollection } from 'geojson';
 import type { RPGeometry } from '../../static/run_countries';
 import './mapbox.css';
@@ -132,6 +133,8 @@ const RunMap = ({
     useState<FeatureCollection<RPGeometry> | null>(null);
   const isLoadingMapDataRef = useRef(false);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [mapAttempt, setMapAttempt] = useState(0);
+  const mapLoadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Use the map theme hook to get the current map theme
   const currentMapTheme = useMapTheme();
@@ -212,56 +215,19 @@ const RunMap = ({
     }
   }, [mapStyle, lights, switchLayerVisibility]); // Include lights to ensure layer visibility updates correctly when theme changes
 
+  const hasRoutes = geoData.features.some(
+    (feature) => feature.geometry.coordinates.length >= 2
+  );
   useEffect(() => {
-    if (mapRef.current) {
-      const map = getMapInstance(mapRef.current);
-
-      // Track tile loading errors
-      let tileErrorCount = 0;
-      const MAX_TILE_ERRORS = 10;
-
-      const handleStyleError = (e: unknown) => {
-        console.error('❌ Map style failed to load:', e);
-        setMapError(
-          'Map tiles failed to load. Please check your internet connection.'
-        );
-
-        if (MAP_TILE_VENDOR === 'mapcn') {
-          console.warn('⚠️ Carto Basemaps (MapCN) failed to load.');
-          console.info('💡 Possible solutions:');
-          console.info('   1. Check your internet connection');
-          console.info(
-            '   2. If in China, Carto may be blocked.  Try fallback:'
-          );
-          console.info('      - Change MAP_TILE_VENDOR to "mapcn_openfreemap"');
-          console.info(
-            '      - Or use MAP_TILE_VENDOR = "maptiler" with free token'
-          );
-        }
-      };
-
-      const handleTileError = () => {
-        tileErrorCount++;
-
-        if (tileErrorCount === MAX_TILE_ERRORS) {
-          console.error(`❌ ${MAX_TILE_ERRORS}+ tile loading errors detected`);
-          console.warn('⚠️ Map tiles are not loading properly.');
-          console.info(
-            '💡 Try switching to a different provider in src/utils/const.ts'
-          );
-        }
-      };
-
-      map.on('error', handleStyleError);
-      map.on('tileerror', handleTileError);
-
-      // Cleanup
-      return () => {
-        map.off('error', handleStyleError);
-        map.off('tileerror', handleTileError);
-      };
-    }
-  }, [mapRef]);
+    if (!hasRoutes || mapRef.current?.getMap().isStyleLoaded()) return;
+    mapLoadTimerRef.current = setTimeout(() => {
+      setMapError('地图加载超时，仍可筛选记录和查看详情。');
+    }, 12000);
+    return () => {
+      if (mapLoadTimerRef.current !== null)
+        clearTimeout(mapLoadTimerRef.current);
+    };
+  }, [mapAttempt, mapStyle, hasRoutes]);
 
   // animation state (single run only)
   const [animatedPoints, setAnimatedPoints] = useState<Coordinate[]>([]);
@@ -295,6 +261,10 @@ const RunMap = ({
 
   const mapRefCallback = useCallback(
     (ref: MapRef | null) => {
+      if (ref === null) {
+        mapRef.current = null;
+        return;
+      }
       if (ref !== null) {
         const map = getMapInstance(ref);
         if (map && IS_CHINESE && usesMapbox) {
@@ -410,10 +380,10 @@ const RunMap = ({
   const style: React.CSSProperties = useMemo(
     () => ({
       width: '100%',
-      height: MAP_HEIGHT,
+      height: mapError || !hasRoutes ? 220 : `min(${MAP_HEIGHT}px, 55vh)`,
       maxWidth: '100%', // Prevent overflow on mobile
     }),
-    []
+    [mapError, hasRoutes]
   );
 
   const fullscreenButton: React.CSSProperties = useMemo(
@@ -440,7 +410,11 @@ const RunMap = ({
 
   // start route animation using RouteAnimator
   const startRouteAnimation = useCallback(() => {
-    if (!isSingleRun) return;
+    if (
+      !isSingleRun ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+      return;
     const points = geoData.features[0].geometry.coordinates as Coordinate[];
     if (!points || points.length < 2) return;
 
@@ -491,9 +465,39 @@ const RunMap = ({
     startRouteAnimation();
   }, [isSingleRun, startRouteAnimation]);
 
+  if (!hasRoutes)
+    return (
+      <div className={styles.noRoutes}>
+        <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
+        <StatusPanel
+          kind="map"
+          title="没有公开路线"
+          description="当前筛选或选中记录没有可展示的轨迹，记录列表与详情仍可浏览。"
+        />
+      </div>
+    );
+
   return (
     <Map
+      key={mapAttempt}
       {...viewState}
+      onLoad={() => {
+        if (mapLoadTimerRef.current !== null)
+          clearTimeout(mapLoadTimerRef.current);
+        setMapError(null);
+      }}
+      onStyleData={() => {
+        if (mapRef.current?.getMap().isStyleLoaded()) {
+          if (mapLoadTimerRef.current !== null)
+            clearTimeout(mapLoadTimerRef.current);
+          setMapError(null);
+        }
+      }}
+      onError={() => {
+        if (mapLoadTimerRef.current !== null)
+          clearTimeout(mapLoadTimerRef.current);
+        setMapError('地图资源暂时无法加载，仍可筛选记录和查看详情。');
+      }}
       onMove={onMove}
       onClick={handleMapClick}
       style={style}
@@ -504,15 +508,22 @@ const RunMap = ({
     >
       {mapError && (
         <div className={styles.mapErrorNotification}>
-          <span>⚠️ {mapError}</span>
-          <button onClick={() => window.location.reload()}>Reload Page</button>
-          <a
-            href="https://github.com/yihong0618/running_page#map-tiles-customization"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Troubleshooting Guide
-          </a>
+          <strong>{mapError ? '地图暂不可用' : '没有公开路线'}</strong>
+          <span>
+            {mapError ?? '当前筛选范围内没有可展示的轨迹，记录列表仍可浏览。'}
+          </span>
+          {mapError && (
+            <button
+              type="button"
+              onClick={() => {
+                setMapError(null);
+                mapRef.current = null;
+                setMapAttempt((attempt) => attempt + 1);
+              }}
+            >
+              重试地图
+            </button>
+          )}
         </div>
       )}
       <RunMapButtons changeYear={changeYear} thisYear={thisYear} />

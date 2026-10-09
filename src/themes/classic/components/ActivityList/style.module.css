@@ -1,245 +1,164 @@
 .activityList {
-  padding: 20px 20px 0 20px;
-  background-color: var(--color-background);
-  color: var(--color-primary);
+  width: min(1160px, calc(100% - 40px));
+  margin: 32px auto 80px;
 }
-
-/* Default scrollbar color variables for this component. You can override these in a higher-level CSS or :root. */
-:root {
-  --color-scrollbar-thumb: var(--color-primary, rgba(0, 0, 0, 0.4));
-  --color-scrollbar-thumb-hover: var(--color-primary, rgba(0, 0, 0, 0.6));
+.heading {
+  padding-block: 24px;
 }
-
-/* rc-virtual-list renders its scrollbar elements with classnames we can target globally. */
-:global(.rc-virtual-list-scrollbar) {
-  background: transparent;
+.heading h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 650;
 }
-
-:global(.rc-virtual-list-scrollbar-thumb) {
-  background: var(--color-scrollbar-thumb) !important;
-  border-radius: 4px;
+.heading p {
+  margin-top: 12px;
+  color: var(--running-muted);
 }
-
-:global(.rc-virtual-list-scrollbar-thumb:hover) {
-  background: var(--color-scrollbar-thumb-hover) !important;
-}
-
 .filterContainer {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  overflow: visible;
-}
-
-.filterContainer select {
-  appearance: none;
-  width: 90px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid var(--color-run-table-thead);
-  background-color: var(--color-run-row-hover-background);
-  color: var(--color-run-table-thead);
-  cursor: pointer;
-  text-align: center;
-  text-transform: capitalize;
-  box-sizing: border-box;
-}
-
-.summaryContainer {
-  /* display: grid;
-  justify-content: center;
-  grid-template-columns: repeat(auto-fit, minmax(280px, auto));
-  gap: 20px; */
-  /* position: relative; */
-  width: 100%;
-  height: 100%;
-  /* overflow: auto;
-  will-change: transform; */
-}
-
-.activityCard {
-  background-color: var(--color-run-row-hover-background);
-  border: 1px solid var(--color-activity-card);
-  border-radius: 8px;
-  padding: 16px;
-  width: 280px;
-  box-shadow: 0 4px 8px var(--color-run-row-hover-background);
-  transition: transform 0.2s;
-  position: relative;
-}
-
-.activityCard:hover {
-  transform: translateY(-5px);
-}
-
-/* Flip card styles */
-.activityCardFlippable {
-  perspective: 1000px;
-  padding: 0;
-  /* Remove padding for flippable cards */
-}
-
-.cardInner {
-  position: relative;
-  width: 100%;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-
-.cardInner.flipped {
-  transform: rotateY(180deg);
-}
-
-.cardFront,
-.cardBack {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  border-radius: 8px;
-  padding: 16px;
-  box-sizing: border-box;
-  background-color: var(--color-run-row-hover-background);
-}
-
-.cardBack {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.routeContainer {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 16px;
-  max-height: 100%;
-  overflow: hidden;
-}
-
-.activityName {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-  color: var(--color-primary);
-}
-
-.activityDetails p {
-  margin: 8px 0;
-  color: var(--color-run-table-thead);
-}
-
-.activityDetails strong {
-  color: var(--color-primary);
-}
-
-.chart {
-  height: 250px;
-  width: 100%;
-  background-color: var(--color-activity-card);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.smallHomeButton {
-  width: 90px;
-  padding: 4px 12px;
-  background-color: var(--color-primary);
-  color: var(--color-background);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 20px;
-}
-
-.smallHomeButton:hover {
-  background-color: var(--color-secondary);
-}
-
-.lifeContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.yearSelector {
-  display: flex;
   flex-wrap: wrap;
+  gap: 24px;
+  padding-block: 20px 28px;
+}
+.filterContainer label {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-  justify-content: center;
+  font-size: 13px;
+  color: var(--running-muted);
+}
+.filterContainer select {
+  min-width: 130px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--running-border);
+  border-radius: 6px;
+  background: var(--running-surface-raised);
+  color: var(--running-text);
+}
+.filterContainer select:disabled {
+  opacity: 0.6;
+}
+.range {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-block: 1px solid var(--running-border);
+  padding: 24px 0;
+}
+.range p,
+.range > span {
+  font-size: 13px;
+  color: var(--running-muted);
+}
+.range strong {
+  color: var(--running-accent);
+  font: 600 32px var(--running-font-mono);
+}
+.range small {
+  font-size: 13px;
+}
+.period {
+  padding: 32px 0;
+  border-bottom: 1px solid var(--running-border);
+}
+.periodHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 20px;
-  padding: 10px;
 }
-
-.yearButton {
-  padding: 8px 16px;
-  background-color: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  border-radius: 5px;
+.period h2 {
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.period h2 small,
+.periodHeading > span {
+  color: var(--running-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.metrics dt {
+  color: var(--running-muted);
+  font-size: 12px;
+}
+.metrics dd {
+  font-size: 22px;
+  margin-top: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.metrics small {
+  font-size: 12px;
+  color: var(--running-muted);
+}
+.note {
+  color: var(--running-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  margin-top: 18px;
+}
+.period summary {
   cursor: pointer;
+  min-height: 44px;
+  padding-block: 12px;
+  margin-top: 12px;
+  color: var(--running-accent);
   font-size: 14px;
-  transition: all 0.2s;
 }
-
-.yearButton:hover {
-  background-color: var(--color-primary);
-  color: var(--color-background);
+.chart {
+  height: 160px;
+  margin-block: 16px;
 }
-
-.yearButtonActive {
-  background-color: var(--color-primary);
-  color: var(--color-background);
+.lifeContainer {
+  margin-top: 24px;
+  overflow-x: auto;
 }
-
-.yearSummarySvg {
-  max-width: 100%;
+.lifeContainer svg {
+  width: 100%;
   height: auto;
-  max-height: 80vh;
 }
-
-/* Inner wrapper to center the virtual list rows and constrain width */
-.summaryInner {
+.pagination {
   display: flex;
   justify-content: center;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0 10px;
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+  color: var(--running-muted);
 }
-
-/* Prevent content from sitting flush against the custom scrollbar. The inner wrapper (direct child) gets right padding. */
-.summaryInner > div {
-  padding-right: 16px;
-  box-sizing: content-box;
+.pagination button {
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--running-surface-raised);
+  border: 1px solid var(--running-border);
+  border-radius: 6px;
+  cursor: pointer;
 }
-
-/* Row container used by VirtualList rows */
-.rowContainer {
-  display: flex;
-  padding: 10px 0;
-  justify-content: flex-start;
-  padding-right: 12px;
-  box-sizing: border-box;
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
-
-/* rc-virtual-list view and body panes: ensure there's a little inner spacing so content doesn't overlap scrollbar */
-:global(.rc-virtual-list-holder-inner),
-:global(.rc-virtual-list-holder) {
-  padding-right: 4px;
-}
-
-.lifeContainer > svg,
-.lifeContainer :global(svg) {
-  max-width: 100%;
-  height: auto;
+@media (max-width: 640px) {
+  .activityList {
+    width: calc(100% - 32px);
+    margin-top: 16px;
+  }
+  .filterContainer {
+    gap: 16px;
+  }
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .metrics dd {
+    font-size: 18px;
+  }
+  .period h2 {
+    font-size: 22px;
+  }
 }

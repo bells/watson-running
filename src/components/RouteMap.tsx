@@ -1,9 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import * as polyline from '@mapbox/polyline';
 import type { Activity } from '../types';
 import { MAPBOX_TOKEN } from '../config';
+import { useLocale } from '../hooks/useLocale';
+import { StatusPanel } from '../core/components/StatusPanel';
 
 interface RouteMapProps {
   activities: Activity[];
@@ -20,6 +22,14 @@ export function RouteMap({
 }: RouteMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const [mapError, setMapError] = useState(false);
+  const { locale } = useLocale();
+  const hasRoutes = activities.some((activity) => activity.summary_polyline);
+  const selectedMissingRoute = Boolean(
+    selectedActivity && !selectedActivity.summary_polyline
+  );
+  const unavailable =
+    !MAPBOX_TOKEN || !hasRoutes || selectedMissingRoute || mapError;
 
   const style =
     dark !== false
@@ -56,7 +66,7 @@ export function RouteMap({
         type: 'line',
         source: 'selected',
         paint: {
-          'line-color': selectedActivity.type === 'Run' ? '#f97316' : '#3b82f6',
+          'line-color': dark ? '#e0ed5e' : '#405000',
           'line-width': 3,
           'line-opacity': 0.9,
         },
@@ -64,7 +74,13 @@ export function RouteMap({
 
       const bounds = new mapboxgl.LngLatBounds();
       for (const c of coords) bounds.extend(c as [number, number]);
-      map.current.fitBounds(bounds, { padding: 50, maxZoom: 14 });
+      map.current.fitBounds(bounds, {
+        padding: 50,
+        maxZoom: 14,
+        duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 0
+          : 500,
+      });
       return;
     }
 
@@ -104,10 +120,10 @@ export function RouteMap({
           'match',
           ['get', 'type'],
           'Run',
-          '#f97316',
+          dark ? '#e0ed5e' : '#405000',
           'Ride',
-          '#3b82f6',
-          '#a855f7',
+          dark ? '#7fcee7' : '#326c86',
+          dark ? '#b7a1ed' : '#69589a',
         ],
         'line-width': 1.5,
         'line-opacity': 0.6,
@@ -138,24 +154,35 @@ export function RouteMap({
       [lngs[lngs.length - 1 - trimCount], lats[lats.length - 1 - trimCount]]
     );
 
-    map.current.fitBounds(bounds, { padding: 30, maxZoom: 13 });
+    map.current.fitBounds(bounds, {
+      padding: 30,
+      maxZoom: 13,
+      duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 0
+        : 500,
+    });
   }
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!MAPBOX_TOKEN || !hasRoutes || !mapContainer.current) return;
 
     if (map.current) {
       map.current.setStyle(style);
       return;
     }
 
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style,
-      center: [121.4, 31.2],
-      zoom: 10,
-    });
+    try {
+      mapboxgl.accessToken = MAPBOX_TOKEN;
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style,
+        center: [121.4, 31.2],
+        zoom: 10,
+      });
+    } catch {
+      setMapError(true);
+      return;
+    }
 
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
     map.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
@@ -163,27 +190,29 @@ export function RouteMap({
     map.current.on('style.load', () => {
       updateRoutes();
     });
+    map.current.on('error', () => setMapError(true));
 
     return () => {
       map.current?.remove();
       map.current = null;
     };
-  }, [dark]);
+  }, [dark, hasRoutes]);
 
   useEffect(() => {
+    if (!MAPBOX_TOKEN || !hasRoutes) return;
     if (map.current?.isStyleLoaded()) {
       updateRoutes();
     } else {
       map.current?.once('style.load', () => updateRoutes());
     }
-  }, [activities, selectedActivity]);
+  }, [activities, selectedActivity, hasRoutes]);
 
   return (
     <div className="relative h-[280px] overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-card)]">
       {selectedActivity && (
         <button
           onClick={onClearSelection}
-          className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-1.5 text-xs font-medium shadow-md transition-colors hover:bg-[var(--color-bg)]"
+          className="absolute top-3 left-3 z-20 flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-1.5 text-xs font-medium shadow-md transition-colors hover:bg-[var(--color-bg)]"
         >
           <svg
             className="h-3.5 w-3.5"
@@ -202,6 +231,33 @@ export function RouteMap({
         </button>
       )}
       <div ref={mapContainer} className="h-full w-full" />
+      {unavailable && (
+        <StatusPanel
+          kind="map"
+          className="absolute inset-0 z-10"
+          title={locale === 'zh' ? '路线地图暂不可用' : 'Route map unavailable'}
+          description={
+            selectedMissingRoute || !hasRoutes
+              ? locale === 'zh'
+                ? '当前记录没有公开路线，其他运动信息仍可查看。'
+                : 'No public route is available for this record.'
+              : locale === 'zh'
+                ? '地图瓦片未能加载，记录列表与详情仍可查看。'
+                : 'Map tiles could not load. Records and details remain available.'
+          }
+          actionLabel={
+            mapError && MAPBOX_TOKEN
+              ? locale === 'zh'
+                ? '重试地图'
+                : 'Retry map'
+              : undefined
+          }
+          onAction={() => {
+            setMapError(false);
+            map.current?.setStyle(style);
+          }}
+        />
+      )}
     </div>
   );
 }

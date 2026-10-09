@@ -5,7 +5,7 @@ import { useTheme, Theme } from '../../hooks/useTheme';
 import styles from './style.module.css';
 
 const Header = () => {
-  const { logo, siteUrl, navLinks } = getSiteMetadata();
+  const { logo, navLinks } = getSiteMetadata();
   const { theme, setTheme } = useTheme();
 
   const icons: Record<Theme, ReactElement> = {
@@ -53,9 +53,9 @@ const Header = () => {
 
   return (
     <>
-      <nav className="mx-auto mt-2 flex w-full max-w-screen-2xl min-w-max items-center justify-between pl-6 lg:px-16">
+      <nav className="mx-auto mt-2 flex w-full max-w-screen-2xl items-center justify-between px-4 lg:px-16">
         <div className="w-1/4">
-          <Link to={siteUrl}>
+          <Link to="/" aria-label="返回跑步记录">
             <picture>
               <img className="h-16 w-16 rounded-full" alt="logo" src={logo} />
             </picture>
@@ -66,7 +66,7 @@ const Header = () => {
             <a
               key={n.url}
               href={n.url}
-              className="mr-3 text-lg lg:mr-4 lg:text-base"
+              className="mr-3 py-3 text-sm lg:mr-4 lg:text-base"
             >
               {n.name}
             </a>

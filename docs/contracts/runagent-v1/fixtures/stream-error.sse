@@ -1,0 +1,8 @@
+id: 0
+event: token
+data: {"type": "token", "requestId": "synthetic-stream-1", "sequence": 0, "content": "先轻松走跑。"}
+
+id: 1
+event: error
+data: {"type": "error", "code": "AI_SERVICE_ERROR", "message": "服务暂不可用。", "requestId": "synthetic-stream-1", "sequence": 1}
+

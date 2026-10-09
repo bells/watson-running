@@ -1,24 +1,19 @@
 
-FROM python:3.10.5-slim AS develop-py
+FROM python:3.12-slim AS develop-py
 WORKDIR /root/running_page
 COPY ./requirements.txt /root/running_page/requirements.txt
-RUN sed -i 's@http://archive.ubuntu.com/ubuntu/@https://mirrors.tuna.tsinghua.edu.cn/ubuntu/@g' /etc/apt/sources.list \
-  && sed -i 's@http://security.ubuntu.com/ubuntu/@https://mirrors.tuna.tsinghua.edu.cn/ubuntu/@g' /etc/apt/sources.list \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends git \
-  && apt-get purge -y --auto-remove \
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends git libcairo2 \
   && rm -rf /var/lib/apt/lists/* \
-  && pip3 install -i https://mirrors.aliyun.com/pypi/simple/ pip -U \
-  && pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
-  && pip3 install -r requirements.txt
+  && python -m pip install --no-cache-dir -r requirements.txt
 
-FROM node:18  AS develop-node
+FROM node:24-slim AS develop-node
 WORKDIR /root/running_page
 COPY ./package.json /root/running_page/package.json
 COPY ./pnpm-lock.yaml /root/running_page/pnpm-lock.yaml
-RUN npm config set registry https://registry.npmmirror.com \
-  && corepack enable \
-  && COREPACK_NPM_REGISTRY=https://registry.npmmirror.com pnpm install
+COPY ./pnpm-workspace.yaml /root/running_page/pnpm-workspace.yaml
+RUN corepack enable \
+  && pnpm install --frozen-lockfile
 
 FROM develop-py AS data
 ARG app

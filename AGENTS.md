@@ -85,7 +85,7 @@
 - 不要手工编辑私有 `data.db`、批量修改 GPX 或直接修补 `activities.json` 来掩盖生成器问题。先修数据源/生成逻辑，再重新生成并审计结果。
 - 轨迹包含精确位置，仓库又会公开部署。更改 `IGNORE_BEFORE_SAVING`、`IGNORE_START_END_RANGE`、`IGNORE_POLYLINE`、`IGNORE_RANGE` 或地图隐私逻辑时，必须把隐私泄露视为高风险回归。
 - 数据刷新后至少核对：活动总数、最新活动时间、运动类型分布、数据库与 JSON 一致性，以及新增/删除的轨迹和 SVG 是否符合预期。
-- Python 版本存在真实差异：`pyproject.toml` 要求 3.12+，Python CI 覆盖 3.12-3.14，数据同步工作流使用 3.11，Dockerfile 仍使用 3.10。修改依赖或语法时先明确目标执行路径，不能只在本机版本通过就宣称全链路兼容。
+- Python 目标下限为 3.12，Python CI 覆盖 3.12-3.14，暂停的数据同步工作流与 Dockerfile 均使用 3.12。修改依赖或语法时仍需分别验证各执行路径，不能只在本机版本通过就宣称全链路兼容。
 
 ## 当前自动化边界
 
@@ -110,7 +110,7 @@
 
 前端环境：
 
-`package.json` 当前声明 Node `>=20` 和 pnpm `8.9.0`；本地优先使用 Node 24，并遵循 `packageManager` 指定的 pnpm 版本。依赖的实际 Node 下限还需检查锁文件中的 `engines`，不能仅凭项目的 `>=20` 推断所有 Node 20 小版本都可用。CI 覆盖 Node 20/22/24，Pages 使用 Node 20，而 Dockerfile 仍使用 Node 18；修改工具链时一起评估这些路径，不把 Docker 环境当作已验证可用。
+`package.json` 当前声明 Node 24 和 pnpm 12.6.0；本地遵循 `packageManager` 指定版本。CI、Pages 与 Dockerfile 均以 Node 24 为目标；修改工具链时检查锁文件 `engines`，不把本地构建当作 Docker/CI 运行证据。
 
 ```bash
 corepack enable

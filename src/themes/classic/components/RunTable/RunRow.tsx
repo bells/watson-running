@@ -8,7 +8,7 @@ import {
 import { SHOW_ELEVATION_GAIN } from '../../utils/const';
 import { M_TO_DIST, M_TO_ELEV } from '../../utils/utils';
 import styles from './style.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { isWatchSource } from '@core/activityDetail';
 
 interface IRunRowProperties {
@@ -26,8 +26,9 @@ const RunRow = ({
   runIndex,
   setRunIndex,
 }: IRunRowProperties) => {
+  const location = useLocation();
   const distance = (run.distance / M_TO_DIST).toFixed(2);
-  const paceParts = run.average_speed ? formatPace(run.average_speed) : null;
+  const paceParts = formatPace(run.average_speed);
   const heartRate = run.average_heartrate;
   const runTime = formatRunTime(run.moving_time);
   const handleClick = () => {
@@ -47,7 +48,16 @@ const RunRow = ({
       onClick={handleClick}
     >
       <td>
-        {titleForRun(run)}{' '}
+        <button
+          type="button"
+          aria-pressed={runIndex === elementIndex}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleClick();
+          }}
+        >
+          {titleForRun(run)}
+        </button>{' '}
         {isWatchSource(run.source) && (
           <span title={run.source ?? '手表记录'} aria-label="手表记录">
             ⌚
@@ -56,16 +66,23 @@ const RunRow = ({
       </td>
       <td>{distance}</td>
       {SHOW_ELEVATION_GAIN && (
-        <td>{((run.elevation_gain ?? 0) * M_TO_ELEV).toFixed(1)}</td>
+        <td>
+          {run.elevation_gain == null
+            ? '—'
+            : (run.elevation_gain * M_TO_ELEV).toFixed(1)}
+        </td>
       )}
-      {paceParts && <td>{paceParts}</td>}
-      <td>{heartRate && heartRate.toFixed(0)}</td>
+      <td>{paceParts}</td>
+      <td>{heartRate?.toFixed(0) ?? '—'}</td>
       <td>{runTime}</td>
       <td className={styles.runDate}>{run.start_date_local}</td>
       <td>
         {run.detail_available ? (
           <Link
             to={`/activity/${run.run_id}`}
+            state={{
+              returnTo: `${import.meta.env.BASE_URL.replace(/\/$/, '')}${location.pathname}${location.search}#run_${run.run_id}`,
+            }}
             className={styles.detailLink}
             onClick={(event) => event.stopPropagation()}
           >

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react';
 import { MAP_TILE_STYLE_LIGHT, MAP_TILE_STYLE_DARK } from '../utils/const';
 
 export type Theme = 'light' | 'dark';
@@ -82,40 +82,7 @@ export const useMapTheme = () => {
  * Main theme hook for the application
  * @returns Object with current theme and function to change theme
  */
-export const useTheme = () => {
-  // Initialize theme from localStorage or default to dark
-  const [themeState, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    return (localStorage.getItem('theme') as Theme) || 'dark';
-  });
-
-  /**
-   * Set theme and dispatch event to notify other components
-   */
-  const setTheme = useCallback((newTheme: Theme) => {
-    setThemeState(newTheme);
-
-    // Dispatch custom event for theme change
-    const event = new CustomEvent(THEME_CHANGE_EVENT, {
-      detail: { theme: newTheme },
-    });
-    window.dispatchEvent(event);
-  }, []);
-
-  // Apply theme changes to DOM and localStorage
-  useEffect(() => {
-    const root = window.document.documentElement;
-
-    // Set attribute and save to localStorage for both themes
-    root.setAttribute('data-theme', themeState);
-    localStorage.setItem('theme', themeState);
-  }, [themeState]);
-
-  return {
-    theme: themeState,
-    setTheme,
-  };
-};
+export { useTheme } from '@core/hooks/useTheme';
 
 /**
  * Hook to trigger re-render when theme changes for dynamic color calculations

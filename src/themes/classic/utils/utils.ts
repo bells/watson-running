@@ -1,5 +1,13 @@
 import { chinaCities } from '../static/city';
 import {
+  compareActivitiesNewest,
+  formatDistanceMeters,
+  formatPaceFromSpeed,
+  parseMovingSeconds,
+  routeDisplayStatus,
+  sportDisplayName,
+} from '@core/activityDisplay';
+import {
   MUNICIPALITY_CITIES_ARR,
   RUN_TITLES,
   ACTIVITY_TYPES,
@@ -43,7 +51,9 @@ export interface Activity {
 
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);
-  const distance = (run.distance / M_TO_DIST).toFixed(2);
+  const distance = IS_IMPERIAL
+    ? (run.distance / M_TO_DIST).toFixed(2)
+    : formatDistanceMeters(run.distance, 2);
   let name = 'Run';
   if (run.name.slice(0, 7) === 'Running') {
     name = 'run';
@@ -52,12 +62,13 @@ const titleForShow = (run: Activity): string => {
     name = run.name;
   }
   return `${name} ${date} ${distance} ${DIST_UNIT} ${
-    !run.summary_polyline ? '(No map data for this run)' : ''
+    routeDisplayStatus(run) === 'missing' ? '(No map data for this run)' : ''
   }`;
 };
 
 const formatPace = (d: number): string => {
-  if (Number.isNaN(d)) return '0';
+  if (!IS_IMPERIAL) return formatPaceFromSpeed(d, 'runner');
+  if (!Number.isFinite(d) || d <= 0) return '—';
   const pace = (M_TO_DIST / 60.0) * (1.0 / d);
   const minutes = Math.floor(pace);
   const seconds = Math.floor((pace - minutes) * 60.0);
@@ -65,16 +76,7 @@ const formatPace = (d: number): string => {
 };
 
 const convertMovingTime2Sec = (moving_time: string): number => {
-  if (!moving_time) {
-    return 0;
-  }
-  // moving_time : '2 days, 12:34:56' or '12:34:56';
-  const splits = moving_time.split(', ');
-  const days = splits.length == 2 ? parseInt(splits[0]) : 0;
-  const time = splits.splice(-1)[0];
-  const [hours, minutes, seconds] = time.split(':').map(Number);
-  const totalSeconds = ((days * 24 + hours) * 60 + minutes) * 60 + seconds;
-  return totalSeconds;
+  return parseMovingSeconds(moving_time) ?? 0;
 };
 
 const formatRunTime = (moving_time: string): string => {
@@ -246,6 +248,7 @@ const getActivitySport = (act: Activity): string => {
 };
 
 const titleForRun = (run: Activity): string => {
+  if (run.type !== 'Run') return run.name || sportDisplayName(run.type);
   if (RICH_TITLE) {
     // 1. try to use user defined name
     if (run.name != '') {
@@ -311,12 +314,8 @@ const filterAndSortRuns = (
   return s.sort(sortFunc);
 };
 
-const sortDateFunc = (a: Activity, b: Activity) => {
-  return (
-    new Date(b.start_date_local.replace(' ', 'T')).getTime() -
-    new Date(a.start_date_local.replace(' ', 'T')).getTime()
-  );
-};
+const sortDateFunc = (a: Activity, b: Activity) =>
+  compareActivitiesNewest(a, b);
 const sortDateFuncReverse = (a: Activity, b: Activity) => sortDateFunc(b, a);
 
 export {

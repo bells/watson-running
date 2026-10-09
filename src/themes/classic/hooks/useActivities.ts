@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { Activity } from '../utils/utils';
 import { locationForRun, titleForRun } from '../utils/utils';
-import activitiesUrl from '@/static/activities.json?url';
+import { getActivityData } from '@core/hooks/useActivities';
 
 interface ProcessedActivities {
   activities: Activity[];
@@ -12,36 +12,6 @@ interface ProcessedActivities {
   runPeriod: Record<string, number>;
   thisYear: string;
 }
-
-let activityDataCache: Activity[] | null = null;
-let activityDataError: unknown = null;
-let activityDataPromise: Promise<Activity[]> | null = null;
-
-const loadActivityData = () => {
-  activityDataPromise ??= fetch(activitiesUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to load activities: ${response.status}`);
-      }
-      return response.json() as Promise<Activity[]>;
-    })
-    .then((activityData) => {
-      activityDataCache = activityData;
-      return activityData;
-    })
-    .catch((error: unknown) => {
-      activityDataError = error;
-      throw error;
-    });
-
-  return activityDataPromise;
-};
-
-const getActivityData = () => {
-  if (activityDataError) throw activityDataError;
-  if (activityDataCache) return activityDataCache;
-  throw loadActivityData();
-};
 
 const processActivities = (activityData: Activity[]): ProcessedActivities => {
   const cities: Record<string, number> = {};
@@ -104,7 +74,16 @@ const getProcessedActivities = (activityData: Activity[]) => {
 
 const useActivities = () => {
   const activityData = getActivityData();
-  return useMemo(() => getProcessedActivities(activityData), [activityData]);
+  return useMemo(
+    () =>
+      getProcessedActivities(
+        activityData.map((activity) => ({
+          ...activity,
+          subtype: activity.subtype ?? '',
+        }))
+      ),
+    [activityData]
+  );
 };
 
 export default useActivities;

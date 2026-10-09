@@ -13,7 +13,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
   return (
     <>
       <Helmet>
-        <html lang="en" />
+        <html lang="zh-CN" />
         <title>{siteTitle}</title>
         <meta name="description" content={description} />
         <meta name="keywords" content="running" />
@@ -28,7 +28,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
           <ChatAssistant />
         </Suspense>
       )}
-      <div className="mx-auto mb-16 max-w-screen-2xl p-4 lg:flex lg:p-16">
+      <div className="mx-auto mb-16 max-w-screen-2xl p-4 lg:px-16 lg:py-8">
         {children}
       </div>
     </>

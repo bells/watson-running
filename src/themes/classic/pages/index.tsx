@@ -13,7 +13,18 @@ import LocationStat from '../components/LocationStat';
 import RunMap from '../components/RunMap';
 import RunTable from '../components/RunTable';
 import SVGStat from '../components/SVGStat';
-import YearsStat from '../components/YearsStat';
+import { Link, useSearchParams } from 'react-router-dom';
+import {
+  summarizeActivities,
+  formatSummaryDuration,
+} from '@core/activitySummary';
+import {
+  formatDistanceMeters,
+  formatPaceFromSpeed,
+  sportDisplayName,
+} from '@core/activityDisplay';
+import { StatusPanel } from '@core/components/StatusPanel';
+import styles from './records.module.css';
 import useActivities from '../hooks/useActivities';
 import getSiteMetadata from '@core/hooks/useSiteMetadata';
 import { useInterval } from '@core/hooks/useInterval';
@@ -83,9 +94,12 @@ const useRunHashId = () =>
 
 const Index = () => {
   const { siteTitle, siteUrl } = getSiteMetadata();
-  const { activities, thisYear } = useActivities();
+  const { activities, thisYear, years } = useActivities();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialYear = searchParams.get('year') ?? thisYear;
+  const sport = searchParams.get('sport') ?? 'all';
   const themeChangeCounter = useThemeChangeCounter();
-  const [year, setYear] = useState(thisYear);
+  const [year, setYear] = useState(initialYear);
   const [runIndex, setRunIndex] = useState(-1);
   const [title, setTitle] = useState('');
   // Animation states for replacing intervalIdRef
@@ -95,7 +109,7 @@ const Index = () => {
   const [currentFilter, setCurrentFilter] = useState<{
     item: string;
     func: (_run: Activity, _value: string) => boolean;
-  }>({ item: thisYear, func: filterYearRuns });
+  }>({ item: initialYear, func: filterYearRuns });
 
   // Track if we're showing a single run from URL hash
   const singleRunId = useRunHashId();
@@ -109,12 +123,12 @@ const Index = () => {
   // Memoize expensive calculations
   const runs = useMemo(() => {
     return filterAndSortRuns(
-      activities,
+      activities.filter((run) => sport === 'all' || run.type === sport),
       currentFilter.item,
       currentFilter.func,
       sortDateFunc
     );
-  }, [activities, currentFilter.item, currentFilter.func]);
+  }, [activities, currentFilter.item, currentFilter.func, sport]);
 
   const geoData = useMemo(() => {
     void themeChangeCounter;
@@ -160,7 +174,10 @@ const Index = () => {
   // Helper function to start animation
   const startAnimation = useCallback(
     (runsToAnimate: Activity[]) => {
-      if (runsToAnimate.length === 0) {
+      if (
+        runsToAnimate.length === 0 ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
         setAnimatedGeoData(geoData);
         return;
       }
@@ -180,7 +197,6 @@ const Index = () => {
       name: string,
       func: (_run: Activity, _value: string) => boolean
     ) => {
-      scrollToMap();
       if (name != 'Year') {
         setYear(thisYear);
       }
@@ -205,10 +221,17 @@ const Index = () => {
       }
 
       changeByItem(y, 'Year', filterYearRuns);
+      setSearchParams(
+        (params) => {
+          params.set('year', y);
+          return params;
+        },
+        { replace: true }
+      );
       // Stop current animation
       setIsAnimating(false);
     },
-    [viewState.zoom, bounds, changeByItem]
+    [viewState.zoom, bounds, changeByItem, setSearchParams]
   );
 
   const changeCity = useCallback(
@@ -404,47 +427,187 @@ const Index = () => {
   }, [year, locateActivity, runs, thisYear]);
 
   const { theme } = useTheme();
+  const totalSummary = useMemo(
+    () => summarizeActivities(activities),
+    [activities]
+  );
+  const latestRun = useMemo(
+    () => totalSummary.activities.find((run) => run.type === 'Run'),
+    [totalSummary]
+  );
+  const rangeSummary = useMemo(() => summarizeActivities(runs), [runs]);
+  const sports = [...new Set(activities.map((run) => run.type))];
 
   return (
     <Layout>
       <Helmet>
         <html lang="en" data-theme={theme} />
       </Helmet>
-      <div className="w-full lg:w-1/3">
-        <h1 className="my-1 mt-1 text-5xl font-extrabold italic">
-          <a href={siteUrl}>{siteTitle}</a>
-        </h1>
-        {(viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
-          <LocationStat
+      <main className={styles.records}>
+        <header className={styles.intro}>
+          <div>
+            <h1>
+              <a href={siteUrl}>{siteTitle}</a>
+            </h1>
+            <p className={styles.motto}>So live a life you will remember!</p>
+            <p className={styles.range}>
+              累计 · {years.at(-1)} 至 {thisYear} · {activities.length} 次运动
+            </p>
+          </div>
+          <div className={styles.total}>
+            <span>累计距离</span>
+            <strong>
+              {formatDistanceMeters(totalSummary.distanceMeters)}{' '}
+              <small>km</small>
+            </strong>
+            <Link to="/summary">回看运动历程 ↗</Link>
+          </div>
+        </header>
+        {latestRun && (
+          <section className={styles.latest} aria-label="最近一次跑步">
+            <span>
+              最近一次跑步 · {latestRun.start_date_local.slice(0, 16)}
+            </span>
+            <strong>{formatDistanceMeters(latestRun.distance)} km</strong>
+            {latestRun.detail_available ? (
+              <Link
+                to={`/activity/${latestRun.run_id}`}
+                state={{
+                  returnTo: `${window.location.pathname}${window.location.search}`,
+                }}
+              >
+                查看详情 ↗
+              </Link>
+            ) : (
+              <span>暂无详细数据</span>
+            )}
+          </section>
+        )}
+        <section className={styles.filters} aria-label="记录筛选">
+          <label>
+            年份
+            <select
+              aria-label="年份"
+              value={year}
+              onChange={(event) => changeYear(event.target.value)}
+            >
+              <option value="Total">全部年份</option>
+              {years.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            运动类型
+            <select
+              aria-label="运动类型"
+              value={sport}
+              onChange={(event) => {
+                setRunIndex(-1);
+                clearRunHash();
+                setSearchParams(
+                  (params) => {
+                    params.set('sport', event.target.value);
+                    params.set('year', year);
+                    return params;
+                  },
+                  { replace: true }
+                );
+              }}
+            >
+              <option value="all">全部运动</option>
+              {sports.map((value) => (
+                <option key={value} value={value}>
+                  {sportDisplayName(value)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <a href="#records">查看 {runs.length} 条记录 ↓</a>
+        </section>
+        <section className={styles.rangeStats} aria-label="当前范围统计">
+          <div>
+            <span>
+              {currentFilter.item === 'Total' ? '全部年份' : currentFilter.item}{' '}
+              · {sport === 'all' ? '全部运动' : sportDisplayName(sport)}
+            </span>
+            <strong>
+              {formatDistanceMeters(rangeSummary.distanceMeters)}{' '}
+              <small>km</small>
+            </strong>
+          </div>
+          <div>
+            <span>运动次数</span>
+            <strong>{runs.length}</strong>
+          </div>
+          <div>
+            <span>运动时间</span>
+            <strong>{formatSummaryDuration(rangeSummary.movingSeconds)}</strong>
+          </div>
+          <div>
+            <span>平均配速 · 有时长记录</span>
+            <strong>
+              {formatPaceFromSpeed(rangeSummary.paceSpeed)} <small>/km</small>
+            </strong>
+          </div>
+        </section>
+        {IS_CHINESE && (
+          <details className={styles.locations}>
+            <summary>按地区与时段探索</summary>
+            <LocationStat
+              changeYear={changeYear}
+              changeCity={changeCity}
+              changeTitle={changeTitle}
+            />
+          </details>
+        )}
+        <section id="records" className={styles.recordSection}>
+          <h2>
+            运动记录 <span>{runs.length} 条 · 选择记录可在地图定位</span>
+          </h2>
+          {runs.length ? (
+            <RunTable
+              key={`${currentFilter.item}-${sport}`}
+              runs={runs}
+              locateActivity={locateActivity}
+              runIndex={runIndex}
+              setRunIndex={setRunIndex}
+            />
+          ) : (
+            <StatusPanel
+              kind="empty"
+              title="这个范围没有运动记录"
+              description="试试其他年份或运动类型。"
+            />
+          )}
+        </section>
+        <section
+          id="map-container"
+          className={styles.mapSection}
+          aria-label="公开运动路线"
+        >
+          <h2>
+            路线与记录 <span>只展示公开导出的路线</span>
+          </h2>
+          <RunMap
+            title={title}
+            viewState={viewState}
+            geoData={animatedGeoData}
+            setViewState={setViewState}
             changeYear={changeYear}
-            changeCity={changeCity}
-            changeTitle={changeTitle}
+            thisYear={year}
+            animationTrigger={animationTrigger}
           />
-        ) : (
-          <YearsStat year={year} onClick={changeYear} />
+        </section>
+        {year === 'Total' && (
+          <details className={styles.locations}>
+            <summary>查看累计轨迹与热力图</summary>
+            <SVGStat />
+          </details>
         )}
-      </div>
-      <div className="w-full lg:w-2/3" id="map-container">
-        <RunMap
-          title={title}
-          viewState={viewState}
-          geoData={animatedGeoData}
-          setViewState={setViewState}
-          changeYear={changeYear}
-          thisYear={year}
-          animationTrigger={animationTrigger}
-        />
-        {year === 'Total' ? (
-          <SVGStat />
-        ) : (
-          <RunTable
-            runs={runs}
-            locateActivity={locateActivity}
-            runIndex={runIndex}
-            setRunIndex={setRunIndex}
-          />
-        )}
-      </div>
+      </main>
       {/* Enable Audiences in Vercel Analytics: https://vercel.com/docs/concepts/analytics/audiences/quickstart */}
       {import.meta.env.VERCEL && <Analytics />}
     </Layout>

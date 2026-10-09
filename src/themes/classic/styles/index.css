@@ -5,113 +5,35 @@
 @import 'tailwindcss';
 @import './mobile.css';
 
+/* Classic aliases keep existing components aligned with the shared running palette. */
 :root {
-  /* global */
+  --color-brand: var(--running-accent);
+  --color-secondary: var(--running-accent);
+  --color-bg: var(--running-surface);
+  --color-tx: var(--running-text);
+  --color-hr: var(--running-border);
+  --color-selected: var(--running-accent-fill);
+  --color-run-date: var(--running-muted);
+  --color-run-table-thead: var(--running-text);
+  --color-run-row-hover-background: var(--running-surface-raised);
+  --color-activity-card: var(--running-border);
   --color-primary: var(--color-brand);
-  --color-secondary: var(--color-secondary);
   --color-background: var(--color-bg);
   --color-text-primary: var(--color-tx);
   --color-hr-primary: var(--color-hr);
-  --color-selected: var(--color-selected);
-  /* table */
-  --color-run-date: var(--color-run-date);
-  --color-run-table-thead: var(--color-run-table-thead);
-  --color-run-row-hover-background: var(--color-run-row-hover-background);
-  /* activity-card */
-  --color-activity-card: var(--color-activity-card);
-  /* svg */
-  --svg-color-active-cell: var(--svg-color-inactive-cell);
-  /* fonts */
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-}
-
-/* 1. System Theme (Base) */
-@media (prefers-color-scheme: light) {
-  :root {
-    --color-brand: var(--color-sky-900);
-    --color-secondary: var(--color-sky-800);
-    --color-bg: var(--color-neutral-100);
-    --color-tx: var(--color-sky-900);
-    --color-hr: var(--color-neutral-300);
-    --color-selected: var(--color-sky-900);
-    --color-run-date: var(--color-neutral-800);
-    --color-run-table-thead: var(--color-neutral-800);
-    --color-run-row-hover-background: var(--color-neutral-200);
-    --color-activity-card: var(--color-neutral-300);
-    --svg-color-active-cell: var(--color-neutral-400);
-    --svg-special-color: #d4a574;
-    --svg-special-color2: #c5756b;
-    --font-sans: 'IBM Plex Sans', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* const nike = 'rgb(224,237,94)'; */
-    --color-brand: #e0ed5e;
-    --color-secondary: #ccd94a;
-    --color-bg: var(--color-neutral-900);
-    --color-tx: var(--color-brand);
-    --color-hr: var(--color-red-500);
-    --color-selected: var(--color-brand);
-    --color-run-date: var(--color-neutral-300);
-    --color-run-table-thead: var(--color-zinc-300);
-    --color-run-row-hover-background: var(--color-neutral-800);
-    --color-activity-card: var(--color-neutral-700);
-    --svg-color-active-cell: #4dd2ff;
-    --svg-special-color: #f7d02c;
-    --svg-special-color2: #f56c6c;
-    --font-sans: 'IBM Plex Sans', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-  }
-}
-
-/* 2. Manual Override (Higher Priority) */
-[data-theme='light'] {
-  --color-brand: var(--color-sky-900);
-  --color-secondary: var(--color-sky-800);
-  --color-bg: var(--color-neutral-100);
-  --color-tx: var(--color-sky-900);
-  --color-hr: var(--color-neutral-300);
-  --color-selected: var(--color-sky-900);
-  --color-run-date: var(--color-neutral-800);
-  --color-run-table-thead: var(--color-neutral-800);
-  --color-run-row-hover-background: var(--color-neutral-200);
-  --color-activity-card: var(--color-neutral-300);
-  --svg-color-inactive-cell: var(--color-neutral-600);
-  --svg-color-active-cell: var(--color-neutral-400);
-  --svg-special-color: #d4a574;
-  --svg-special-color2: #c5756b;
-  --font-sans: 'IBM Plex Sans', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-}
-
-[data-theme='dark'] {
-  /* const nike = 'rgb(224,237,94)'; */
-  --color-brand: #e0ed5e;
-  --color-secondary: #ccd94a;
-  --color-bg: var(--color-neutral-900);
-  --color-tx: var(--color-brand);
-  --color-hr: var(--color-red-500);
-  --color-selected: var(--color-brand);
-  --color-run-date: var(--color-neutral-300);
-  --color-run-table-thead: var(--color-zinc-300);
-  --color-run-row-hover-background: var(--color-neutral-800);
-  --color-activity-card: var(--color-neutral-700);
-  --svg-color-active-cell: #4dd2ff;
-  --svg-special-color: #f7d02c;
-  --svg-special-color2: #f56c6c;
-  --font-sans: 'IBM Plex Sans', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --svg-color-inactive-cell: var(--running-border);
+  --svg-color-active-cell: var(--running-accent);
+  --svg-special-color: var(--running-chart-cadence);
+  --svg-special-color2: var(--running-chart-heart);
+  --font-sans: var(--running-font-sans);
+  --font-mono: var(--running-font-mono);
 }
 
 @layer base {
   html,
   body {
     background-color: var(--color-background);
-    color: var(--color-brand);
+    color: var(--running-text);
     transition:
       background-color 0.1s ease,
       color 0.1s ease;

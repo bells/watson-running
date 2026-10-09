@@ -23,7 +23,7 @@
 
 ## 环境与验证
 
-- 本地 `.python-version` 为 3.12，`pyproject.toml` 要求 3.12+；Python CI 为 3.12–3.14，同步 Workflow 为 3.11，Docker 为 3.10。按实际执行路径判断语法与依赖兼容性。
+- 本地 `.python-version` 为 3.12，`pyproject.toml` 要求 3.12+；Python CI 为 3.12–3.14，暂停的同步 Workflow 与 Docker 为 3.12。按实际执行路径判断语法与依赖兼容性。
 - CI 通过 `requirements-dev.txt` 引入 `requirements.txt`，同步与 Docker 直接安装 `requirements.txt`；项目安装与锁文件还涉及 `pyproject.toml`、`uv.lock`、`pdm.lock`。更改依赖时检查各入口差异，不能只更新其中一份就宣称全部路径可用。
 
 ```bash

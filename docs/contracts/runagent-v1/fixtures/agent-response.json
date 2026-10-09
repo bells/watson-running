@@ -1,0 +1,6 @@
+{
+  "conversationId": "synthetic-conversation-1",
+  "executionId": "synthetic-execution-1",
+  "toolCallCount": 0,
+  "content": "配速表示完成一公里所用的时间。"
+}

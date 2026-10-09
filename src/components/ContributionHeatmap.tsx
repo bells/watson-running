@@ -27,7 +27,12 @@ function toDisplayType(type: string): 'Run' | 'Ride' | 'Hike' | 'Training' {
 }
 
 const TYPE_PALETTES: Record<string, string[]> = {
-  Run: ['#fed7aa', '#fb923c', '#f97316', '#ea580c'],
+  Run: [
+    'var(--running-heat-1)',
+    'var(--running-heat-2)',
+    'var(--running-heat-3)',
+    'var(--running-heat-4)',
+  ],
   Ride: ['#bfdbfe', '#60a5fa', '#3b82f6', '#2563eb'],
   Hike: ['#bbf7d0', '#4ade80', '#22c55e', '#16a34a'],
   Training: ['#fce7f3', '#f9a8d4', '#ec4899', '#db2777'],
@@ -38,7 +43,7 @@ function getColor(distance: number, max: number, filter: SportFilter): string {
   if (distance === 0) return 'var(--color-border)';
   const level = Math.ceil(Math.min(distance / max, 1) * 4);
   const colors: Record<string, string[]> = {
-    all: ['#e9d5ff', '#c084fc', '#a855f7', '#7c3aed'],
+    all: TYPE_PALETTES.Run,
     Run: TYPE_PALETTES.Run,
     Ride: TYPE_PALETTES.Ride,
     Hike: TYPE_PALETTES.Hike,
@@ -389,7 +394,7 @@ export function ContributionHeatmap({
             onClick={() => handleSelectYear('all')}
             className={`rounded px-2.5 py-1 text-xs font-medium transition-all ${
               selectedYear === 'all'
-                ? 'bg-[var(--color-accent)] text-white'
+                ? 'bg-[var(--running-accent-fill)] text-[#202a33]'
                 : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
             }`}
           >
@@ -426,7 +431,7 @@ export function ContributionHeatmap({
               onClick={() => handleSelectYear(y)}
               className={`rounded px-2.5 py-1 text-xs font-medium transition-all ${
                 selectedYear === y
-                  ? 'bg-[var(--color-accent)] text-white'
+                  ? 'bg-[var(--running-accent-fill)] text-[#202a33]'
                   : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
               }`}
             >

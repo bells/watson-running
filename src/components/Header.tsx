@@ -1,5 +1,6 @@
 import type { Activity } from '../types';
 import { useLocale } from '../hooks/useLocale';
+import getSiteMetadata from '../core/hooks/useSiteMetadata';
 
 type Page = 'home' | 'tracks';
 
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export function Header({ dark, toggleTheme, page, onNavigate }: HeaderProps) {
   const { locale, setLocale, t } = useLocale();
+  const { logo } = getSiteMetadata();
 
   const navItems: { label: string; page: Page }[] = [
     { label: t('home'), page: 'home' },
@@ -21,22 +23,23 @@ export function Header({ dark, toggleTheme, page, onNavigate }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-bg)]/70 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <span className="text-xl font-bold text-[var(--color-text)]">
-            RUNNING<span className="text-[var(--color-run)]">.</span>PAGE
+          <img src={logo} alt="Watson" className="h-8 w-8" />
+          <span className="text-lg font-bold text-[var(--color-text)]">
+            Watson Running
           </span>
         </div>
 
         {/* Right nav */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-6">
           {navItems.map((item) => (
             <button
               type="button"
               key={item.page}
               onClick={() => onNavigate(item.page)}
-              className={`cursor-pointer border-0 bg-transparent p-0 text-sm transition-colors ${
+              className={`min-h-11 cursor-pointer border-0 bg-transparent p-0 text-sm transition-colors ${
                 item.page === page
                   ? 'font-medium text-[var(--color-accent)]'
                   : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
@@ -47,7 +50,8 @@ export function Header({ dark, toggleTheme, page, onNavigate }: HeaderProps) {
           ))}
           <button
             onClick={toggleTheme}
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-[var(--color-card)]"
+            aria-label={`Switch to ${dark ? 'light' : 'dark'} theme`}
+            className="flex h-11 w-11 items-center justify-center rounded-lg transition-colors hover:bg-[var(--color-card)]"
           >
             {dark ? (
               <svg
@@ -81,7 +85,8 @@ export function Header({ dark, toggleTheme, page, onNavigate }: HeaderProps) {
           </button>
           <button
             onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-[var(--color-muted)] transition-colors hover:bg-[var(--color-card)] hover:text-[var(--color-text)]"
+            aria-label={locale === 'zh' ? 'Switch to English' : '切换中文'}
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-xs font-bold text-[var(--color-muted)] transition-colors hover:bg-[var(--color-card)] hover:text-[var(--color-text)]"
             title={locale === 'zh' ? 'Switch to English' : '切换中文'}
           >
             {locale === 'zh' ? 'EN' : '中'}
@@ -90,7 +95,8 @@ export function Header({ dark, toggleTheme, page, onNavigate }: HeaderProps) {
             href="https://github.com/bells/watson-running"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--color-muted)] transition-colors hover:bg-[var(--color-card)] hover:text-[var(--color-text)]"
+            aria-label="GitHub"
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-[var(--color-muted)] transition-colors hover:bg-[var(--color-card)] hover:text-[var(--color-text)]"
             title="GitHub"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">

@@ -10,7 +10,7 @@
 
 ## 本地准备
 
-前端建议使用 Node 24，并通过 Corepack 使用 `package.json` 指定的 pnpm 版本（当前 8.9.0）：
+前端使用 Node 24，并通过 Corepack 使用 `package.json` 指定的 pnpm 版本（当前 12.6.0）：
 
 ```bash
 corepack enable

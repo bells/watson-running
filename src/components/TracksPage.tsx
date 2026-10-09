@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import * as polyline from '@mapbox/polyline';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import type { Activity } from '../types';
 import {
   getAvailableYears,
@@ -11,7 +9,9 @@ import {
   formatPace,
 } from '../hooks/useActivities';
 import { useLocale } from '../hooks/useLocale';
-import { MAPBOX_TOKEN } from '../config';
+import { RouteMap } from './RouteMap';
+import { useTheme } from '../hooks/useTheme';
+import { summarizeActivities } from '../core/activitySummary';
 
 type SportType = 'Run';
 
@@ -66,7 +66,10 @@ function TrackThumb({
     : '';
   if (!points) return null;
   return (
-    <div
+    <button
+      type="button"
+      aria-pressed={selected}
+      aria-label={`${activity.name} · ${(activity.distance / 1000).toFixed(1)} km · ${activity.start_date_local}`}
       className={`group relative cursor-pointer rounded transition-all ${selected ? 'ring-2 ring-[var(--color-accent)] ring-offset-1 ring-offset-[var(--color-bg)]' : ''}`}
       onClick={onClick}
       title={`${activity.name} — ${(activity.distance / 1000).toFixed(1)} km`}
@@ -86,169 +89,14 @@ function TrackThumb({
           strokeLinejoin="round"
         />
       </svg>
-    </div>
+    </button>
   );
 }
 
-function TrackMap({
-  activity,
-  activities,
-  dark,
-}: {
-  activity: Activity | null;
-  activities: Activity[];
-  dark?: boolean;
-}) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const mapReady = useRef(false);
-  const activityRef = useRef(activity);
-  const activitiesRef = useRef(activities);
-  const style =
-    dark !== false
-      ? 'mapbox://styles/mapbox/dark-v11'
-      : 'mapbox://styles/mapbox/light-v11';
-
-  // Keep the latest props in refs via an effect (not during render) so the
-  // stable updateRoutes callback below can read them at event time. This is
-  // the React-recommended alternative to writing ref.current during render
-  // (react-hooks/refs).
-  useEffect(() => {
-    activityRef.current = activity;
-    activitiesRef.current = activities;
-  });
-
-  // Stable callback ref — always reads latest data from refs
-  const updateRoutes = useRef(() => {
-    const m = map.current;
-    if (!m || !mapReady.current) return;
-    const act = activityRef.current;
-    const acts = activitiesRef.current;
-    ['selected', 'all-routes'].forEach((id) => {
-      if (m.getLayer(id)) m.removeLayer(id);
-      if (m.getSource(id)) m.removeSource(id);
-    });
-    if (act?.summary_polyline) {
-      const coords = polyline
-        .decode(act.summary_polyline)
-        .map(([lat, lng]) => [lng, lat]);
-      m.addSource('selected', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'LineString', coordinates: coords },
-        },
-      });
-      m.addLayer({
-        id: 'selected',
-        type: 'line',
-        source: 'selected',
-        paint: {
-          'line-color': getColor(act),
-          'line-width': 3,
-          'line-opacity': 0.9,
-        },
-      });
-      const bounds = new mapboxgl.LngLatBounds();
-      coords.forEach((c) => bounds.extend(c as [number, number]));
-      m.fitBounds(bounds, { padding: 50, maxZoom: 14 });
-      return;
-    }
-    const features = acts
-      .filter((a) => a.summary_polyline)
-      .map((a) => ({
-        type: 'Feature' as const,
-        properties: { type: a.type },
-        geometry: {
-          type: 'LineString' as const,
-          coordinates: polyline
-            .decode(a.summary_polyline!)
-            .map(([lat, lng]) => [lng, lat]),
-        },
-      }));
-    if (!features.length) return;
-    m.addSource('all-routes', {
-      type: 'geojson',
-      data: { type: 'FeatureCollection', features },
-    });
-    m.addLayer({
-      id: 'all-routes',
-      type: 'line',
-      source: 'all-routes',
-      paint: {
-        'line-color': [
-          'match',
-          ['get', 'type'],
-          'Run',
-          '#f97316',
-          'Ride',
-          '#3b82f6',
-          'Hike',
-          '#22c55e',
-          '#a855f7',
-        ],
-        'line-width': 1.2,
-        'line-opacity': 0.5,
-      },
-    });
-    const allCoords = features.flatMap(
-      (f) => f.geometry.coordinates as [number, number][]
-    );
-    if (!allCoords.length) return;
-    const lngs = allCoords.map((c) => c[0]).sort((a, b) => a - b);
-    const lats = allCoords.map((c) => c[1]).sort((a, b) => a - b);
-    const t = Math.floor(lngs.length * 0.1);
-    m.fitBounds(
-      new mapboxgl.LngLatBounds(
-        [lngs[t], lats[t]],
-        [lngs[lngs.length - 1 - t], lats[lats.length - 1 - t]]
-      ),
-      { padding: 30, maxZoom: 13 }
-    );
-  });
-
-  // Init map once
-  useEffect(() => {
-    if (!mapContainer.current) return;
-    if (map.current) {
-      map.current.setStyle(style);
-      return;
-    }
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    mapReady.current = false;
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style,
-      center: [108, 35],
-      zoom: 3,
-    });
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-    map.current.on('style.load', () => {
-      mapReady.current = true;
-      updateRoutes.current();
-    });
-    return () => {
-      map.current?.remove();
-      map.current = null;
-      mapReady.current = false;
-    };
-  }, [dark]);
-
-  // Re-render routes when selection or data changes
-  useEffect(() => {
-    if (mapReady.current) updateRoutes.current();
-  }, [activity, activities]);
-
-  return <div ref={mapContainer} className="h-full w-full" />;
-}
-
 function getColor(a: Activity): string {
-  if (a.type === 'Run') {
-    const km = a.distance / 1000;
-    return km >= 40 ? '#ef4444' : km >= 20 ? '#f97316' : '#f97316';
-  }
-  return '#a855f7';
+  return a.type === 'Run'
+    ? 'var(--running-accent)'
+    : 'var(--running-chart-cadence)';
 }
 
 export function TracksPage({
@@ -257,6 +105,7 @@ export function TracksPage({
   onSelectActivity,
 }: TracksPageProps) {
   const { locale } = useLocale();
+  const { dark } = useTheme();
   const allYears = getAvailableYears(activities);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [sportFilter, setSportFilter] = useState<SportType | null>(null);
@@ -302,11 +151,9 @@ export function TracksPage({
     (s, a) => s + parseMovingTime(a.moving_time),
     0
   );
-  const runs = base.filter((a) => a.type === 'Run' && a.average_speed > 0);
-  const avgPace =
-    runs.length > 0
-      ? runs.reduce((s, a) => s + a.average_speed, 0) / runs.length
-      : 0;
+  const avgPace = summarizeActivities(
+    base.filter((a) => a.type === 'Run')
+  ).paceSpeed;
 
   // Cluster tracks — defer heavy work
   type Cluster = { representative: Activity; count: number; color: string };
@@ -380,7 +227,11 @@ export function TracksPage({
   };
 
   const allSportTabs: { label: string; value: SportType; color: string }[] = [
-    { label: locale === 'zh' ? '跑步' : 'Run', value: 'Run', color: '#f97316' },
+    {
+      label: locale === 'zh' ? '跑步' : 'Run',
+      value: 'Run',
+      color: 'var(--running-accent)',
+    },
   ];
 
   return (
@@ -448,7 +299,7 @@ export function TracksPage({
                   {Math.floor((totalTime % 3600) / 60)}m
                 </p>
               </div>
-              {avgPace > 0 && (
+              {avgPace !== null && (
                 <div>
                   <p className="text-[10px] tracking-wider text-[var(--color-muted)] uppercase">
                     {locale === 'zh' ? '均配速' : 'Avg Pace'}
@@ -569,14 +420,12 @@ export function TracksPage({
           )}
 
           {/* Map */}
-          <div
-            className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-card)]"
-            style={{ height: 260 }}
-          >
-            <TrackMap
-              activity={selectedActivity}
+          <div>
+            <RouteMap
+              selectedActivity={selectedActivity}
               activities={withPolyline}
-              dark
+              dark={dark}
+              onClearSelection={() => setSelectedActivity(null)}
             />
           </div>
         </div>
@@ -588,7 +437,7 @@ export function TracksPage({
             className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-4"
           >
             {/* Year pills + sport filter */}
-            <div className="mb-4 flex items-center gap-1.5 border-b border-[var(--color-border)] pb-3">
+            <div className="mb-4 flex flex-wrap items-center gap-1.5 border-b border-[var(--color-border)] pb-3">
               {totalYearPages > 1 && (
                 <button
                   onClick={() => setYearPage((p) => Math.max(0, p - 1))}
@@ -600,7 +449,7 @@ export function TracksPage({
               )}
               <button
                 onClick={() => setSelectedYear(null)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${selectedYear === null ? 'bg-[var(--color-accent)] text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${selectedYear === null ? 'bg-[var(--running-accent-fill)] text-[#202a33]' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
               >
                 {locale === 'zh' ? '全部' : 'All'}
               </button>
@@ -610,7 +459,7 @@ export function TracksPage({
                   onClick={() =>
                     setSelectedYear(selectedYear === yr ? null : yr)
                   }
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${selectedYear === yr ? 'bg-[var(--color-accent)] text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${selectedYear === yr ? 'bg-[var(--running-accent-fill)] text-[#202a33]' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
                 >
                   {yr}
                 </button>
@@ -630,22 +479,19 @@ export function TracksPage({
               <div className="ml-auto flex items-center gap-1.5">
                 <button
                   onClick={() => setSportFilter(null)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${sportFilter === null ? 'border-transparent bg-[var(--color-accent)] text-white' : 'border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${sportFilter === null ? 'border-transparent bg-[var(--running-accent-fill)] text-[#202a33]' : 'border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
                 >
                   {locale === 'zh' ? '全部' : 'All'}
                 </button>
                 {allSportTabs
                   .filter((t) => hasSport(t.value))
-                  .map(({ label, value, color }) => (
+                  .map(({ label, value }) => (
                     <button
                       key={value}
                       onClick={() =>
                         setSportFilter(sportFilter === value ? null : value)
                       }
-                      className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${sportFilter === value ? 'border-transparent text-white' : 'border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
-                      style={
-                        sportFilter === value ? { backgroundColor: color } : {}
-                      }
+                      className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${sportFilter === value ? 'border-transparent bg-[var(--running-accent-fill)] text-[#202a33]' : 'border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
                     >
                       {label}
                     </button>
@@ -762,17 +608,11 @@ export function TracksPage({
                 {sportFilter === null || sportFilter === 'Run' ? (
                   <>
                     <span className="flex items-center gap-1.5">
-                      <span className="inline-block h-0.5 w-3 rounded bg-[#f97316]" />
+                      <span className="inline-block h-0.5 w-3 rounded bg-[var(--running-accent)]" />
                       {locale === 'zh' ? '跑步' : 'Run'}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="inline-block h-0.5 w-3 rounded bg-[#ef4444]" />
-                      {locale === 'zh' ? '跑步 >20km' : 'Run >20km'}
                     </span>
                   </>
                 ) : null}
-                {null}
-                {null}
                 <div className="ml-auto flex items-center gap-1">
                   <span>
                     {clusteredTracks.length}{' '}

@@ -7,6 +7,7 @@ import {
 import { LocaleProvider } from './hooks/useLocale';
 import { THEME_PRESET } from './config';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { StatusPanel } from './core/components/StatusPanel';
 
 // 主题注册表 — 新增主题时在此处注册，并在 src/themes/ 下创建对应文件夹
 const themes: Record<string, LazyExoticComponent<ComponentType>> = {
@@ -24,19 +25,9 @@ export default function App() {
       <ErrorBoundary>
         <Suspense
           fallback={
-            <div
-              className="flex min-h-screen items-center justify-center"
-              style={{ backgroundColor: 'var(--color-bg, #0d1117)' }}
-            >
-              <div
-                style={{
-                  color: 'var(--color-muted, #8b949e)',
-                  fontSize: '0.875rem',
-                }}
-              >
-                Loading...
-              </div>
-            </div>
+            <main className="flex min-h-screen items-center justify-center bg-[var(--running-surface)] p-6">
+              <StatusPanel kind="loading" title="正在加载跑步记录…" />
+            </main>
           }
         >
           <ThemeComponent />

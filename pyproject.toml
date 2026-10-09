@@ -23,12 +23,12 @@ dependencies = [
   "timezonefinder; platform_system == \"Windows\"",
   "pyyaml",
   "aiofiles",
-  "cloudscraper",
+  "cloudscraper==1.2.71",
   "tcxreader",
   "rich",
   "lxml",
   "eviltransform",
-  "stravaweblib",
+  "stravaweblib==0.0.10",
   "tenacity",
   "numpy",
   "tzlocal",
@@ -38,10 +38,9 @@ dependencies = [
   "garth",
   "pycryptodome",
   "duckdb",
-  "openai",
-  "svglib>=1.5.1",
-  "cairosvg>=2.7.1",
-  "certifi==2025.1.31",
+  "openai==3.6.0",
+  "cairosvg>=2.9.1",
+  "certifi==2026.7.22",
 ]
 requires-python = ">=3.12"
 readme = "README.md"

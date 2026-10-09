@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PROPOSED RunAgent v1 agent-request",
+  "type": "object",
+  "properties": {
+    "conversationId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000,
+      "pattern": "\\S"
+    }
+  },
+  "required": [
+    "message"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,2 @@
+# SSE dispatch requires a terminating blank line, including the final event.
+docs/contracts/runagent-v1/fixtures/*.sse whitespace=-blank-at-eof

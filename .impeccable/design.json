@@ -1,0 +1,511 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-07T13:04:14.816223+00:00",
+  "title": "Design System: Watson Running",
+  "extensions": {
+    "colorMeta": {
+      "surface-light": {
+        "role": "neutral",
+        "displayName": "暖白 / 石墨页面",
+        "tonalRamp": [
+          "oklch(15.00% 0.00287 264.54)",
+          "oklch(26.43% 0.00287 264.54)",
+          "oklch(37.86% 0.00287 264.54)",
+          "oklch(49.29% 0.00287 264.54)",
+          "oklch(60.71% 0.00287 264.54)",
+          "oklch(72.14% 0.00287 264.54)",
+          "oklch(83.57% 0.00287 264.54)",
+          "oklch(95.00% 0.00287 264.54)"
+        ]
+      },
+      "raised-light": {
+        "role": "neutral",
+        "displayName": "纸白 / 深灰表面",
+        "tonalRamp": [
+          "oklch(15.00% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95.00% 0.00000 89.88)"
+        ]
+      },
+      "text-light": {
+        "role": "neutral",
+        "displayName": "炭黑 / 冷白文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.02174 245.85)",
+          "oklch(26.43% 0.02174 245.85)",
+          "oklch(37.86% 0.02174 245.85)",
+          "oklch(49.29% 0.02174 245.85)",
+          "oklch(60.71% 0.02174 245.85)",
+          "oklch(72.14% 0.02174 245.85)",
+          "oklch(83.57% 0.02174 245.85)",
+          "oklch(95.00% 0.02174 245.85)"
+        ]
+      },
+      "muted-light": {
+        "role": "neutral",
+        "displayName": "灰蓝次要文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.02673 242.33)",
+          "oklch(26.43% 0.02673 242.33)",
+          "oklch(37.86% 0.02673 242.33)",
+          "oklch(49.29% 0.02673 242.33)",
+          "oklch(60.71% 0.02673 242.33)",
+          "oklch(72.14% 0.02673 242.33)",
+          "oklch(83.57% 0.02673 242.33)",
+          "oklch(95.00% 0.02673 242.33)"
+        ]
+      },
+      "border-light": {
+        "role": "neutral",
+        "displayName": "灰蓝细线",
+        "tonalRamp": [
+          "oklch(15.00% 0.01277 236.64)",
+          "oklch(26.43% 0.01277 236.64)",
+          "oklch(37.86% 0.01277 236.64)",
+          "oklch(49.29% 0.01277 236.64)",
+          "oklch(60.71% 0.01277 236.64)",
+          "oklch(72.14% 0.01277 236.64)",
+          "oklch(83.57% 0.01277 236.64)",
+          "oklch(95.00% 0.01277 236.64)"
+        ]
+      },
+      "accent-light": {
+        "role": "primary",
+        "displayName": "浅色深橄榄",
+        "tonalRamp": [
+          "oklch(15.00% 0.09761 121.89)",
+          "oklch(26.43% 0.09761 121.89)",
+          "oklch(37.86% 0.09761 121.89)",
+          "oklch(49.29% 0.09761 121.89)",
+          "oklch(60.71% 0.09761 121.89)",
+          "oklch(72.14% 0.09761 121.89)",
+          "oklch(83.57% 0.09761 121.89)",
+          "oklch(95.00% 0.09761 121.89)"
+        ]
+      },
+      "accent-fill": {
+        "role": "primary",
+        "displayName": "跑道荧光黄",
+        "tonalRamp": [
+          "oklch(15.00% 0.16503 114.08)",
+          "oklch(26.43% 0.16503 114.08)",
+          "oklch(37.86% 0.16503 114.08)",
+          "oklch(49.29% 0.16503 114.08)",
+          "oklch(60.71% 0.16503 114.08)",
+          "oklch(72.14% 0.16503 114.08)",
+          "oklch(83.57% 0.16503 114.08)",
+          "oklch(95.00% 0.16503 114.08)"
+        ]
+      },
+      "warning-light": {
+        "role": "secondary",
+        "displayName": "警示赭色",
+        "tonalRamp": [
+          "oklch(15.00% 0.09715 66.13)",
+          "oklch(26.43% 0.09715 66.13)",
+          "oklch(37.86% 0.09715 66.13)",
+          "oklch(49.29% 0.09715 66.13)",
+          "oklch(60.71% 0.09715 66.13)",
+          "oklch(72.14% 0.09715 66.13)",
+          "oklch(83.57% 0.09715 66.13)",
+          "oklch(95.00% 0.09715 66.13)"
+        ]
+      },
+      "heart-light": {
+        "role": "secondary",
+        "displayName": "心率玫红",
+        "tonalRamp": [
+          "oklch(15.00% 0.14315 14.48)",
+          "oklch(26.43% 0.14315 14.48)",
+          "oklch(37.86% 0.14315 14.48)",
+          "oklch(49.29% 0.14315 14.48)",
+          "oklch(60.71% 0.14315 14.48)",
+          "oklch(72.14% 0.14315 14.48)",
+          "oklch(83.57% 0.14315 14.48)",
+          "oklch(95.00% 0.14315 14.48)"
+        ]
+      },
+      "cadence-light": {
+        "role": "secondary",
+        "displayName": "步频湖蓝",
+        "tonalRamp": [
+          "oklch(15.00% 0.07307 229.89)",
+          "oklch(26.43% 0.07307 229.89)",
+          "oklch(37.86% 0.07307 229.89)",
+          "oklch(49.29% 0.07307 229.89)",
+          "oklch(60.71% 0.07307 229.89)",
+          "oklch(72.14% 0.07307 229.89)",
+          "oklch(83.57% 0.07307 229.89)",
+          "oklch(95.00% 0.07307 229.89)"
+        ]
+      },
+      "elevation-light": {
+        "role": "secondary",
+        "displayName": "海拔灰紫",
+        "tonalRamp": [
+          "oklch(15.00% 0.10350 294.25)",
+          "oklch(26.43% 0.10350 294.25)",
+          "oklch(37.86% 0.10350 294.25)",
+          "oklch(49.29% 0.10350 294.25)",
+          "oklch(60.71% 0.10350 294.25)",
+          "oklch(72.14% 0.10350 294.25)",
+          "oklch(83.57% 0.10350 294.25)",
+          "oklch(95.00% 0.10350 294.25)"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "暖白 / 石墨页面",
+        "tonalRamp": [
+          "oklch(15.00% 0.01099 242.29)",
+          "oklch(26.43% 0.01099 242.29)",
+          "oklch(37.86% 0.01099 242.29)",
+          "oklch(49.29% 0.01099 242.29)",
+          "oklch(60.71% 0.01099 242.29)",
+          "oklch(72.14% 0.01099 242.29)",
+          "oklch(83.57% 0.01099 242.29)",
+          "oklch(95.00% 0.01099 242.29)"
+        ]
+      },
+      "raised-dark": {
+        "role": "neutral",
+        "displayName": "纸白 / 深灰表面",
+        "tonalRamp": [
+          "oklch(15.00% 0.01873 248.52)",
+          "oklch(26.43% 0.01873 248.52)",
+          "oklch(37.86% 0.01873 248.52)",
+          "oklch(49.29% 0.01873 248.52)",
+          "oklch(60.71% 0.01873 248.52)",
+          "oklch(72.14% 0.01873 248.52)",
+          "oklch(83.57% 0.01873 248.52)",
+          "oklch(95.00% 0.01873 248.52)"
+        ]
+      },
+      "text-dark": {
+        "role": "neutral",
+        "displayName": "炭黑 / 冷白文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.01010 238.51)",
+          "oklch(26.43% 0.01010 238.51)",
+          "oklch(37.86% 0.01010 238.51)",
+          "oklch(49.29% 0.01010 238.51)",
+          "oklch(60.71% 0.01010 238.51)",
+          "oklch(72.14% 0.01010 238.51)",
+          "oklch(83.57% 0.01010 238.51)",
+          "oklch(95.00% 0.01010 238.51)"
+        ]
+      },
+      "muted-dark": {
+        "role": "neutral",
+        "displayName": "灰蓝次要文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.01769 236.78)",
+          "oklch(26.43% 0.01769 236.78)",
+          "oklch(37.86% 0.01769 236.78)",
+          "oklch(49.29% 0.01769 236.78)",
+          "oklch(60.71% 0.01769 236.78)",
+          "oklch(72.14% 0.01769 236.78)",
+          "oklch(83.57% 0.01769 236.78)",
+          "oklch(95.00% 0.01769 236.78)"
+        ]
+      },
+      "border-dark": {
+        "role": "neutral",
+        "displayName": "灰蓝细线",
+        "tonalRamp": [
+          "oklch(15.00% 0.01994 239.67)",
+          "oklch(26.43% 0.01994 239.67)",
+          "oklch(37.86% 0.01994 239.67)",
+          "oklch(49.29% 0.01994 239.67)",
+          "oklch(60.71% 0.01994 239.67)",
+          "oklch(72.14% 0.01994 239.67)",
+          "oklch(83.57% 0.01994 239.67)",
+          "oklch(95.00% 0.01994 239.67)"
+        ]
+      },
+      "warning-dark": {
+        "role": "secondary",
+        "displayName": "警示赭色",
+        "tonalRamp": [
+          "oklch(15.00% 0.10186 76.65)",
+          "oklch(26.43% 0.10186 76.65)",
+          "oklch(37.86% 0.10186 76.65)",
+          "oklch(49.29% 0.10186 76.65)",
+          "oklch(60.71% 0.10186 76.65)",
+          "oklch(72.14% 0.10186 76.65)",
+          "oklch(83.57% 0.10186 76.65)",
+          "oklch(95.00% 0.10186 76.65)"
+        ]
+      },
+      "heart-dark": {
+        "role": "secondary",
+        "displayName": "心率玫红",
+        "tonalRamp": [
+          "oklch(15.00% 0.12548 16.22)",
+          "oklch(26.43% 0.12548 16.22)",
+          "oklch(37.86% 0.12548 16.22)",
+          "oklch(49.29% 0.12548 16.22)",
+          "oklch(60.71% 0.12548 16.22)",
+          "oklch(72.14% 0.12548 16.22)",
+          "oklch(83.57% 0.12548 16.22)",
+          "oklch(95.00% 0.12548 16.22)"
+        ]
+      },
+      "cadence-dark": {
+        "role": "secondary",
+        "displayName": "步频湖蓝",
+        "tonalRamp": [
+          "oklch(15.00% 0.08521 220.18)",
+          "oklch(26.43% 0.08521 220.18)",
+          "oklch(37.86% 0.08521 220.18)",
+          "oklch(49.29% 0.08521 220.18)",
+          "oklch(60.71% 0.08521 220.18)",
+          "oklch(72.14% 0.08521 220.18)",
+          "oklch(83.57% 0.08521 220.18)",
+          "oklch(95.00% 0.08521 220.18)"
+        ]
+      },
+      "elevation-dark": {
+        "role": "secondary",
+        "displayName": "海拔灰紫",
+        "tonalRamp": [
+          "oklch(15.00% 0.10941 297.01)",
+          "oklch(26.43% 0.10941 297.01)",
+          "oklch(37.86% 0.10941 297.01)",
+          "oklch(49.29% 0.10941 297.01)",
+          "oklch(60.71% 0.10941 297.01)",
+          "oklch(72.14% 0.10941 297.01)",
+          "oklch(83.57% 0.10941 297.01)",
+          "oklch(95.00% 0.10941 297.01)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "品牌首屏标题",
+        "purpose": "Classic 品牌标题；斜体属于该标题表达。"
+      },
+      "metric": {
+        "displayName": "周期数字",
+        "purpose": "Mono 累计指标，单位另用较低字重。"
+      },
+      "title": {
+        "displayName": "区段标题",
+        "purpose": "档案与详情的区段层级。"
+      },
+      "body": {
+        "displayName": "说明文字",
+        "purpose": "说明与文字链接，页面保留局部变体。"
+      },
+      "label": {
+        "displayName": "标签与期间",
+        "purpose": "期间、筛选、单位和来源。"
+      },
+      "status-title": {
+        "displayName": "状态标题",
+        "purpose": "局部共享状态面板的标题。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "development-launcher",
+        "value": "0 4px 20px #0002",
+        "purpose": "仅开发聊天浮动入口。"
+      },
+      {
+        "name": "development-drawer",
+        "value": "-12px 0 48px #0003",
+        "purpose": "仅开发聊天右侧覆盖层。"
+      },
+      {
+        "name": "dashboard-card-hover",
+        "value": "0 10px 15px -3px color-mix(in oklab, var(--running-accent) 5%, transparent), 0 4px 6px -4px color-mix(in oklab, var(--running-accent) 5%, transparent)",
+        "purpose": "目标和个人卡片的 hover 状态，与强调色边框和浅填充同时出现。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "classic-theme-color",
+        "value": "background-color 0.1s ease, color 0.1s ease",
+        "purpose": "Classic 页面的主题颜色切换。"
+      },
+      {
+        "name": "dashboard-theme-color",
+        "value": "background-color 0.3s, color 0.3s",
+        "purpose": "Dashboard 页面的主题颜色切换。"
+      },
+      {
+        "name": "classic-theme-control",
+        "value": "all 0.2s ease",
+        "purpose": "Classic 主题按钮状态。"
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation-duration: 0.01ms; animation-iteration-count: 1; transition-duration: 0.01ms; scroll-behavior: auto",
+        "purpose": "共享减少动态效果覆盖，保持内容完整。"
+      },
+      {
+        "name": "dashboard-card-feedback",
+        "value": "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "目标、个人与最佳成绩卡片的 hover 状态；减少动态效果时覆盖为 0.01ms。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "development-chat-full-width",
+        "value": "600px"
+      },
+      {
+        "name": "compact-content",
+        "value": "640px"
+      },
+      {
+        "name": "classic-record-cards",
+        "value": "800px"
+      },
+      {
+        "name": "detail-three-columns",
+        "value": "850px"
+      },
+      {
+        "name": "dashboard-two-columns",
+        "value": "1024px"
+      },
+      {
+        "name": "dashboard-wide-sidebar",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "恢复动作",
+      "kind": "button",
+      "description": "共享局部状态中的重试或恢复动作。",
+      "html": "<button class=\"ds-retry\" type=\"button\">重试</button>",
+      "css": ".ds-retry { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); min-height: 44px; margin-top: 6px; padding: 9px 16px; border: 0; border-radius: 6px; background: var(--running-accent-fill, #e0ed5e); color: #202a33; font-weight: 600; cursor: pointer; } .ds-retry:hover { filter: brightness(0.96); } .ds-retry:focus-visible { outline: 3px solid var(--running-focus, #405000); outline-offset: 3px; }",
+      "refersTo": "button-primary"
+    },
+    {
+      "name": "周期分页",
+      "kind": "button",
+      "description": "周期汇总的次要分页动作；禁用状态留在原位置。",
+      "html": "<button class=\"ds-page\" type=\"button\">下一页</button>",
+      "css": ".ds-page { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); min-height: 44px; padding: 8px 16px; background: var(--running-surface-raised, #ffffff); color: var(--running-text, #202a33); border: 1px solid var(--running-border, #d4dde3); border-radius: 6px; cursor: pointer; } .ds-page:disabled { opacity: 0.4; cursor: default; } .ds-page:focus-visible { outline: 2px solid var(--running-focus, #405000); outline-offset: 3px; }",
+      "refersTo": "button-secondary"
+    },
+    {
+      "name": "期间字段",
+      "kind": "input",
+      "description": "记录和周期汇总中的带标签原生选择框。",
+      "html": "<label class=\"ds-field\">年份<select class=\"ds-select\"><option>2026</option><option>全部年份</option></select></label>",
+      "css": ".ds-field { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--running-muted, #52616d); } .ds-select { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); min-width: 130px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--running-border, #d4dde3); border-radius: 6px; background: var(--running-surface-raised, #ffffff); color: var(--running-text, #202a33); } .ds-select:disabled { opacity: 0.6; } .ds-select:focus-visible { outline: 2px solid var(--running-focus, #405000); outline-offset: 3px; }",
+      "refersTo": "select"
+    },
+    {
+      "name": "年度筛选",
+      "kind": "chip",
+      "description": "Dashboard 选中与未选中的年度筛选；选中状态由文字和按下语义共同表达。",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-selected\" aria-pressed=\"true\">2026</button><button class=\"ds-chip\" aria-pressed=\"false\">全部年份</button></div>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 8px; } .ds-chip { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); min-height: 44px; padding: 4px 12px; border: 0; border-radius: calc(infinity * 1px); background: var(--running-border, #d4dde3); color: var(--running-muted, #52616d); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-chip:hover { color: var(--running-text, #202a33); } .ds-selected { background: var(--running-accent-fill, #e0ed5e); color: #202a33; } .ds-chip:focus-visible { outline: 2px solid var(--running-focus, #405000); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-chip { transition-duration: 0.01ms; } }",
+      "refersTo": "chip-selected"
+    },
+    {
+      "name": "页内导航",
+      "kind": "nav",
+      "description": "Dashboard 活动页按钮，强调当前页面并保留窄屏换行。",
+      "html": "<nav class=\"ds-nav\" aria-label=\"页面\"><button class=\"ds-nav-item ds-current\" aria-current=\"page\">首页</button><button class=\"ds-nav-item\">轨迹墙</button></nav>",
+      "css": ".ds-nav { display: flex; flex-wrap: wrap; gap: 12px; } .ds-nav-item { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--running-muted, #52616d); font-size: 14px; cursor: pointer; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-nav-item:hover { color: var(--running-text, #202a33); } .ds-current { color: var(--running-accent, #405000); font-weight: 500; } .ds-nav-item:focus-visible { outline: 2px solid var(--running-focus, #405000); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-nav-item { transition-duration: 0.01ms; } }"
+    },
+    {
+      "name": "图表容器",
+      "kind": "card",
+      "description": "真实曲线的标题与内容框；不在预览中制造采样数据。",
+      "html": "<section class=\"ds-chart\"><h2>心率 <small>bpm</small></h2><p class=\"ds-chart-empty\">本次运动没有心率采样</p></section>",
+      "css": ".ds-chart { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); min-width: 0; background: var(--running-surface-raised, #ffffff); color: var(--running-text, #202a33); border: 1px solid var(--running-border, #d4dde3); border-radius: 12px; padding: 20px 16px 10px; } .ds-chart h2 { margin: 0 0 12px; font-size: 15px; font-weight: 600; } .ds-chart small { font-weight: 400; color: var(--running-muted, #52616d); } .ds-chart-empty { color: var(--running-muted, #52616d); font-size: 14px; padding: 28px 0; }",
+      "refersTo": "chart-card"
+    },
+    {
+      "name": "局部状态",
+      "kind": "custom",
+      "description": "地图或数据区域的可恢复说明，页面其他信息仍可用。",
+      "html": "<section class=\"ds-status\" role=\"status\"><strong>地图暂时无法加载</strong><p>活动记录仍然可查看。</p><button type=\"button\">重试</button></section>",
+      "css": ".ds-status { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 160px; padding: 24px; border: 1px solid var(--running-border, #d4dde3); border-radius: 12px; background: var(--running-surface-raised, #ffffff); color: var(--running-text, #202a33); text-align: center; } .ds-status strong { font-size: 15px; line-height: 1.4; } .ds-status p { max-width: 44ch; margin: 0; color: var(--running-muted, #52616d); font-size: 13px; line-height: 1.6; } .ds-status button { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); min-height: 44px; margin-top: 6px; padding: 9px 16px; border: 0; border-radius: 6px; background: var(--running-accent-fill, #e0ed5e); color: #202a33; font-weight: 600; cursor: pointer; } .ds-status button:hover { filter: brightness(0.96); } .ds-status button:focus-visible { outline: 3px solid var(--running-focus, #405000); outline-offset: 3px; }",
+      "refersTo": "status-panel"
+    },
+    {
+      "name": "记录详情链接",
+      "kind": "custom",
+      "description": "档案记录、最近跑步和详情路径使用的文字动作。",
+      "html": "<a class=\"ds-detail-link\" href=\"#record\">查看详情</a>",
+      "css": ".ds-detail-link { font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); color: var(--running-accent, #405000); text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 44px; } .ds-detail-link:focus-visible { outline: 2px solid var(--running-focus, #405000); outline-offset: 3px; }"
+    },
+    {
+      "name": "Dashboard 内容卡片",
+      "kind": "card",
+      "refersTo": "dashboard-card",
+      "description": "目标与个人信息使用的有边框容器；hover 柔和抬升。",
+      "html": "<section class=\"ds-dashboard-card\"><p class=\"ds-dashboard-label\">年度目标</p></section>",
+      "css": ".ds-dashboard-card { padding: 20px; border: 1px solid var(--running-border, #d4dde3); border-radius: 12px; color: var(--running-text, #202a33); background: var(--running-surface-raised, #ffffff); font-family: var(--running-font-sans, \"IBM Plex Sans\", system-ui, -apple-system, sans-serif); transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-dashboard-label { color: var(--running-muted, #52616d); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 8px; } .ds-dashboard-card:hover { border-color: color-mix(in oklab, var(--running-accent, #405000) 30%, transparent); background: color-mix(in oklab, var(--running-accent, #405000) 5%, transparent); box-shadow: 0 10px 15px -3px color-mix(in oklab, var(--running-accent, #405000) 5%, transparent), 0 4px 6px -4px color-mix(in oklab, var(--running-accent, #405000) 5%, transparent); } @media (prefers-reduced-motion: reduce) { .ds-dashboard-card { transition-duration: 0.01ms; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "赛道记录册",
+    "overview": "Watson 的个人运动历程由真实记录、期间、分段和公开路线组织成册。石墨深色与暖白浅色共享一套语义颜色；IBM Plex 的文字与数字构成克制而清楚的节奏。保留 Watson 名称、既有标志和个人文案，不用虚构成绩或装饰数据形成视觉重点。\n\nClassic 用通栏记录、细分隔线和周期区段呈现档案；Dashboard 保留有边框的卡片网格。两者共享可读的期间、数字、单位和局部状态，但不要求所有页面使用同一种容器。首屏与详情可以强调真实距离，密集记录则依靠对齐和字重建立层级。\n\n本文件按当前源码与本地浏览器截图提取，记录实现后的系统，不代表线上发布验证。颜色源在 `src/core/styles/tokens.css`；组件细节在各主题 CSS Modules 与 Tailwind class 中。前面的 token 是这些已用值的机器可读映射，并没有新增运行时 CSS token。前面组件颜色以浅色为基准；实现继续使用 `--running-*` 的明暗映射。",
+    "keyCharacteristics": [
+      "石墨 / 暖白完整主题，荧光黄填充与主题可读强调色分工。",
+      "数字对齐、单位可读、期间明确，真实数据决定强调程度。",
+      "档案区段以细线分隔；图表和局部状态以有边框的容器承载。",
+      "控件有可见焦点；窄屏将记录转为纵向条目。",
+      "缺失和局部失败直接说明，保留其余可用内容。"
+    ],
+    "rules": [
+      {
+        "name": "The Theme Pair Rule",
+        "body": "每个新表面使用共享语义颜色，并同时检查石墨与暖白主题；不要把深色可读的荧光黄直接用作浅色正文。",
+        "section": "colors"
+      },
+      {
+        "name": "The Data Accent Rule",
+        "body": "跑步数字与可操作重点使用跑步强调色；辅助曲线颜色随语义固定，并配文字说明。",
+        "section": "colors"
+      },
+      {
+        "name": "The Number And Unit Rule",
+        "body": "数字采用等宽或 tabular 排版，单位紧随数值、降低字重但保留可读颜色；期间在数字附近直接说明。",
+        "section": "typography"
+      },
+      {
+        "name": "The Local Recovery Rule",
+        "body": "空筛选、缺失采样、详情错误与地图失败在所属区域说明；保留筛选、记录和返回路径，地图失败不替换整个页面。",
+        "section": "layout"
+      },
+      {
+        "name": "The Record Surface Rule",
+        "body": "默认内容层靠边界与色调区分；保留 Dashboard 卡片 hover 与覆盖层自身的阴影和模糊，不将它们推广为记录行的装饰。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** 从共享 `--running-*` 语义颜色取值，并核对明暗两套主题。",
+      "**Do** 在数字附近写明期间、单位和适用记录范围；保留来源与估算说明。",
+      "**Do** 使用等宽 / tabular 数字和可读的单位、日期、说明文字。",
+      "**Do** 保持可见键盘焦点与（44px）主要控件触控高度。",
+      "**Do** 用细线组织记录区段，用有边框表面承载图表和局部状态。",
+      "**Do** 将缺失和失败说明留在所属区域，并保留可用记录及返回路径。"
+    ],
+    "donts": [
+      "**Don't** 把荧光黄作为浅色主题的正文色，或让重要单位仅靠透明度变淡。",
+      "**Don't** 用虚构运动数据、零值曲线或未核实成绩填补缺失记录。",
+      "**Don't** 为新页面另建一套脱离共享明暗 token 的配色。",
+      "**Don't** 将详情配速章、开发抽屉阴影或 Dashboard 卡片网格强制套在所有页面。",
+      "**Don't** 用私有原始轨迹或精确起终点补画公开页面与设计预览。",
+      "**Don't** 把现有开发聊天样式记录解释为生产聊天已经开放。"
+    ]
+  }
+}

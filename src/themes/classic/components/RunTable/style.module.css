@@ -1,121 +1,120 @@
-@media only screen and (max-width: 768px) {
-  .tableContainer {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .runTable {
-    min-width: 650px;
-    font-size: 0.8rem;
-  }
-
-  .runTable th,
-  .runTable td {
-    padding: 0.25rem !important;
-    white-space: nowrap;
-    min-width: 60px;
-  }
-
-  .runTable th:first-child,
-  .runTable td:first-child {
-    min-width: 100px;
-  }
-
-  .runTable th:last-child,
-  .runTable td:last-child {
-    min-width: 80px;
-  }
-}
-
-.runTable {
-  width: 100%;
-  margin: 2rem 0 5rem 0;
-  color: var(--color-run-table-thead);
-  background-color: var(--color-background);
-  font-family: var(--font-mono);
-  table-layout: auto;
-  :is(thead) {
-    color: var(--color-run-table-thead);
-
-    :is(th) {
-      padding: 0.5rem;
-      white-space: nowrap;
-      text-align: center;
-    }
-
-    .sortableHeader {
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.2s ease;
-    }
-
-    .sortableHeader:hover {
-      color: var(--color-primary);
-    }
-
-    :is(th):first-child {
-      text-align: left;
-    }
-
-    :is(th):last-child {
-      text-align: right;
-    }
-  }
-  :is(th, td) {
-    white-space: nowrap;
-    text-align: center;
-  }
-
-  :is(th, td):first-child {
-    text-align: left;
-  }
-
-  :is(th, td):last-child {
-    text-align: right;
-  }
-}
-
-.runRow {
-  cursor: pointer;
-  :is(td) {
-    padding: 0.5rem;
-    border: 0;
-    text-align: center; /* 默认居中 */
-  }
-
-  :is(td):first-child {
-    text-align: left;
-  }
-
-  :is(td):last-child {
-    text-align: right;
-  }
-
-  &:hover {
-    background-color: var(--color-run-row-hover-background);
-  }
-}
-
-.selected {
-  color: var(--color-primary);
-}
-
 .tableContainer {
   width: 100%;
-  overflow-x: auto;
+  min-width: 0;
 }
-
+.sortControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: var(--running-muted);
+  font-size: 13px;
+}
+.sortControls select,
+.sortControls button {
+  min-height: 44px;
+  border: 1px solid var(--running-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: var(--running-surface-raised);
+  color: var(--running-text);
+}
+.runTable {
+  width: 100%;
+  color: var(--running-text);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.runTable th,
+.runTable td {
+  padding: 10px 8px;
+  text-align: right;
+  border-bottom: 1px solid var(--running-border);
+}
+.runTable th {
+  color: var(--running-muted);
+  font-weight: 400;
+}
+.runTable th:first-child,
+.runTable td:first-child {
+  text-align: left;
+}
+.runTable button {
+  min-height: 44px;
+  cursor: pointer;
+}
+.runTable th button {
+  padding-inline: 6px;
+}
+.runRow {
+  cursor: pointer;
+}
+.runRow:hover,
+.selected {
+  background: var(--running-surface-raised);
+}
+.selected td:first-child {
+  color: var(--running-accent);
+}
 .runDate {
-  color: var(--color-run-date);
+  color: var(--running-muted);
 }
-
 .detailLink {
-  color: var(--color-primary);
+  color: var(--running-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
-.detailLink:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
+.mobileRecords {
+  display: none;
+}
+@media (max-width: 800px) {
+  .runTable {
+    display: none;
+  }
+  .mobileRecords {
+    display: block;
+  }
+  .mobileRecords article {
+    border-top: 1px solid var(--running-border);
+    padding: 18px 0;
+  }
+  .mobileSelected {
+    background: var(--running-surface-raised);
+  }
+  .mobileRecords p {
+    font-size: 12px;
+  }
+  .recordTitle {
+    color: var(--running-accent);
+    font-weight: 600;
+    min-height: 44px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .mobileRecords dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-block: 10px;
+  }
+  .mobileRecords dt {
+    color: var(--running-muted);
+    font-size: 12px;
+  }
+  .mobileRecords dd {
+    margin-top: 4px;
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+  }
+  .recordFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--running-muted);
+  }
 }
