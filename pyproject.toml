@@ -38,7 +38,8 @@ dependencies = [
   "garth",
   "pycryptodome",
   "duckdb",
-  "openai==3.6.0",
+  "openai==3.24.0",
+  "oauthlib>=4.0.0,<5",
   "cairosvg>=2.9.1",
   "certifi==2026.7.22",
 ]
