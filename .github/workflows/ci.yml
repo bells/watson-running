@@ -2,6 +2,9 @@ name: CI
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   python_lint_and_test:
     runs-on: ubuntu-latest
@@ -10,7 +13,7 @@ jobs:
       matrix:
         python-version: ['3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -27,9 +30,13 @@ jobs:
         run: |
           pip install -r requirements-dev.txt
 
-      - name: Check private data path contract
+      - name: Check private data and security contracts
         run: |
-          python -m unittest test_private_data_config
+          python -m unittest test_private_data_config test_generator_privacy
+          python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Check dependency entry points
+        run: python -m unittest test_dependency_contract
 
       - name: Check formatting (black)
         run: black . --diff --color && black . --check
@@ -45,7 +52,7 @@ jobs:
       matrix:
         node: [24]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false

@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:96db77bcc3ad56264fc3ae14e1358f99b00366351e0f8d06ebab6a4aa768ae3c"
+content_hash = "sha256:75b883cdbde2b8ede56a028835f1db1d9790bbc3814c5bd43be3ce0efc3d2c3a"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -1104,32 +1104,32 @@ files = [
 
 [[package]]
 name = "oauthlib"
-version = "3.3.1"
-requires_python = ">=3.8"
+version = "4.0.0"
+requires_python = ">=3.9"
 summary = "A generic, spec-compliant, thorough implementation of the OAuth request-signing logic"
 groups = ["default"]
 files = [
-    {file = "oauthlib-3.3.1-py3-none-any.whl", hash = "sha256:88119c938d2b8fb88561af5f6ee0eec8cc8d552b7bb1f712743136eb7523b7a1"},
-    {file = "oauthlib-3.3.1.tar.gz", hash = "sha256:0f0f8aa759826a193cf66c12ea1af1637f87b9b4622d46e866952bb022e538c9"},
+    {file = "oauthlib-4.0.0-py3-none-any.whl", hash = "sha256:624c28c13a0a59cabf9747dfa52af63be3e512a7f2714df16e91b5b3a145e6cd"},
+    {file = "oauthlib-4.0.0.tar.gz", hash = "sha256:efb274799819440f95b4ab3b818869f1ce9ae26c5beacba0201d1a1b76b54f86"},
 ]
 
 [[package]]
 name = "openai"
-version = "3.6.0"
+version = "3.24.0"
 requires_python = ">=3.10"
 summary = "The official Python library for the openai API"
 groups = ["default"]
 dependencies = [
     "anyio<5,>=4.10.0",
-    "httpx2<3,>=2.7.0",
+    "httpx2<3,>=2.12.0",
     "jiter<1,>=0.16.0",
     "pydantic!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.*,<3,>=1.10.13",
     "sniffio",
     "typing-extensions<5,>=4.14",
 ]
 files = [
-    {file = "openai-3.6.0-py3-none-any.whl", hash = "sha256:508e2158bf971687f953b62e44b02f207792c815aac306816386d7ba34d37f5f"},
-    {file = "openai-3.6.0.tar.gz", hash = "sha256:18fe3f6e96390ef41ee27b152fc9effefca321c33673bd9b956a572493d3ab9b"},
+    {file = "openai-3.24.0-py3-none-any.whl", hash = "sha256:b59703a3e3b5df78b269e90049d383a1dda58c90104cc4be59db21078db4b7a4"},
+    {file = "openai-3.24.0.tar.gz", hash = "sha256:1e7463f7d78773ab2ce4fe85710481aa5bd5ffefd54c8de4b067506cd2d42895"},
 ]
 
 [[package]]
