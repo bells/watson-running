@@ -1,4 +1,7 @@
-import { chinaCities } from '../static/city';
+import {
+  matchesActivityCity,
+  parseActivityLocation,
+} from '@core/activityLocation';
 import {
   compareActivitiesNewest,
   formatDistanceMeters,
@@ -7,12 +10,7 @@ import {
   routeDisplayStatus,
   sportDisplayName,
 } from '@core/activityDisplay';
-import {
-  MUNICIPALITY_CITIES_ARR,
-  RUN_TITLES,
-  ACTIVITY_TYPES,
-  RICH_TITLE,
-} from './const';
+import { RUN_TITLES, ACTIVITY_TYPES, RICH_TITLE } from './const';
 
 export type Coordinate = [number, number];
 
@@ -26,6 +24,8 @@ export const DIST_UNIT = IS_IMPERIAL ? 'mi' : 'km'; // Label
 export const ELEV_UNIT = IS_IMPERIAL ? 'ft' : 'm'; // Label
 
 export interface Activity {
+  geography?: import('@core/types').Geography;
+  geographyIssue?: 'invalid';
   run_id: number;
   name: string;
   distance: number;
@@ -97,120 +97,8 @@ const scrollToMap = () => {
   }
 };
 
-const extractCities = (str: string): string[] => {
-  const locations = [];
-  let match;
-  const pattern = /([\u4e00-\u9fa5]{2,}(市|自治州|特别行政区|盟|地区))/g;
-  while ((match = pattern.exec(str)) !== null) {
-    locations.push(match[0]);
-  }
-
-  return locations;
-};
-
-const extractDistricts = (str: string): string[] => {
-  const locations = [];
-  let match;
-  const pattern = /([\u4e00-\u9fa5]{2,}(区|县))/g;
-  while ((match = pattern.exec(str)) !== null) {
-    locations.push(match[0]);
-  }
-
-  return locations;
-};
-
-const extractCoordinate = (str: string): [number, number] | null => {
-  const pattern = /'latitude': ([-]?\d+\.\d+).*?'longitude': ([-]?\d+\.\d+)/;
-  const match = str.match(pattern);
-
-  if (match) {
-    const latitude = parseFloat(match[1]);
-    const longitude = parseFloat(match[2]);
-    return [longitude, latitude];
-  }
-
-  return null;
-};
-
-const cities = chinaCities.map((c) => c.name);
-const locationCache = new Map<number, ReturnType<typeof locationForRun>>();
-// what about oversea?
-const locationForRun = (
-  run: Activity
-): {
-  country: string;
-  province: string;
-  city: string;
-  coordinate: [number, number] | null;
-} => {
-  if (locationCache.has(run.run_id)) {
-    return locationCache.get(run.run_id)!;
-  }
-  let location = run.location_country;
-  let [city, province, country] = ['', '', ''];
-  let coordinate = null;
-  if (location) {
-    // Only for Chinese now
-    // should filter 臺灣
-
-    // 处理格式 "城市:省份" 的情况
-    if (location.includes(':')) {
-      const parts = location.split(':');
-      city = parts[0].trim();
-      province = parts[1].trim();
-      // 如果 province 没有 "省" 字，补上
-      if (
-        !province.includes('省') &&
-        !province.includes('自治区') &&
-        !province.includes('市')
-      ) {
-        province = province + '省';
-      }
-    } else {
-      // 原来的逻辑
-      const cityMatch = extractCities(location);
-      const provinceMatch = location.match(/[\u4e00-\u9fa5]{2,}(省|自治区)/);
-
-      if (cityMatch) {
-        city = cities.find((value) => cityMatch.includes(value)) as string;
-
-        if (!city) {
-          city = '';
-        }
-      }
-      if (provinceMatch) {
-        [province] = provinceMatch;
-        // try to extract city coord from location_country info
-        coordinate = extractCoordinate(location);
-      }
-    }
-
-    const l = location.split(',');
-    // or to handle keep location format
-    let countryMatch = l[l.length - 1].match(
-      /[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/
-    );
-    if (!countryMatch && l.length >= 3) {
-      countryMatch = l[2].match(/[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/);
-    }
-    if (countryMatch) {
-      [country] = countryMatch;
-    }
-  }
-  if (MUNICIPALITY_CITIES_ARR.includes(city)) {
-    province = city;
-    if (location) {
-      const districtMatch = extractDistricts(location);
-      if (districtMatch.length > 0) {
-        city = districtMatch[districtMatch.length - 1];
-      }
-    }
-  }
-
-  const r = { country, province, city, coordinate };
-  locationCache.set(run.run_id, r);
-  return r;
-};
+const locationForRun = (run: Activity) =>
+  parseActivityLocation(run.location_country);
 
 const intComma = (x = '') => {
   if (x.toString().length <= 5) {
@@ -292,12 +180,8 @@ const filterYearRuns = (run: Activity, year: string) => {
   return false;
 };
 
-const filterCityRuns = (run: Activity, city: string) => {
-  if (run && run.location_country) {
-    return run.location_country.includes(city);
-  }
-  return false;
-};
+const filterCityRuns = (run: Activity, city: string) =>
+  matchesActivityCity(run, city);
 const filterTitleRuns = (run: Activity, title: string) =>
   titleForRun(run) === title;
 

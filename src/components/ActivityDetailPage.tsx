@@ -1,3 +1,4 @@
+import { ActivityGeographySummary } from '@core/components/ActivityGeographySummary';
 import { Suspense, useEffect, useState } from 'react';
 import {
   Area,
@@ -176,6 +177,11 @@ function ActivityOverview({ runId }: { runId: number }) {
   );
 }
 
+function GeographyOverview({ runId }: { runId: number }) {
+  const activity = getActivityData().find((run) => run.run_id === runId);
+  return activity ? <ActivityGeographySummary activity={activity} /> : null;
+}
+
 function returnPath(defaultPath: string): string {
   const historyState: unknown = window.history.state;
   if (
@@ -261,6 +267,11 @@ export default function ActivityDetailPage() {
             {dark ? '浅色模式' : '深色模式'}
           </button>
         </nav>
+        {runId !== null && (
+          <Suspense fallback={null}>
+            <GeographyOverview runId={runId} />
+          </Suspense>
+        )}
         {runId === null || error ? (
           <>
             {runId !== null && (

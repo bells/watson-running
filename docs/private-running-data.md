@@ -78,3 +78,13 @@ For each future publish, verify activity count, newest date, source IDs,
 sport-type distribution, changed tracks and generated assets. Stage only
 reviewed public outputs. A successful build or scheduled job is not evidence
 that JoyRun supplied new activities or that Vercel deployed them.
+
+## Geography maintenance
+
+Region schemas are installed only by the explicit backed-up apply path described in
+[geography-backfill.md](geography-backfill.md). Normal export never migrates or
+backfills. The default preview is immutable and rejects nonempty WAL/journal or
+changing inputs. Approved boundary packages, fingerprints, backups and original
+routes stay outside this repository. Historical JoyRun routes remain `unknown_crs`
+until independent CRS evidence is available. Public geometry still follows the
+500-metre endpoint policy with the existing short-route fallback.

@@ -1,6 +1,7 @@
 # some code from https://github.com/fieryd/PKURunningHelper great thanks
 import argparse
 import ast
+import getpass
 import json
 import os
 import subprocess
@@ -29,7 +30,8 @@ from config import (
     start_point,
 )
 from generator import Generator
-from private_data import validate_joyrun_export
+from joyrun_detail_sync import export_public, sync_missing_details
+from private_data import require_private_database, validate_joyrun_export
 from utils import adjust_time
 
 # struct body
@@ -641,14 +643,23 @@ class Joyrun:
         return namedtuple("x", d.keys())(*d.values())
 
     def get_all_joyrun_tracks(
-        self, old_tracks_ids, with_gpx=False, with_tcx=False, threshold=10
+        self,
+        old_tracks_ids,
+        with_gpx=False,
+        with_tcx=False,
+        threshold=10,
+        list_records=None,
+        detail_cache=None,
     ):
-        run_ids = self.get_runs_records_ids()
+        if list_records is None:
+            list_records = self.get_runs_records()
+        listed_by_id = {int(record["fid"]): record for record in list_records}
+        run_ids = list(listed_by_id)
         old_tracks_ids = [int(i) for i in old_tracks_ids if i.isdigit()]
 
         old_gpx_ids = os.listdir(GPX_FOLDER)
         old_gpx_ids = [i.split(".")[0] for i in old_gpx_ids if not i.startswith(".")]
-        new_run_ids = list(set(run_ids) - set(old_tracks_ids))
+        new_run_ids = sorted(set(run_ids) - set(old_tracks_ids))
         tracks = []
         seen_runs = {}  # Dictionary to keep track of unique runs with start time as key
         for i in new_run_ids:
@@ -673,7 +684,43 @@ class Joyrun:
                 run["run_data"], old_gpx_ids, with_gpx, with_tcx
             )
             tracks.append(track)
+            if detail_cache is not None:
+                record = run["run_data"]["runrecord"]
+                detail_cache[int(record["fid"])] = record
         return tracks
+
+
+def sync_joyrun_data(client, generator, with_gpx=False, with_tcx=False, threshold=10):
+    list_records = client.get_runs_records()
+    detail_cache = {}
+    tracks = client.get_all_joyrun_tracks(
+        generator.get_old_tracks_ids(),
+        with_gpx,
+        with_tcx,
+        threshold,
+        list_records=list_records,
+        detail_cache=detail_cache,
+    )
+    generator.sync_from_app(tracks)
+    failures = sync_missing_details(
+        client, generator.session, list_records, cached_records=detail_cache
+    )
+    from geography.incremental import sync_incremental
+
+    try:
+        geography_counts = sync_incremental(generator.session)
+        print(f"Geography: {geography_counts}")
+    except Exception:
+        print("Geography unavailable; provider activities and details retained")
+    # Publish detail files before advertising availability in the activity list.
+    count = export_public(generator.session)
+    activities = generator.load()
+    destination = Path(JSON_FILE)
+    temporary = destination.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(activities), encoding="utf-8")
+    temporary.replace(destination)
+    print(f"Exported {len(activities)} activities; {count} public details")
+    return failures
 
 
 def _generate_svg_profile(athlete, min_grid_distance):
@@ -749,9 +796,16 @@ def _generate_svg_profile(athlete, min_grid_distance):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("phone_number_or_uid", help="joyrun phone number or uid")
     parser.add_argument(
-        "identifying_code_or_sid", help="joyrun identifying_code from sms or sid"
+        "phone_number_or_uid", nargs="?", help="joyrun phone number or uid"
+    )
+    parser.add_argument(
+        "identifying_code_or_sid",
+        nargs="?",
+        help="joyrun identifying_code from sms or sid",
+    )
+    parser.add_argument(
+        "--phone", help="JoyRun phone number; SMS code is prompted privately"
     )
     parser.add_argument(
         "--athlete",
@@ -792,35 +846,53 @@ if __name__ == "__main__":
     )
     options = parser.parse_args()
     try:
-        validate_joyrun_export(
+        private_root = validate_joyrun_export(
             os.getenv("RUNNING_DATA_DIR"),
             Path(__file__).resolve().parent.parent,
             os.getenv("IGNORE_START_END_RANGE"),
             os.getenv("IGNORE_BEFORE_SAVING"),
         )
+        require_private_database(Path(SQL_FILE), private_root)
     except ValueError as error:
         parser.error(str(error))
+    os.umask(0o077)
+    if options.phone and (options.phone_number_or_uid or options.from_uid_sid):
+        parser.error(
+            "--phone cannot be combined with positional credentials or --from-uid-sid"
+        )
+    account = options.phone or options.phone_number_or_uid
+    if not account:
+        parser.error("Provide --phone or a positional phone number / uid")
+    if options.from_uid_sid and not options.identifying_code_or_sid:
+        parser.error("--from-uid-sid requires both uid and sid")
     if options.from_uid_sid:
         j = Joyrun.from_uid_sid(
             uid=str(options.phone_number_or_uid),
             sid=str(options.identifying_code_or_sid),
         )
     else:
-        j = Joyrun(
-            user_name=str(options.phone_number_or_uid),
-            identifying_code=str(options.identifying_code_or_sid),
+        code = options.identifying_code_or_sid or getpass.getpass(
+            "请输入本次悦跑圈短信验证码: "
         )
+        if not code.strip():
+            parser.error("SMS code cannot be empty")
+        j = Joyrun(
+            user_name=str(account),
+            identifying_code=code.strip(),
+        )
+        del code
         j.login_by_phone()
 
-    generator = Generator(SQL_FILE)
-    old_tracks_ids = generator.get_old_tracks_ids()  # todo 支持重新拉取所有的
-    tracks = j.get_all_joyrun_tracks(
-        old_tracks_ids, options.with_gpx, options.with_tcx, options.threshold
-    )
-    generator.sync_from_app(tracks)
-    activities_list = generator.load()
-    with open(JSON_FILE, "w") as f:
-        json.dump(activities_list, f)
+    from geography.safety import write_lock
 
-    print("Data export to DB done")
-    _generate_svg_profile(options.athlete, options.min_grid_distance)
+    with write_lock(private_root):
+        generator = Generator(SQL_FILE)
+        failures = sync_joyrun_data(
+            j, generator, options.with_gpx, options.with_tcx, options.threshold
+        )
+
+        print("Data export to DB done")
+        _generate_svg_profile(options.athlete, options.min_grid_distance)
+    if failures:
+        print(f"Failed detail IDs (retry on next sync): {failures[:25]}")
+        sys.exit(1)

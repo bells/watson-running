@@ -16,11 +16,11 @@ from config import JSON_FILE, SQL_FILE
 from generator import Generator
 from generator.db import Activity, Base, JoyrunDetail
 from joyrun_detail import normalize_joyrun_detail
-from joyrun_sync import Joyrun
 from private_data import require_private_database, validate_joyrun_export
 
 PUBLIC_DIR = Path(__file__).resolve().parent.parent / "public/activity-details"
 DETAIL_SUMMARY_KEYS = {
+    "geography",
     "source",
     "detail_available",
     "calories_kcal",
@@ -90,6 +90,37 @@ def export_public(session, destination=PUBLIC_DIR):
     return len(exported_ids)
 
 
+def sync_missing_details(client, session, list_records, delay=0.7, cached_records=None):
+    cached_records = dict(cached_records or {})
+    activity_ids = {run_id for (run_id,) in session.query(Activity.run_id)}
+    existing = {run_id for (run_id,) in session.query(JoyrunDetail.run_id)}
+    pending = [
+        record
+        for record in list_records
+        if int(record["fid"]) in activity_ids and int(record["fid"]) not in existing
+    ]
+    failures = []
+    print(f"Missing activity details: {len(pending)}")
+    for index, record in enumerate(pending):
+        run_id = int(record["fid"])
+        for attempt in range(3):
+            try:
+                runrecord = cached_records.pop(run_id, None)
+                if runrecord is None:
+                    runrecord = client.get_single_run_record(run_id)["runrecord"]
+                save_detail(session, record, runrecord)
+                break
+            except Exception as error:
+                session.rollback()
+                if attempt == 2:
+                    failures.append((run_id, type(error).__name__))
+                else:
+                    time.sleep(2**attempt + random.uniform(0, 0.5))
+        if index + 1 < len(pending):
+            time.sleep(max(delay, 0))
+    return failures
+
+
 def export_activity_summaries():
     activities = Generator(SQL_FILE).load()
     destination = Path(JSON_FILE)
@@ -127,6 +158,8 @@ def assert_existing_activities_unchanged(previous, current):
 
 
 def main():
+    from joyrun_sync import Joyrun
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--phone", help="JoyRun phone number; code is prompted privately"
@@ -144,53 +177,68 @@ def main():
     )
     require_private_database(Path(SQL_FILE), private_root)
     os.umask(0o077)
-    engine = create_engine(f"sqlite:///{SQL_FILE}")
-    Base.metadata.create_all(engine, tables=[JoyrunDetail.__table__])
-    session = sessionmaker(bind=engine)()
-    if args.export_only:
-        print(f"Exported {export_public(session)} reviewed public details")
-        if args.refresh_activities_json:
+    from geography.safety import write_lock
+
+    with write_lock(private_root):
+        engine = create_engine(f"sqlite:///{SQL_FILE}")
+        Base.metadata.create_all(engine, tables=[JoyrunDetail.__table__])
+        session = sessionmaker(bind=engine)()
+        if args.export_only:
+            print(f"Exported {export_public(session)} reviewed public details")
+            if args.refresh_activities_json:
+                print(f"Exported {export_activity_summaries()} activity summaries")
+            return
+        if not args.phone:
+            parser.error("--phone is required for backfill")
+        code = getpass.getpass("JoyRun SMS code: ")
+        client = Joyrun(user_name=args.phone, identifying_code=code)
+        del code
+        client.login_by_phone()
+        list_records = client.get_runs_records()
+        existing = {run_id for (run_id,) in session.query(JoyrunDetail.run_id)}
+        pending = [
+            record for record in list_records if int(record["fid"]) not in existing
+        ]
+        if args.limit:
+            pending = pending[: args.limit]
+        print(
+            f"List {len(list_records)}; existing {len(existing)}; pending {len(pending)}"
+        )
+        success = 0
+        failures = []
+        for index, record in enumerate(pending, 1):
+            run_id = int(record["fid"])
+            for attempt in range(3):
+                try:
+                    response = client.get_single_run_record(run_id)
+                    save_detail(session, record, response["runrecord"])
+                    success += 1
+                    break
+                except Exception as error:
+                    session.rollback()
+                    if attempt == 2:
+                        failures.append((run_id, type(error).__name__))
+                    else:
+                        time.sleep(2**attempt + random.uniform(0, 0.5))
+            if index % 50 == 0:
+                print(
+                    f"Processed {index}/{len(pending)}; saved {success}; failed {len(failures)}",
+                    flush=True,
+                )
+            time.sleep(max(args.delay, 0))
+        from geography.incremental import sync_incremental
+
+        try:
+            print(f"Geography: {sync_incremental(session)}")
+        except Exception:
+            print("Geography: deferred; provider details remain saved")
+        print(
+            f"Saved {success}; failed {len(failures)}; public {export_public(session)}"
+        )
+        if not failures:
             print(f"Exported {export_activity_summaries()} activity summaries")
-        return
-    if not args.phone:
-        parser.error("--phone is required for backfill")
-    code = getpass.getpass("JoyRun SMS code: ")
-    client = Joyrun(user_name=args.phone, identifying_code=code)
-    del code
-    client.login_by_phone()
-    list_records = client.get_runs_records()
-    existing = {run_id for (run_id,) in session.query(JoyrunDetail.run_id)}
-    pending = [record for record in list_records if int(record["fid"]) not in existing]
-    if args.limit:
-        pending = pending[: args.limit]
-    print(f"List {len(list_records)}; existing {len(existing)}; pending {len(pending)}")
-    success = 0
-    failures = []
-    for index, record in enumerate(pending, 1):
-        run_id = int(record["fid"])
-        for attempt in range(3):
-            try:
-                response = client.get_single_run_record(run_id)
-                save_detail(session, record, response["runrecord"])
-                success += 1
-                break
-            except Exception as error:
-                session.rollback()
-                if attempt == 2:
-                    failures.append((run_id, type(error).__name__))
-                else:
-                    time.sleep(2**attempt + random.uniform(0, 0.5))
-        if index % 50 == 0:
-            print(
-                f"Processed {index}/{len(pending)}; saved {success}; failed {len(failures)}",
-                flush=True,
-            )
-        time.sleep(max(args.delay, 0))
-    print(f"Saved {success}; failed {len(failures)}; public {export_public(session)}")
-    if not failures:
-        print(f"Exported {export_activity_summaries()} activity summaries")
-    if failures:
-        print(f"Failed IDs: {failures[:25]}")
+        if failures:
+            print(f"Failed IDs: {failures[:25]}")
 
 
 if __name__ == "__main__":

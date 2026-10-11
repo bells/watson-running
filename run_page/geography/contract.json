@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "levels": ["country", "province", "city"],
+  "statuses": [
+    "pending",
+    "complete",
+    "partial",
+    "no_route",
+    "indoor",
+    "invalid_route",
+    "unknown_crs",
+    "boundary_unavailable",
+    "stale",
+    "error"
+  ],
+  "levelStatuses": [
+    "complete",
+    "partial",
+    "boundary_unavailable",
+    "out_of_scope",
+    "unavailable"
+  ],
+  "reasons": [
+    "unknown_provider",
+    "ambiguous_provider",
+    "source_conflict",
+    "no_route",
+    "indoor",
+    "invalid_coordinate",
+    "unknown_crs",
+    "segment_break",
+    "time_reversal",
+    "jump_point",
+    "projection_failed",
+    "near_boundary",
+    "brief_crossing",
+    "overlap",
+    "coverage_gap",
+    "parent_conflict",
+    "boundary_unavailable",
+    "out_of_scope",
+    "input_changed",
+    "not_migrated",
+    "calculation_error",
+    "invalid_route",
+    "missing_source_file",
+    "source_changed"
+  ],
+  "distanceUnit": "m",
+  "unknownDistance": null,
+  "zeroDistance": 0,
+  "onlyPositiveTrustedRegions": true
+}

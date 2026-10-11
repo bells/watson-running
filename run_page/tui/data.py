@@ -4,10 +4,18 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Callable, Optional
+
+from run_page.geography.public_contract import (
+    CATALOG,
+    read_public_geography,
+    activity_regions,
+    aggregate_regions as aggregate_regions,
+)
+from run_page.geography.catalog import parse_provider_location
 
 # ── constants matching web UI ──────────────────────────────
 
@@ -61,6 +69,8 @@ class Activity:
     elevation_gain: Optional[float]
     average_speed: float  # m/s
     streak: int
+    geography: dict | None = None
+    geography_issue: str | None = None
 
     # ── computed properties ────────────────────────────────
 
@@ -154,49 +164,22 @@ class Activity:
 
     # ── location parsing ───────────────────────────────────
 
+    def _provider_name(self, level: str) -> str:
+        chain = parse_provider_location(self.location_country, CATALOG)
+        region_id = chain[f"{level}Id"]
+        return CATALOG.regions[region_id]["name"] if region_id else ""
+
     @property
     def city(self) -> str:
-        loc = self.location_country
-        if not loc:
-            return ""
-        parts = [p.strip() for p in loc.split(",")]
-        # Chinese address: city is typically 3rd from end
-        # e.g. "..., 沈阳市, 辽宁省, 110142, 中国"
-        for p in reversed(parts):
-            if p.endswith("市") or p.endswith("县"):
-                return p
-        if len(parts) >= 3:
-            return parts[-3]
-        return parts[0] if parts else ""
+        return self._provider_name("city")
 
     @property
     def province(self) -> str:
-        loc = self.location_country
-        if not loc:
-            return ""
-        parts = [p.strip() for p in loc.split(",")]
-        for p in reversed(parts):
-            if p.endswith("省") or p.endswith("自治区") or p.endswith("特别行政区"):
-                return p
-        if len(parts) >= 2:
-            return parts[-2]
-        return ""
+        return self._provider_name("province")
 
     @property
     def country(self) -> str:
-        loc = self.location_country
-        if not loc:
-            return ""
-        parts = [p.strip() for p in loc.split(",")]
-        country = parts[-1] if parts else ""
-        country_std = {
-            "中国": "中国",
-            "美利坚合众国": "美国",
-            "United States": "美国",
-            "日本": "日本",
-            "대한민국": "韩国",
-        }
-        return country_std.get(country, country)
+        return self._provider_name("country")
 
     # ── race classification ────────────────────────────────
 
@@ -232,7 +215,7 @@ def make_type_filter(sport_type: str) -> FilterFunc:
 
 
 def make_city_filter(city: str) -> FilterFunc:
-    return lambda a: city in (a.city or "")
+    return lambda a: city == a.city
 
 
 def make_period_filter(period: str) -> FilterFunc:
@@ -338,6 +321,7 @@ class AggregatedData:
     # date range
     first_date: Optional[str]
     last_date: Optional[str]
+    region_source: str = "provider"
 
     @property
     def overall_avg_pace(self) -> Optional[str]:
@@ -364,7 +348,7 @@ class AggregatedData:
     def filter(self, filters: list[FilterFunc]) -> AggregatedData:
         """Return a new AggregatedData for the filtered subset."""
         filtered = filter_activities(self.activities, filters)
-        return aggregate_activities(filtered)
+        return aggregate_activities(filtered, self.region_source)
 
     def year_runs(self, year: str) -> list[Activity]:
         return [a for a in self.activities if a.year == year]
@@ -374,7 +358,9 @@ def _parse_city_province_country(a: Activity) -> tuple[str, str, str]:
     return a.city, a.province, a.country
 
 
-def aggregate_activities(activities: list[Activity]) -> AggregatedData:
+def aggregate_activities(
+    activities: list[Activity], region_source: str = "provider"
+) -> AggregatedData:
     """Compute all aggregations from a list of activities."""
 
     years_set: set[str] = set()
@@ -427,22 +413,27 @@ def aggregate_activities(activities: list[Activity]) -> AggregatedData:
             ys.daily_distances.get(a.date_local, 0) + d_km
         )
 
-        # location
-        city, prov, ctry = _parse_city_province_country(a)
-        if city:
-            cities[city] += d_km
-            if city not in city_details:
-                city_details[city] = LocationStats(
-                    city=city, province=prov, country=ctry
-                )
-            city_details[city].total_distance += d_km
-            city_details[city].count += 1
-            if a.elevation_gain:
-                city_details[city].total_elevation += a.elevation_gain
-        if prov:
-            provinces[prov] += d_km
-        if ctry:
-            countries[ctry] += d_km
+        # Each level is independent; provider mode retains whole-activity distance.
+        for level, totals in (
+            ("country", countries),
+            ("province", provinces),
+            ("city", cities),
+        ):
+            for region in activity_regions(a, region_source, level):
+                region_id = region["id"]
+                length_km = region["distanceM"] / 1000
+                totals[region_id] += length_km
+                if level == "city":
+                    if region_id not in city_details:
+                        parent = CATALOG.regions.get(region["parentId"], {})
+                        city_details[region_id] = LocationStats(
+                            city=region["name"], province=parent.get("name", "")
+                        )
+                    stats = city_details[region_id]
+                    stats.total_distance += length_km
+                    stats.count += 1
+                    if a.elevation_gain:
+                        stats.total_elevation += a.elevation_gain
 
         # period
         periods[a.period_label] += 1
@@ -474,6 +465,7 @@ def aggregate_activities(activities: list[Activity]) -> AggregatedData:
 
     return AggregatedData(
         activities=activities,
+        region_source=region_source,
         years=sorted(years_set, reverse=True),
         year_stats={y: year_stats[y] for y in sorted(year_stats, reverse=True)},
         cities=dict(sorted(cities.items(), key=lambda x: -x[1])),
@@ -618,7 +610,16 @@ def load_activities(json_path: str | Path) -> list[Activity]:
         raise FileNotFoundError(f"Activities file not found: {path}")
     with open(path) as f:
         data = json.load(f)
-    return [Activity(**item) for item in data]
+    allowed = {entry.name for entry in fields(Activity)}
+    activities = []
+    for item in data:
+        values = {key: value for key, value in item.items() if key in allowed}
+        if "geography" in values:
+            values["geography"] = read_public_geography(values["geography"])
+            if values["geography"] is None:
+                values["geography_issue"] = "invalid"
+        activities.append(Activity(**values))
+    return activities
 
 
 def find_data_file() -> Path:
@@ -635,4 +636,11 @@ def find_data_file() -> Path:
             return p.resolve()
     raise FileNotFoundError(
         "Could not find activities.json. Run data sync first or specify path."
+    )
+
+
+def make_region_filter(source: str, level: str, region_id: str) -> FilterFunc:
+    return lambda activity: any(
+        region["id"] == region_id
+        for region in activity_regions(activity, source, level)
     )

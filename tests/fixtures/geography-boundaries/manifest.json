@@ -1,0 +1,294 @@
+{
+  "schemaVersion": 1,
+  "acceptanceVersion": "boundary-acceptance-v1",
+  "packageVersion": "synthetic-boundaries-v1",
+  "catalogVersion": "synthetic-catalog-v1",
+  "synthetic": true,
+  "layers": [
+    {
+      "level": "country",
+      "administrativeSemantics": "country",
+      "sourceAdministrativeSemantics": "country",
+      "outputCrs": "OGC:CRS84",
+      "sourceCrs": "EPSG:4326",
+      "crsEvidence": "Synthetic coordinates explicitly constructed in WGS84, not JoyRun/provider CRS evidence.",
+      "conversion": "Identity; longitude latitude order.",
+      "controlPoints": [
+        {
+          "source": [
+            0,
+            0
+          ],
+          "wgs84": [
+            0,
+            0
+          ]
+        },
+        {
+          "source": [
+            10,
+            2
+          ],
+          "wgs84": [
+            10,
+            2
+          ]
+        }
+      ],
+      "sourceUrl": "urn:watson-running:synthetic-boundaries",
+      "sourceRevision": "synthetic-v1",
+      "acquiredAt": "2026-10-11",
+      "attribution": "Watson; synthetic tests only",
+      "upstreamDataLicense": {
+        "id": "MIT",
+        "url": "urn:watson-running:synthetic-data-license",
+        "file": "LICENSE.txt",
+        "sha256": "b7253b5e1e97aab48f1ed4e013e5dbf2407567d2c0e1575d760555e738055d1b"
+      },
+      "file": "country.geojson",
+      "sha256": "6f37b543e3e7a822e933d3638e591ff6dcb7224d4238692752bdd48de0254f67",
+      "regionIds": [
+        "country:CHN",
+        "country:USA"
+      ],
+      "coverageGeometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              10,
+              0
+            ],
+            [
+              10,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        ]
+      },
+      "knownOverlaps": [],
+      "knownGaps": [
+        "synthetic coverage gaps"
+      ],
+      "knownDisputes": []
+    },
+    {
+      "level": "province",
+      "administrativeSemantics": "province",
+      "sourceAdministrativeSemantics": "province",
+      "outputCrs": "OGC:CRS84",
+      "sourceCrs": "EPSG:4326",
+      "crsEvidence": "Synthetic coordinates explicitly constructed in WGS84, not JoyRun/provider CRS evidence.",
+      "conversion": "Identity; longitude latitude order.",
+      "controlPoints": [
+        {
+          "source": [
+            0,
+            0
+          ],
+          "wgs84": [
+            0,
+            0
+          ]
+        },
+        {
+          "source": [
+            10,
+            2
+          ],
+          "wgs84": [
+            10,
+            2
+          ]
+        }
+      ],
+      "sourceUrl": "urn:watson-running:synthetic-boundaries",
+      "sourceRevision": "synthetic-v1",
+      "acquiredAt": "2026-10-11",
+      "attribution": "Watson; synthetic tests only",
+      "upstreamDataLicense": {
+        "id": "MIT",
+        "url": "urn:watson-running:synthetic-data-license",
+        "file": "LICENSE.txt",
+        "sha256": "b7253b5e1e97aab48f1ed4e013e5dbf2407567d2c0e1575d760555e738055d1b"
+      },
+      "file": "province.geojson",
+      "sha256": "05bf4a69d022e1f36f869a324b441dc5e5073b6f68e6eaf3ed2b5257f227fa41",
+      "regionIds": [
+        "CHN:province:110000",
+        "CHN:province:440000"
+      ],
+      "coverageGeometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              0.2,
+              0.5
+            ],
+            [
+              0.2,
+              0.7
+            ],
+            [
+              0.4,
+              0.7
+            ],
+            [
+              0.4,
+              0.5
+            ],
+            [
+              0.2,
+              0.5
+            ]
+          ]
+        ]
+      },
+      "knownOverlaps": [],
+      "knownGaps": [],
+      "knownDisputes": []
+    },
+    {
+      "level": "city",
+      "administrativeSemantics": "prefecture",
+      "sourceAdministrativeSemantics": "prefecture",
+      "outputCrs": "OGC:CRS84",
+      "sourceCrs": "EPSG:4326",
+      "crsEvidence": "Synthetic coordinates explicitly constructed in WGS84, not JoyRun/provider CRS evidence.",
+      "conversion": "Identity; longitude latitude order.",
+      "controlPoints": [
+        {
+          "source": [
+            0,
+            0
+          ],
+          "wgs84": [
+            0,
+            0
+          ]
+        },
+        {
+          "source": [
+            10,
+            2
+          ],
+          "wgs84": [
+            10,
+            2
+          ]
+        }
+      ],
+      "sourceUrl": "urn:watson-running:synthetic-boundaries",
+      "sourceRevision": "synthetic-v1",
+      "acquiredAt": "2026-10-11",
+      "attribution": "Watson; synthetic tests only",
+      "upstreamDataLicense": {
+        "id": "MIT",
+        "url": "urn:watson-running:synthetic-data-license",
+        "file": "LICENSE.txt",
+        "sha256": "b7253b5e1e97aab48f1ed4e013e5dbf2407567d2c0e1575d760555e738055d1b"
+      },
+      "file": "city.geojson",
+      "sha256": "c2abc24dfebecceece8a7dacb41a3a4f03ed755d6cc7da03a2ac7dd8f7087556",
+      "regionIds": [
+        "CHN:city:110000",
+        "CHN:city:440300",
+        "CHN:city:441900"
+      ],
+      "coverageGeometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              0.2,
+              0.5
+            ],
+            [
+              0.2,
+              0.7
+            ],
+            [
+              0.4,
+              0.7
+            ],
+            [
+              0.4,
+              0.5
+            ],
+            [
+              0.2,
+              0.5
+            ]
+          ]
+        ]
+      },
+      "knownOverlaps": [
+        [
+          "CHN:city:440300",
+          "CHN:city:441900"
+        ]
+      ],
+      "knownGaps": [
+        "synthetic coverage gaps"
+      ],
+      "knownDisputes": []
+    }
+  ]
+}

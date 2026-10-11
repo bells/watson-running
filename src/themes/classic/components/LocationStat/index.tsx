@@ -1,41 +1,27 @@
 import YearStat from '../YearStat';
-import {
-  CHINESE_LOCATION_INFO_MESSAGE_FIRST,
-  CHINESE_LOCATION_INFO_MESSAGE_SECOND,
-} from '../../utils/const';
-import CitiesStat from './CitiesStat';
-import LocationSummary from './LocationSummary';
 import PeriodStat from './PeriodStat';
-
-interface ILocationStatProps {
-  changeYear: (_year: string) => void;
-  changeCity: (_city: string) => void;
-  changeTitle: (_title: string) => void;
+import { RegionExplorer } from '@core/components/RegionExplorer';
+import type { GeographySource, RegionSelection } from '@core/types';
+import type { Activity } from '../../utils/utils';
+interface Props {
+  changeYear: (year: string) => void;
+  changeTitle: (title: string) => void;
+  activities: Activity[];
+  source: GeographySource;
+  onSourceChange: (source: GeographySource) => void;
+  selection: RegionSelection | null;
+  onSelect: (selection: RegionSelection | null) => void;
 }
-
-const LocationStat = ({
+export default function LocationStat({
   changeYear,
-  changeCity,
   changeTitle,
-}: ILocationStatProps) => (
-  <div className="w-full pb-16 lg:w-full lg:pr-16">
-    <section className="pb-0">
-      <p className="leading-relaxed">
-        {CHINESE_LOCATION_INFO_MESSAGE_FIRST}
-        .
-        <br />
-        <br />
-        {CHINESE_LOCATION_INFO_MESSAGE_SECOND}
-        .
-        <br />
-      </p>
-    </section>
-    <hr />
-    <YearStat year="Total" onClick={changeYear} />
-    <LocationSummary />
-    <CitiesStat onClick={changeCity} />
-    <PeriodStat onClick={changeTitle} />
-  </div>
-);
-
-export default LocationStat;
+  ...regions
+}: Props) {
+  return (
+    <div className="w-full pb-16">
+      <YearStat year="Total" onClick={changeYear} />
+      <RegionExplorer {...regions} />
+      <PeriodStat onClick={changeTitle} />
+    </div>
+  );
+}

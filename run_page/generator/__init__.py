@@ -13,6 +13,7 @@ from sqlalchemy import func
 from polyline_processor import filter_out
 from private_data import validate_joyrun_export
 from synced_data_file_logger import save_synced_data_file_list
+from geography.export import export_context, export_geography
 
 from .db import Activity, JoyrunDetail, init_db, update_or_create_activity
 
@@ -260,6 +261,9 @@ class Generator:
 
         activities = query.order_by(Activity.start_date_local)
         activity_list = []
+        geography_connection, private_root, region_catalog, boundary_package = (
+            export_context(self.session)
+        )
 
         streak = 0
         week_streak = 0
@@ -303,6 +307,15 @@ class Generator:
             activity.week_streak = week_streak  # type: ignore
             last_date = date
             item = activity.to_dict()
+            geography = export_geography(
+                geography_connection,
+                item,
+                private_root,
+                region_catalog,
+                boundary_package,
+            )
+            if geography is not None:
+                item["geography"] = geography
             detail = detail_summaries.get(activity.run_id)
             if detail:
                 item.update(

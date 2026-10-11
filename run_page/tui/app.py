@@ -16,7 +16,7 @@ from textual.binding import Binding
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.reactive import reactive
 from textual.widget import Widget
-from textual.widgets import Button, DataTable, Label, Static
+from textual.widgets import Button, DataTable, Label, Static, Select
 
 from .braille import render_polyline
 from .data import (
@@ -29,6 +29,9 @@ from .data import (
     load_activities,
     make_type_filter,
     make_year_filter,
+    make_region_filter,
+    aggregate_regions,
+    activity_regions,
 )
 
 # ── colour palette ─────────────────────────────────────────
@@ -258,16 +261,16 @@ def _render_cities_panel(data: AggregatedData) -> Panel | None:
     t.add_column("City", style="bold")
     t.add_column("Runs", justify="right")
     t.add_column("Distance", justify="right")
-    for city, stats in list(data.city_details.items())[:10]:
+    for stats in list(data.city_details.values())[:10]:
         t.add_row(
-            city,
+            f"{stats.city} · {stats.province}",
             str(stats.count),
             f"{stats.total_distance:.1f} km",
         )
 
     return Panel(
         t,
-        title=f"Cities ({len(data.city_details)})",
+        title=f"Cities ({len(data.city_details)}) · {'GPS in region' if data.region_source == 'route' else 'Provider whole distance'}",
         title_align="left",
         border_style=CARD_BORDER_COLOR,
     )
@@ -344,6 +347,14 @@ class RunDetailPanel(Widget):
             rows.append(("Elevation", f"{activity.elevation_gain:.0f} m"))
         if activity.city:
             rows.append(("Location", activity.city))
+        if activity.geography_issue:
+            rows.append(("Regions", "invalid / unavailable"))
+        elif activity.geography:
+            rows.append(("Regions", activity.geography["status"]))
+            rows.extend(
+                ("GPS city", f"{region['name']} · {region['distanceM']/1000:.2f} km")
+                for region in activity_regions(activity, "route", "city")
+            )
         return rows
 
     def _extra_rows(self, activity: Activity) -> list[tuple[str, str]]:
@@ -868,6 +879,10 @@ class RunningTUI(App):
         border: round #8d9740;
     }
 
+    #region-controls { height: 3; }
+    #region-controls Select { width: 1fr; }
+    #region-coverage { height: 2; padding: 0 2; }
+
     #list-left { width: 45%; min-width: 40; border: solid #404040; background: #171717; }
     #list-right { width: 55%; min-width: 30; }
 
@@ -914,6 +929,9 @@ class RunningTUI(App):
         self._sort_asc = False
         self._active_filters: list[FilterFunc] = []
         self._current_view = "stats"
+        self.region_source = "provider"
+        self.region_level = "city"
+        self.region_id = ""
 
     # ── lifecycle ───────────────────────────────────────────
 
@@ -922,6 +940,33 @@ class RunningTUI(App):
             yield NavSidebar(id="nav")
             with Vertical(id="main-area"):
                 yield FilterBar(id="filter-bar", years=[], types=[])
+                with Horizontal(id="region-controls"):
+                    yield Select(
+                        [
+                            ("轨迹已确认 / GPS", "route"),
+                            ("平台归属 / 整条距离", "provider"),
+                        ],
+                        value="provider",
+                        allow_blank=False,
+                        id="region-source",
+                    )
+                    yield Select(
+                        [
+                            ("国家", "country"),
+                            ("省份", "province"),
+                            ("城市及同级地区", "city"),
+                        ],
+                        value="city",
+                        allow_blank=False,
+                        id="region-level",
+                    )
+                    yield Select(
+                        [("全部地区", "")],
+                        value="",
+                        allow_blank=False,
+                        id="region-selection",
+                    )
+                yield Label("", id="region-coverage")
                 # all views stacked; only one visible at a time
                 with Horizontal(id="view-list"):
                     with Vertical(id="list-left"):
@@ -945,6 +990,10 @@ class RunningTUI(App):
         except Exception as exc:
             self.notify(f"Failed to load data: {exc}", severity="error", timeout=10)
             return
+
+        if any(activity_regions(a, "route", "country") for a in self.activities):
+            self.region_source = "route"
+            self.query_one("#region-source", Select).value = "route"
 
         # init filter bar — default to most recent year
         self._sync_filter_bar(default_latest_year=True)
@@ -1052,8 +1101,36 @@ class RunningTUI(App):
         filtered = self.activities
         for f in self._active_filters:
             filtered = [a for a in filtered if f(a)]
+        region_summary = aggregate_regions(
+            filtered, self.region_source, self.region_level
+        )
+        options = [("全部地区", "")]
+        from run_page.geography.public_contract import CATALOG
+
+        for region in region_summary["rows"]:
+            parent = CATALOG.regions.get(region["parentId"], {})
+            label = f"{region['name']} · {parent.get('name', '')} · {region['distanceM']/1000:.2f} km"
+            options.append((label, region["id"]))
+        selector = self.query_one("#region-selection", Select)
+        with self.prevent(Select.Changed):
+            selector.set_options(options)
+            if self.region_id not in {value for _, value in options}:
+                self.region_id = ""
+            selector.value = self.region_id
+        mode = "地区内 GPS 里程" if self.region_source == "route" else "平台整条里程"
+        self.query_one("#region-coverage", Label).update(
+            f"{mode} · 覆盖 {region_summary['coveredActivities']}/{len(filtered)} · 无可用地区 {region_summary['unavailableActivities']}\n公开地图使用既有裁剪路线；地区里程不改写活动总距离。"
+        )
+        if self.region_id:
+            filtered = [
+                a
+                for a in filtered
+                if make_region_filter(
+                    self.region_source, self.region_level, self.region_id
+                )(a)
+            ]
         self._displayed_activities = filtered
-        self.filtered_data = aggregate_activities(filtered)
+        self.filtered_data = aggregate_activities(filtered, self.region_source)
         table = self.query_one("#run-table", DataTable)
         self._populate_table(table, filtered)
         stats_view = self.query_one(StatsView)
@@ -1096,6 +1173,21 @@ class RunningTUI(App):
             self._select_activity(idx)
         except (ValueError, IndexError):
             pass
+
+    def on_select_changed(self, event: Select.Changed) -> None:
+        if not self.data or event.value is Select.BLANK:
+            return
+        if event.select.id == "region-source":
+            self.region_source = str(event.value)
+            self.region_id = ""
+        elif event.select.id == "region-level":
+            self.region_level = str(event.value)
+            self.region_id = ""
+        elif event.select.id == "region-selection":
+            self.region_id = str(event.value)
+        else:
+            return
+        self._rebuild_filters()
 
     def on_filter_bar_filter_changed(self, event: FilterBar.FilterChanged) -> None:
         self._rebuild_filters()

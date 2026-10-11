@@ -1,0 +1,95 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "region_id": "CHN:province:110000",
+        "parent_id": "country:CHN"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "region_id": "CHN:province:440000",
+        "parent_id": "country:CHN"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            [
+              0.2,
+              0.5
+            ],
+            [
+              0.2,
+              0.7
+            ],
+            [
+              0.4,
+              0.7
+            ],
+            [
+              0.4,
+              0.5
+            ],
+            [
+              0.2,
+              0.5
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,18 +1,21 @@
 import type { Activity, SportFilter } from '../types';
 import { useLocale } from '../hooks/useLocale';
-import {
-  formatDistance,
-  parseMovingTime,
-  extractProvince,
-} from '../hooks/useActivities';
+import { formatDistance, parseMovingTime } from '../hooks/useActivities';
+import { aggregateActivityRegions } from '@core/activityGeography';
+import type { GeographySource } from '@core/types';
 import { AVATAR } from '../config';
 
 interface ProfileCardProps {
   activities: Activity[];
   filter?: SportFilter;
+  source?: GeographySource;
 }
 
-export function ProfileCard({ activities, filter = 'all' }: ProfileCardProps) {
+export function ProfileCard({
+  activities,
+  filter = 'all',
+  source = 'provider',
+}: ProfileCardProps) {
   const { t, locale } = useLocale();
 
   // Filter activities by sport type for distance/count/time
@@ -32,31 +35,16 @@ export function ProfileCard({ activities, filter = 'all' }: ProfileCardProps) {
   const yearsActive =
     allDates.length > 0 ? Math.max(...allDates) - Math.min(...allDates) + 1 : 0;
 
-  // Countries and provinces — use shared extractProvince for consistency with ChinaMap
-  const countries = new Set<string>();
-  const provinces = new Set<string>();
-  for (const a of activities) {
-    const loc = a.location_country;
-    if (!loc || loc === 'None') continue;
-    // Detect country
-    if (loc.startsWith('{')) {
-      try {
-        const d = JSON.parse(loc.replace(/'/g, '"').replace(/None/g, 'null'));
-        if (d.country) countries.add(d.country);
-      } catch {
-        /* ignore */
-      }
-    } else if (loc.includes('泰国')) {
-      countries.add('泰国');
-    } else if (loc.includes('日本')) {
-      countries.add('日本');
-    } else {
-      countries.add('中国');
-    }
-    // Province — use shared logic (China-only)
-    const p = extractProvince(loc);
-    if (p) provinces.add(p);
-  }
+  const countries = aggregateActivityRegions(
+    filteredActivities,
+    source,
+    'country'
+  ).rows;
+  const provinces = aggregateActivityRegions(
+    filteredActivities,
+    source,
+    'province'
+  ).rows;
 
   const formatHours = (secs: number) => `${(secs / 3600).toFixed(1)}h`;
 
@@ -131,7 +119,8 @@ export function ProfileCard({ activities, filter = 'all' }: ProfileCardProps) {
                 d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            {countries.size} {t('countries')} ·
+            {t(`regionSource_${source}`)} · {countries.length} {t('countries')}{' '}
+            ·
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -150,7 +139,7 @@ export function ProfileCard({ activities, filter = 'all' }: ProfileCardProps) {
                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            {provinces.size} {t('provinces')}
+            {provinces.length} {t('provinces')}
           </p>
         </div>
       </div>

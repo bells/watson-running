@@ -1,11 +1,15 @@
+import styles from './ChinaMap.module.css';
 import { useEffect, useMemo, useState } from 'react';
 import type { Activity, SportFilter } from '../types';
 import { useLocale } from '../hooks/useLocale';
-import { extractProvince } from '../hooks/useActivities';
+import { aggregateActivityRegions } from '@core/activityGeography';
+import type { GeographySource } from '@core/types';
+import { regionCatalog } from '@core/regionCatalog';
 
 interface ChinaMapProps {
   activities: Activity[];
   filter: SportFilter;
+  source: GeographySource;
   onSelectProvince?: (province: string | null) => void;
   selectedProvince?: string | null;
 }
@@ -60,11 +64,13 @@ function featureToPath(feature: GeoFeature, w: number, h: number): string {
 export function ChinaMap({
   activities,
   filter,
+  source,
   onSelectProvince,
   selectedProvince,
 }: ChinaMapProps) {
   const { locale } = useLocale();
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null);
+  const [mapFailed, setMapFailed] = useState(false);
   const [features, setFeatures] = useState<GeoFeature[]>([]);
 
   const SVG_W = 260;
@@ -72,20 +78,24 @@ export function ChinaMap({
 
   // Lazy-load GeoJSON to keep initial bundle small
   useEffect(() => {
-    import('../assets/china-provinces.json').then((mod) => {
-      setFeatures((mod.default as { features: GeoFeature[] }).features);
-    });
+    import('../assets/china-provinces.json')
+      .then((mod) => {
+        setFeatures((mod.default as { features: GeoFeature[] }).features);
+      })
+      .catch(() => setMapFailed(true));
   }, []);
 
-  // Build province → activity count map
-  const provinceCount = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const a of activities) {
-      const p = extractProvince(a.location_country);
-      if (p) map.set(p, (map.get(p) ?? 0) + 1);
-    }
-    return map;
-  }, [activities]);
+  const provinceCount = useMemo(
+    () =>
+      new Map(
+        aggregateActivityRegions(activities, source, 'province').rows.map(
+          (row) => [row.id, row.activityCount]
+        )
+      ),
+    [activities, source]
+  );
+  const label = (id: string) =>
+    regionCatalog.regions.find((r) => r.id === id)?.name ?? id;
 
   const visitedCount = provinceCount.size;
   const displayProvince = hoveredProvince ?? selectedProvince;
@@ -111,7 +121,7 @@ export function ChinaMap({
           {selectedProvince ? (
             <button
               onClick={() => onSelectProvince?.(null)}
-              className="flex items-center gap-1 text-[var(--color-accent)] transition-opacity hover:opacity-70"
+              className="flex min-h-11 items-center gap-1 text-[var(--color-accent)] transition-opacity hover:opacity-70"
             >
               <svg
                 className="h-3 w-3"
@@ -142,6 +152,13 @@ export function ChinaMap({
         </div>
       </div>
 
+      {mapFailed && (
+        <p>
+          {locale === 'zh'
+            ? '地图暂不可用；地区列表仍可筛选。'
+            : 'Map unavailable; region filters remain usable.'}
+        </p>
+      )}
       {/* SVG Map — aspect-ratio wrapper prevents stretching */}
       <div className="relative" style={{ aspectRatio: `${SVG_W} / ${SVG_H}` }}>
         <svg
@@ -153,7 +170,7 @@ export function ChinaMap({
           style={{ display: 'block', position: 'absolute', inset: 0 }}
         >
           {features.map((feature) => {
-            const name = feature.properties.name;
+            const name = `CHN:province:${feature.properties.adcode}`;
             const count = provinceCount.get(name) ?? 0;
             const visited = count > 0;
             const isHovered = hoveredProvince === name;
@@ -185,10 +202,20 @@ export function ChinaMap({
                 fill={fill}
                 stroke="var(--color-bg)"
                 strokeWidth="0.5"
-                className={`transition-all duration-150 ${visited ? 'cursor-pointer' : 'cursor-default'}`}
+                className={`${styles.province} transition-all duration-150 motion-reduce:transition-none ${visited ? 'cursor-pointer' : 'cursor-default'}`}
                 onMouseEnter={() => setHoveredProvince(name)}
                 onMouseLeave={() => setHoveredProvince(null)}
                 onClick={() => handleClick(name)}
+                role="button"
+                tabIndex={visited ? 0 : -1}
+                aria-label={label(name)}
+                aria-pressed={isSelected}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleClick(name);
+                  }
+                }}
               />
             );
           })}
@@ -200,7 +227,7 @@ export function ChinaMap({
         {displayProvince && (
           <>
             <span className="font-medium text-[var(--color-text)]">
-              {displayProvince}
+              {label(displayProvince)}
             </span>
             {displayCount > 0 && (
               <span className="ml-1.5">

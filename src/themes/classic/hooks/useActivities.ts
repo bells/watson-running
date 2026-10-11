@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
+import { summarizeLocations } from '@core/activityLocation';
 import type { Activity } from '../utils/utils';
-import { locationForRun, titleForRun } from '../utils/utils';
+import { titleForRun } from '../utils/utils';
 import { getActivityData } from '@core/hooks/useActivities';
 
 interface ProcessedActivities {
@@ -14,18 +15,11 @@ interface ProcessedActivities {
 }
 
 const processActivities = (activityData: Activity[]): ProcessedActivities => {
-  const cities: Record<string, number> = {};
   const runPeriod: Record<string, number> = {};
-  const provinces: Set<string> = new Set();
-  const countries: Set<string> = new Set();
   const years: Set<string> = new Set();
-
-  // location_country 在这批个人数据中主要保存省份，国家层级固定为中国。
-  countries.add('中国');
+  const { countries, provinces, cities } = summarizeLocations(activityData);
 
   activityData.forEach((run) => {
-    const location = locationForRun(run);
-
     const periodName = titleForRun(run);
     if (periodName) {
       runPeriod[periodName] = runPeriod[periodName]
@@ -33,12 +27,6 @@ const processActivities = (activityData: Activity[]): ProcessedActivities => {
         : 1;
     }
 
-    const { city, province } = location;
-    // drop only one char city
-    if (city.length > 1) {
-      cities[city] = cities[city] ? cities[city] + run.distance : run.distance;
-    }
-    if (province) provinces.add(province);
     const year = run.start_date_local.slice(0, 4);
     years.add(year);
   });

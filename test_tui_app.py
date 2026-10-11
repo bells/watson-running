@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from textual.widgets import Button
+from textual.widgets import Button, Select
 
 from run_page.tui.app import (
     FilterBar,
@@ -41,6 +41,47 @@ def _many_activities(count: int = 108) -> list[dict]:
 
 
 class RunningTUITest(unittest.IsolatedAsyncioTestCase):
+    async def test_regions_switch_filter_and_no_route_with_shared_fixture(self):
+        from tempfile import TemporaryDirectory
+        from pathlib import Path
+        from run_page.tui.data import aggregate_regions, load_activities
+
+        fixture = Path(__file__).parent / "tests/fixtures/geography-activities.json"
+        activities = load_activities(fixture)
+        scoped = [a for a in activities if a.year == "2026" and a.type == "Run"]
+        self.assertEqual(scoped[1].country, "中国")
+        self.assertEqual(scoped[1].city, "深圳市")
+        self.assertEqual(
+            [
+                r["distanceM"]
+                for r in aggregate_regions(scoped, "route", "city")["rows"]
+            ],
+            [12000, 8000],
+        )
+        self.assertEqual(
+            aggregate_regions(scoped, "provider", "city")["rows"][0]["distanceM"], 22100
+        )
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "activities.json"
+            path.write_bytes(fixture.read_bytes())
+            app = RunningTUI(path)
+            async with app.run_test(size=(130, 40)) as pilot:
+                await pilot.pause()
+                self.assertEqual(app.region_source, "route")
+                app.query_one("#region-selection", Select).value = "CHN:city:110000"
+                await pilot.pause()
+                self.assertEqual([a.run_id for a in app._displayed_activities], [201])
+                self.assertIsNone(
+                    app.query_one(RunDetailPanel).activity.summary_polyline
+                )
+                app.query_one("#region-source", Select).value = "provider"
+                await pilot.pause()
+                app.query_one("#region-selection", Select).value = "CHN:city:440300"
+                await pilot.pause()
+                self.assertEqual(
+                    [a.run_id for a in app._displayed_activities], [201, 203]
+                )
+
     def test_monthly_distances_aggregates_by_month(self) -> None:
         year_stats = YearStats(
             year="2026",

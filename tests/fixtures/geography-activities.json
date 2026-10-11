@@ -1,0 +1,148 @@
+[
+  {
+    "run_id": 201,
+    "name": "合成跨省活动",
+    "distance": 21100,
+    "moving_time": "1:40:00",
+    "type": "Run",
+    "subtype": "Run",
+    "start_date": "2026-01-01 08:00:00",
+    "start_date_local": "2026-01-01 08:00:00",
+    "location_country": "深圳:广东",
+    "summary_polyline": null,
+    "average_heartrate": null,
+    "average_speed": 3.5,
+    "elevation_gain": null,
+    "streak": 1,
+    "geography": {
+      "schemaVersion": 1,
+      "status": "complete",
+      "source": "private_route",
+      "versions": {
+        "catalog": "synthetic-v1",
+        "boundaries": "synthetic-v1",
+        "rules": "v1"
+      },
+      "provider": {
+        "countryId": "country:CHN",
+        "provinceId": "CHN:province:440000",
+        "cityId": "CHN:city:440300",
+        "source": "catalog_inferred"
+      },
+      "primary": {
+        "countryId": "country:CHN",
+        "provinceId": "CHN:province:440000",
+        "cityId": "CHN:city:440300"
+      },
+      "validGpsDistanceM": 20000,
+      "levels": {
+        "country": {
+          "status": "complete",
+          "trustedDistanceM": 20000,
+          "uncertainDistanceM": 0,
+          "uncoveredDistanceM": 0,
+          "reasons": []
+        },
+        "province": {
+          "status": "complete",
+          "trustedDistanceM": 20000,
+          "uncertainDistanceM": 0,
+          "uncoveredDistanceM": 0,
+          "reasons": []
+        },
+        "city": {
+          "status": "complete",
+          "trustedDistanceM": 20000,
+          "uncertainDistanceM": 0,
+          "uncoveredDistanceM": 0,
+          "reasons": []
+        }
+      },
+      "regions": [
+        {
+          "id": "country:CHN",
+          "level": "country",
+          "name": "中国",
+          "parentId": null,
+          "distanceM": 20000
+        },
+        {
+          "id": "CHN:province:110000",
+          "level": "province",
+          "name": "北京市",
+          "parentId": "country:CHN",
+          "distanceM": 8000
+        },
+        {
+          "id": "CHN:province:440000",
+          "level": "province",
+          "name": "广东省",
+          "parentId": "country:CHN",
+          "distanceM": 12000
+        },
+        {
+          "id": "CHN:city:110000",
+          "level": "city",
+          "name": "北京市",
+          "parentId": "CHN:province:110000",
+          "distanceM": 8000
+        },
+        {
+          "id": "CHN:city:440300",
+          "level": "city",
+          "name": "深圳市",
+          "parentId": "CHN:province:440000",
+          "distanceM": 12000
+        }
+      ]
+    }
+  },
+  {
+    "run_id": 202,
+    "name": "合成跨省活动",
+    "distance": 21100,
+    "moving_time": "1:40:00",
+    "type": "Run",
+    "subtype": "Run",
+    "start_date": "2025-01-01 08:00:00",
+    "start_date_local": "2025-01-01 08:00:00",
+    "location_country": "深圳:广东",
+    "summary_polyline": null,
+    "average_heartrate": null,
+    "average_speed": 3.5,
+    "elevation_gain": null,
+    "streak": 1
+  },
+  {
+    "run_id": 203,
+    "name": "旧平台记录",
+    "distance": 1000,
+    "moving_time": "1:40:00",
+    "type": "Run",
+    "subtype": "Run",
+    "start_date": "2026-01-01 08:00:00",
+    "start_date_local": "2026-01-01 08:00:00",
+    "location_country": "深圳市:广东省",
+    "summary_polyline": null,
+    "average_heartrate": null,
+    "average_speed": 3.5,
+    "elevation_gain": null,
+    "streak": 1
+  },
+  {
+    "run_id": 204,
+    "name": "合成跨省活动",
+    "distance": 21100,
+    "moving_time": "1:40:00",
+    "type": "Ride",
+    "subtype": "Run",
+    "start_date": "2026-01-01 08:00:00",
+    "start_date_local": "2026-01-01 08:00:00",
+    "location_country": null,
+    "summary_polyline": null,
+    "average_heartrate": null,
+    "average_speed": 3.5,
+    "elevation_gain": null,
+    "streak": 1
+  }
+]

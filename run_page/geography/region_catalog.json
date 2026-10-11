@@ -1,0 +1,3883 @@
+{
+  "version": "location-catalog-v1",
+  "provenance": "Identity and aliases from existing locationNames.ts; not boundary coverage or administrative accuracy evidence. Direct county aggregate codes ending in 90 are excluded.",
+  "regions": [
+    {
+      "id": "country:CHN",
+      "countryCode": "CHN",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "CHN",
+      "name": "中国",
+      "parentId": null,
+      "aliases": ["China", "中华人民共和国", "中国大陆"]
+    },
+    {
+      "id": "country:USA",
+      "countryCode": "USA",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "USA",
+      "name": "美国",
+      "parentId": null,
+      "aliases": ["United States", "USA", "美利坚合众国"]
+    },
+    {
+      "id": "country:GBR",
+      "countryCode": "GBR",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "GBR",
+      "name": "英国",
+      "parentId": null,
+      "aliases": ["United Kingdom", "UK"]
+    },
+    {
+      "id": "country:JPN",
+      "countryCode": "JPN",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "JPN",
+      "name": "日本",
+      "parentId": null,
+      "aliases": ["Japan"]
+    },
+    {
+      "id": "country:THA",
+      "countryCode": "THA",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "THA",
+      "name": "泰国",
+      "parentId": null,
+      "aliases": ["Thailand"]
+    },
+    {
+      "id": "country:AUT",
+      "countryCode": "AUT",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "AUT",
+      "name": "奥地利",
+      "parentId": null,
+      "aliases": ["Austria", "奧地利"]
+    },
+    {
+      "id": "country:IDN",
+      "countryCode": "IDN",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "IDN",
+      "name": "印度尼西亚",
+      "parentId": null,
+      "aliases": ["Indonesia"]
+    },
+    {
+      "id": "country:KOR",
+      "countryCode": "KOR",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "KOR",
+      "name": "韩国",
+      "parentId": null,
+      "aliases": ["South Korea"]
+    },
+    {
+      "id": "country:LKA",
+      "countryCode": "LKA",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "LKA",
+      "name": "斯里兰卡",
+      "parentId": null,
+      "aliases": ["Sri Lanka"]
+    },
+    {
+      "id": "country:SLB",
+      "countryCode": "SLB",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "SLB",
+      "name": "所罗门群岛",
+      "parentId": null,
+      "aliases": ["Solomon Islands"]
+    },
+    {
+      "id": "country:LVA",
+      "countryCode": "LVA",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "LVA",
+      "name": "拉脱维亚",
+      "parentId": null,
+      "aliases": ["Latvia"]
+    },
+    {
+      "id": "country:EST",
+      "countryCode": "EST",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "EST",
+      "name": "爱沙尼亚",
+      "parentId": null,
+      "aliases": ["Estonia"]
+    },
+    {
+      "id": "country:AUS",
+      "countryCode": "AUS",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "AUS",
+      "name": "澳大利亚",
+      "parentId": null,
+      "aliases": ["Australia"]
+    },
+    {
+      "id": "CHN:province:110000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "110000",
+      "name": "北京市",
+      "parentId": "country:CHN",
+      "aliases": ["北京"]
+    },
+    {
+      "id": "CHN:province:120000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "120000",
+      "name": "天津市",
+      "parentId": "country:CHN",
+      "aliases": ["天津"]
+    },
+    {
+      "id": "CHN:province:130000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "130000",
+      "name": "河北省",
+      "parentId": "country:CHN",
+      "aliases": ["河北"]
+    },
+    {
+      "id": "CHN:province:140000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "140000",
+      "name": "山西省",
+      "parentId": "country:CHN",
+      "aliases": ["山西"]
+    },
+    {
+      "id": "CHN:province:150000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "150000",
+      "name": "内蒙古自治区",
+      "parentId": "country:CHN",
+      "aliases": ["内蒙古"]
+    },
+    {
+      "id": "CHN:province:210000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "210000",
+      "name": "辽宁省",
+      "parentId": "country:CHN",
+      "aliases": ["辽宁"]
+    },
+    {
+      "id": "CHN:province:220000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "220000",
+      "name": "吉林省",
+      "parentId": "country:CHN",
+      "aliases": ["吉林"]
+    },
+    {
+      "id": "CHN:province:230000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "230000",
+      "name": "黑龙江省",
+      "parentId": "country:CHN",
+      "aliases": ["黑龙江"]
+    },
+    {
+      "id": "CHN:province:310000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "310000",
+      "name": "上海市",
+      "parentId": "country:CHN",
+      "aliases": ["上海"]
+    },
+    {
+      "id": "CHN:province:320000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "320000",
+      "name": "江苏省",
+      "parentId": "country:CHN",
+      "aliases": ["江苏"]
+    },
+    {
+      "id": "CHN:province:330000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "330000",
+      "name": "浙江省",
+      "parentId": "country:CHN",
+      "aliases": ["浙江"]
+    },
+    {
+      "id": "CHN:province:340000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "340000",
+      "name": "安徽省",
+      "parentId": "country:CHN",
+      "aliases": ["安徽"]
+    },
+    {
+      "id": "CHN:province:350000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "350000",
+      "name": "福建省",
+      "parentId": "country:CHN",
+      "aliases": ["福建"]
+    },
+    {
+      "id": "CHN:province:360000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "360000",
+      "name": "江西省",
+      "parentId": "country:CHN",
+      "aliases": ["江西"]
+    },
+    {
+      "id": "CHN:province:370000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "370000",
+      "name": "山东省",
+      "parentId": "country:CHN",
+      "aliases": ["山东"]
+    },
+    {
+      "id": "CHN:province:410000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "410000",
+      "name": "河南省",
+      "parentId": "country:CHN",
+      "aliases": ["河南"]
+    },
+    {
+      "id": "CHN:province:420000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "420000",
+      "name": "湖北省",
+      "parentId": "country:CHN",
+      "aliases": ["湖北"]
+    },
+    {
+      "id": "CHN:province:430000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "430000",
+      "name": "湖南省",
+      "parentId": "country:CHN",
+      "aliases": ["湖南"]
+    },
+    {
+      "id": "CHN:province:440000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "440000",
+      "name": "广东省",
+      "parentId": "country:CHN",
+      "aliases": ["广东"]
+    },
+    {
+      "id": "CHN:province:450000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "450000",
+      "name": "广西壮族自治区",
+      "parentId": "country:CHN",
+      "aliases": ["广西"]
+    },
+    {
+      "id": "CHN:province:460000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "460000",
+      "name": "海南省",
+      "parentId": "country:CHN",
+      "aliases": ["海南"]
+    },
+    {
+      "id": "CHN:province:500000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "500000",
+      "name": "重庆市",
+      "parentId": "country:CHN",
+      "aliases": ["重庆"]
+    },
+    {
+      "id": "CHN:province:510000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "510000",
+      "name": "四川省",
+      "parentId": "country:CHN",
+      "aliases": ["四川"]
+    },
+    {
+      "id": "CHN:province:520000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "520000",
+      "name": "贵州省",
+      "parentId": "country:CHN",
+      "aliases": ["贵州"]
+    },
+    {
+      "id": "CHN:province:530000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "530000",
+      "name": "云南省",
+      "parentId": "country:CHN",
+      "aliases": ["云南"]
+    },
+    {
+      "id": "CHN:province:540000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "540000",
+      "name": "西藏自治区",
+      "parentId": "country:CHN",
+      "aliases": ["西藏"]
+    },
+    {
+      "id": "CHN:province:610000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "610000",
+      "name": "陕西省",
+      "parentId": "country:CHN",
+      "aliases": ["陕西"]
+    },
+    {
+      "id": "CHN:province:620000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "620000",
+      "name": "甘肃省",
+      "parentId": "country:CHN",
+      "aliases": ["甘肃"]
+    },
+    {
+      "id": "CHN:province:630000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "630000",
+      "name": "青海省",
+      "parentId": "country:CHN",
+      "aliases": ["青海"]
+    },
+    {
+      "id": "CHN:province:640000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "640000",
+      "name": "宁夏回族自治区",
+      "parentId": "country:CHN",
+      "aliases": ["宁夏"]
+    },
+    {
+      "id": "CHN:province:650000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "650000",
+      "name": "新疆维吾尔自治区",
+      "parentId": "country:CHN",
+      "aliases": ["新疆"]
+    },
+    {
+      "id": "CHN:province:710000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "710000",
+      "name": "台湾省",
+      "parentId": "country:CHN",
+      "aliases": ["台湾"]
+    },
+    {
+      "id": "CHN:province:810000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "810000",
+      "name": "香港特别行政区",
+      "parentId": "country:CHN",
+      "aliases": ["香港"]
+    },
+    {
+      "id": "CHN:province:820000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "820000",
+      "name": "澳门特别行政区",
+      "parentId": "country:CHN",
+      "aliases": ["澳门"]
+    },
+    {
+      "id": "CHN:city:130100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130100",
+      "name": "石家庄市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["石家庄"]
+    },
+    {
+      "id": "CHN:city:130200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130200",
+      "name": "唐山市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["唐山"]
+    },
+    {
+      "id": "CHN:city:130300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130300",
+      "name": "秦皇岛市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["秦皇岛"]
+    },
+    {
+      "id": "CHN:city:130400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130400",
+      "name": "邯郸市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["邯郸"]
+    },
+    {
+      "id": "CHN:city:130500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130500",
+      "name": "邢台市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["邢台"]
+    },
+    {
+      "id": "CHN:city:130600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130600",
+      "name": "保定市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["保定"]
+    },
+    {
+      "id": "CHN:city:130700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130700",
+      "name": "张家口市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["张家口"]
+    },
+    {
+      "id": "CHN:city:130800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130800",
+      "name": "承德市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["承德"]
+    },
+    {
+      "id": "CHN:city:130900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "130900",
+      "name": "沧州市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["沧州"]
+    },
+    {
+      "id": "CHN:city:131000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "131000",
+      "name": "廊坊市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["廊坊"]
+    },
+    {
+      "id": "CHN:city:131100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "131100",
+      "name": "衡水市",
+      "parentId": "CHN:province:130000",
+      "aliases": ["衡水"]
+    },
+    {
+      "id": "CHN:city:140100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140100",
+      "name": "太原市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["太原"]
+    },
+    {
+      "id": "CHN:city:140200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140200",
+      "name": "大同市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["大同"]
+    },
+    {
+      "id": "CHN:city:140300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140300",
+      "name": "阳泉市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["阳泉"]
+    },
+    {
+      "id": "CHN:city:140400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140400",
+      "name": "长治市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["长治"]
+    },
+    {
+      "id": "CHN:city:140500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140500",
+      "name": "晋城市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["晋城"]
+    },
+    {
+      "id": "CHN:city:140600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140600",
+      "name": "朔州市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["朔州"]
+    },
+    {
+      "id": "CHN:city:140700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140700",
+      "name": "晋中市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["晋中"]
+    },
+    {
+      "id": "CHN:city:140800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140800",
+      "name": "运城市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["运城"]
+    },
+    {
+      "id": "CHN:city:140900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "140900",
+      "name": "忻州市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["忻州"]
+    },
+    {
+      "id": "CHN:city:141000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "141000",
+      "name": "临汾市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["临汾"]
+    },
+    {
+      "id": "CHN:city:141100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "141100",
+      "name": "吕梁市",
+      "parentId": "CHN:province:140000",
+      "aliases": ["吕梁"]
+    },
+    {
+      "id": "CHN:city:150100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150100",
+      "name": "呼和浩特市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["呼和浩特"]
+    },
+    {
+      "id": "CHN:city:150200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150200",
+      "name": "包头市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["包头"]
+    },
+    {
+      "id": "CHN:city:150300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150300",
+      "name": "乌海市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["乌海"]
+    },
+    {
+      "id": "CHN:city:150400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150400",
+      "name": "赤峰市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["赤峰"]
+    },
+    {
+      "id": "CHN:city:150500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150500",
+      "name": "通辽市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["通辽"]
+    },
+    {
+      "id": "CHN:city:150600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150600",
+      "name": "鄂尔多斯市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["鄂尔多斯"]
+    },
+    {
+      "id": "CHN:city:150700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150700",
+      "name": "呼伦贝尔市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["呼伦贝尔"]
+    },
+    {
+      "id": "CHN:city:150800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150800",
+      "name": "巴彦淖尔市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["巴彦淖尔"]
+    },
+    {
+      "id": "CHN:city:150900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "150900",
+      "name": "乌兰察布市",
+      "parentId": "CHN:province:150000",
+      "aliases": ["乌兰察布"]
+    },
+    {
+      "id": "CHN:city:152200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "152200",
+      "name": "兴安盟",
+      "parentId": "CHN:province:150000",
+      "aliases": ["兴安盟"]
+    },
+    {
+      "id": "CHN:city:152500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "152500",
+      "name": "锡林郭勒盟",
+      "parentId": "CHN:province:150000",
+      "aliases": ["锡林郭勒盟"]
+    },
+    {
+      "id": "CHN:city:152900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "152900",
+      "name": "阿拉善盟",
+      "parentId": "CHN:province:150000",
+      "aliases": ["阿拉善盟"]
+    },
+    {
+      "id": "CHN:city:210100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210100",
+      "name": "沈阳市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["沈阳"]
+    },
+    {
+      "id": "CHN:city:210200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210200",
+      "name": "大连市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["大连"]
+    },
+    {
+      "id": "CHN:city:210300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210300",
+      "name": "鞍山市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["鞍山"]
+    },
+    {
+      "id": "CHN:city:210400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210400",
+      "name": "抚顺市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["抚顺"]
+    },
+    {
+      "id": "CHN:city:210500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210500",
+      "name": "本溪市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["本溪"]
+    },
+    {
+      "id": "CHN:city:210600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210600",
+      "name": "丹东市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["丹东"]
+    },
+    {
+      "id": "CHN:city:210700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210700",
+      "name": "锦州市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["锦州"]
+    },
+    {
+      "id": "CHN:city:210800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210800",
+      "name": "营口市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["营口"]
+    },
+    {
+      "id": "CHN:city:210900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "210900",
+      "name": "阜新市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["阜新"]
+    },
+    {
+      "id": "CHN:city:211000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "211000",
+      "name": "辽阳市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["辽阳"]
+    },
+    {
+      "id": "CHN:city:211100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "211100",
+      "name": "盘锦市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["盘锦"]
+    },
+    {
+      "id": "CHN:city:211200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "211200",
+      "name": "铁岭市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["铁岭"]
+    },
+    {
+      "id": "CHN:city:211300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "211300",
+      "name": "朝阳市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["朝阳"]
+    },
+    {
+      "id": "CHN:city:211400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "211400",
+      "name": "葫芦岛市",
+      "parentId": "CHN:province:210000",
+      "aliases": ["葫芦岛"]
+    },
+    {
+      "id": "CHN:city:220100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220100",
+      "name": "长春市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["长春"]
+    },
+    {
+      "id": "CHN:city:220200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220200",
+      "name": "吉林市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["吉林"]
+    },
+    {
+      "id": "CHN:city:220300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220300",
+      "name": "四平市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["四平"]
+    },
+    {
+      "id": "CHN:city:220400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220400",
+      "name": "辽源市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["辽源"]
+    },
+    {
+      "id": "CHN:city:220500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220500",
+      "name": "通化市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["通化"]
+    },
+    {
+      "id": "CHN:city:220600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220600",
+      "name": "白山市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["白山"]
+    },
+    {
+      "id": "CHN:city:220700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220700",
+      "name": "松原市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["松原"]
+    },
+    {
+      "id": "CHN:city:220800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "220800",
+      "name": "白城市",
+      "parentId": "CHN:province:220000",
+      "aliases": ["白城"]
+    },
+    {
+      "id": "CHN:city:222400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "222400",
+      "name": "延边朝鲜族自治州",
+      "parentId": "CHN:province:220000",
+      "aliases": ["延边朝鲜族自治州"]
+    },
+    {
+      "id": "CHN:city:230100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230100",
+      "name": "哈尔滨市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["哈尔滨"]
+    },
+    {
+      "id": "CHN:city:230200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230200",
+      "name": "齐齐哈尔市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["齐齐哈尔"]
+    },
+    {
+      "id": "CHN:city:230300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230300",
+      "name": "鸡西市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["鸡西"]
+    },
+    {
+      "id": "CHN:city:230400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230400",
+      "name": "鹤岗市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["鹤岗"]
+    },
+    {
+      "id": "CHN:city:230500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230500",
+      "name": "双鸭山市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["双鸭山"]
+    },
+    {
+      "id": "CHN:city:230600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230600",
+      "name": "大庆市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["大庆"]
+    },
+    {
+      "id": "CHN:city:230700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230700",
+      "name": "伊春市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["伊春"]
+    },
+    {
+      "id": "CHN:city:230800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230800",
+      "name": "佳木斯市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["佳木斯"]
+    },
+    {
+      "id": "CHN:city:230900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "230900",
+      "name": "七台河市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["七台河"]
+    },
+    {
+      "id": "CHN:city:231000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "231000",
+      "name": "牡丹江市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["牡丹江"]
+    },
+    {
+      "id": "CHN:city:231100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "231100",
+      "name": "黑河市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["黑河"]
+    },
+    {
+      "id": "CHN:city:231200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "231200",
+      "name": "绥化市",
+      "parentId": "CHN:province:230000",
+      "aliases": ["绥化"]
+    },
+    {
+      "id": "CHN:city:232700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "232700",
+      "name": "大兴安岭地区",
+      "parentId": "CHN:province:230000",
+      "aliases": ["大兴安岭地区"]
+    },
+    {
+      "id": "CHN:city:320100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320100",
+      "name": "南京市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["南京"]
+    },
+    {
+      "id": "CHN:city:320200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320200",
+      "name": "无锡市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["无锡"]
+    },
+    {
+      "id": "CHN:city:320300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320300",
+      "name": "徐州市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["徐州"]
+    },
+    {
+      "id": "CHN:city:320400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320400",
+      "name": "常州市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["常州"]
+    },
+    {
+      "id": "CHN:city:320500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320500",
+      "name": "苏州市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["苏州"]
+    },
+    {
+      "id": "CHN:city:320600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320600",
+      "name": "南通市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["南通"]
+    },
+    {
+      "id": "CHN:city:320700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320700",
+      "name": "连云港市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["连云港"]
+    },
+    {
+      "id": "CHN:city:320800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320800",
+      "name": "淮安市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["淮安"]
+    },
+    {
+      "id": "CHN:city:320900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "320900",
+      "name": "盐城市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["盐城"]
+    },
+    {
+      "id": "CHN:city:321000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "321000",
+      "name": "扬州市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["扬州"]
+    },
+    {
+      "id": "CHN:city:321100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "321100",
+      "name": "镇江市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["镇江"]
+    },
+    {
+      "id": "CHN:city:321200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "321200",
+      "name": "泰州市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["泰州"]
+    },
+    {
+      "id": "CHN:city:321300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "321300",
+      "name": "宿迁市",
+      "parentId": "CHN:province:320000",
+      "aliases": ["宿迁"]
+    },
+    {
+      "id": "CHN:city:330100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330100",
+      "name": "杭州市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["杭州"]
+    },
+    {
+      "id": "CHN:city:330200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330200",
+      "name": "宁波市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["宁波"]
+    },
+    {
+      "id": "CHN:city:330300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330300",
+      "name": "温州市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["温州"]
+    },
+    {
+      "id": "CHN:city:330400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330400",
+      "name": "嘉兴市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["嘉兴"]
+    },
+    {
+      "id": "CHN:city:330500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330500",
+      "name": "湖州市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["湖州"]
+    },
+    {
+      "id": "CHN:city:330600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330600",
+      "name": "绍兴市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["绍兴"]
+    },
+    {
+      "id": "CHN:city:330700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330700",
+      "name": "金华市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["金华"]
+    },
+    {
+      "id": "CHN:city:330800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330800",
+      "name": "衢州市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["衢州"]
+    },
+    {
+      "id": "CHN:city:330900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "330900",
+      "name": "舟山市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["舟山"]
+    },
+    {
+      "id": "CHN:city:331000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "331000",
+      "name": "台州市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["台州"]
+    },
+    {
+      "id": "CHN:city:331100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "331100",
+      "name": "丽水市",
+      "parentId": "CHN:province:330000",
+      "aliases": ["丽水"]
+    },
+    {
+      "id": "CHN:city:340100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340100",
+      "name": "合肥市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["合肥"]
+    },
+    {
+      "id": "CHN:city:340200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340200",
+      "name": "芜湖市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["芜湖"]
+    },
+    {
+      "id": "CHN:city:340300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340300",
+      "name": "蚌埠市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["蚌埠"]
+    },
+    {
+      "id": "CHN:city:340400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340400",
+      "name": "淮南市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["淮南"]
+    },
+    {
+      "id": "CHN:city:340500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340500",
+      "name": "马鞍山市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["马鞍山"]
+    },
+    {
+      "id": "CHN:city:340600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340600",
+      "name": "淮北市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["淮北"]
+    },
+    {
+      "id": "CHN:city:340700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340700",
+      "name": "铜陵市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["铜陵"]
+    },
+    {
+      "id": "CHN:city:340800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "340800",
+      "name": "安庆市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["安庆"]
+    },
+    {
+      "id": "CHN:city:341000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341000",
+      "name": "黄山市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["黄山"]
+    },
+    {
+      "id": "CHN:city:341100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341100",
+      "name": "滁州市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["滁州"]
+    },
+    {
+      "id": "CHN:city:341200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341200",
+      "name": "阜阳市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["阜阳"]
+    },
+    {
+      "id": "CHN:city:341300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341300",
+      "name": "宿州市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["宿州"]
+    },
+    {
+      "id": "CHN:city:341500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341500",
+      "name": "六安市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["六安"]
+    },
+    {
+      "id": "CHN:city:341600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341600",
+      "name": "亳州市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["亳州"]
+    },
+    {
+      "id": "CHN:city:341700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341700",
+      "name": "池州市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["池州"]
+    },
+    {
+      "id": "CHN:city:341800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "341800",
+      "name": "宣城市",
+      "parentId": "CHN:province:340000",
+      "aliases": ["宣城"]
+    },
+    {
+      "id": "CHN:city:350100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350100",
+      "name": "福州市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["福州"]
+    },
+    {
+      "id": "CHN:city:350200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350200",
+      "name": "厦门市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["厦门"]
+    },
+    {
+      "id": "CHN:city:350300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350300",
+      "name": "莆田市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["莆田"]
+    },
+    {
+      "id": "CHN:city:350400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350400",
+      "name": "三明市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["三明"]
+    },
+    {
+      "id": "CHN:city:350500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350500",
+      "name": "泉州市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["泉州"]
+    },
+    {
+      "id": "CHN:city:350600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350600",
+      "name": "漳州市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["漳州"]
+    },
+    {
+      "id": "CHN:city:350700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350700",
+      "name": "南平市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["南平"]
+    },
+    {
+      "id": "CHN:city:350800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350800",
+      "name": "龙岩市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["龙岩"]
+    },
+    {
+      "id": "CHN:city:350900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "350900",
+      "name": "宁德市",
+      "parentId": "CHN:province:350000",
+      "aliases": ["宁德"]
+    },
+    {
+      "id": "CHN:city:360100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360100",
+      "name": "南昌市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["南昌"]
+    },
+    {
+      "id": "CHN:city:360200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360200",
+      "name": "景德镇市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["景德镇"]
+    },
+    {
+      "id": "CHN:city:360300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360300",
+      "name": "萍乡市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["萍乡"]
+    },
+    {
+      "id": "CHN:city:360400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360400",
+      "name": "九江市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["九江"]
+    },
+    {
+      "id": "CHN:city:360500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360500",
+      "name": "新余市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["新余"]
+    },
+    {
+      "id": "CHN:city:360600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360600",
+      "name": "鹰潭市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["鹰潭"]
+    },
+    {
+      "id": "CHN:city:360700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360700",
+      "name": "赣州市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["赣州"]
+    },
+    {
+      "id": "CHN:city:360800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360800",
+      "name": "吉安市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["吉安"]
+    },
+    {
+      "id": "CHN:city:360900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "360900",
+      "name": "宜春市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["宜春"]
+    },
+    {
+      "id": "CHN:city:361000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "361000",
+      "name": "抚州市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["抚州"]
+    },
+    {
+      "id": "CHN:city:361100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "361100",
+      "name": "上饶市",
+      "parentId": "CHN:province:360000",
+      "aliases": ["上饶"]
+    },
+    {
+      "id": "CHN:city:370100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370100",
+      "name": "济南市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["济南"]
+    },
+    {
+      "id": "CHN:city:370200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370200",
+      "name": "青岛市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["青岛"]
+    },
+    {
+      "id": "CHN:city:370300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370300",
+      "name": "淄博市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["淄博"]
+    },
+    {
+      "id": "CHN:city:370400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370400",
+      "name": "枣庄市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["枣庄"]
+    },
+    {
+      "id": "CHN:city:370500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370500",
+      "name": "东营市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["东营"]
+    },
+    {
+      "id": "CHN:city:370600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370600",
+      "name": "烟台市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["烟台"]
+    },
+    {
+      "id": "CHN:city:370700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370700",
+      "name": "潍坊市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["潍坊"]
+    },
+    {
+      "id": "CHN:city:370800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370800",
+      "name": "济宁市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["济宁"]
+    },
+    {
+      "id": "CHN:city:370900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "370900",
+      "name": "泰安市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["泰安"]
+    },
+    {
+      "id": "CHN:city:371000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "371000",
+      "name": "威海市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["威海"]
+    },
+    {
+      "id": "CHN:city:371100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "371100",
+      "name": "日照市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["日照"]
+    },
+    {
+      "id": "CHN:city:371300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "371300",
+      "name": "临沂市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["临沂"]
+    },
+    {
+      "id": "CHN:city:371400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "371400",
+      "name": "德州市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["德州"]
+    },
+    {
+      "id": "CHN:city:371500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "371500",
+      "name": "聊城市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["聊城"]
+    },
+    {
+      "id": "CHN:city:371600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "371600",
+      "name": "滨州市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["滨州"]
+    },
+    {
+      "id": "CHN:city:371700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "371700",
+      "name": "菏泽市",
+      "parentId": "CHN:province:370000",
+      "aliases": ["菏泽"]
+    },
+    {
+      "id": "CHN:city:410100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410100",
+      "name": "郑州市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["郑州"]
+    },
+    {
+      "id": "CHN:city:410200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410200",
+      "name": "开封市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["开封"]
+    },
+    {
+      "id": "CHN:city:410300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410300",
+      "name": "洛阳市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["洛阳"]
+    },
+    {
+      "id": "CHN:city:410400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410400",
+      "name": "平顶山市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["平顶山"]
+    },
+    {
+      "id": "CHN:city:410500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410500",
+      "name": "安阳市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["安阳"]
+    },
+    {
+      "id": "CHN:city:410600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410600",
+      "name": "鹤壁市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["鹤壁"]
+    },
+    {
+      "id": "CHN:city:410700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410700",
+      "name": "新乡市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["新乡"]
+    },
+    {
+      "id": "CHN:city:410800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410800",
+      "name": "焦作市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["焦作"]
+    },
+    {
+      "id": "CHN:city:410900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "410900",
+      "name": "濮阳市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["濮阳"]
+    },
+    {
+      "id": "CHN:city:411000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411000",
+      "name": "许昌市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["许昌"]
+    },
+    {
+      "id": "CHN:city:411100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411100",
+      "name": "漯河市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["漯河"]
+    },
+    {
+      "id": "CHN:city:411200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411200",
+      "name": "三门峡市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["三门峡"]
+    },
+    {
+      "id": "CHN:city:411300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411300",
+      "name": "南阳市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["南阳"]
+    },
+    {
+      "id": "CHN:city:411400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411400",
+      "name": "商丘市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["商丘"]
+    },
+    {
+      "id": "CHN:city:411500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411500",
+      "name": "信阳市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["信阳"]
+    },
+    {
+      "id": "CHN:city:411600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411600",
+      "name": "周口市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["周口"]
+    },
+    {
+      "id": "CHN:city:411700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "411700",
+      "name": "驻马店市",
+      "parentId": "CHN:province:410000",
+      "aliases": ["驻马店"]
+    },
+    {
+      "id": "CHN:city:420100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420100",
+      "name": "武汉市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["武汉"]
+    },
+    {
+      "id": "CHN:city:420200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420200",
+      "name": "黄石市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["黄石"]
+    },
+    {
+      "id": "CHN:city:420300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420300",
+      "name": "十堰市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["十堰"]
+    },
+    {
+      "id": "CHN:city:420500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420500",
+      "name": "宜昌市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["宜昌"]
+    },
+    {
+      "id": "CHN:city:420600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420600",
+      "name": "襄阳市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["襄阳"]
+    },
+    {
+      "id": "CHN:city:420700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420700",
+      "name": "鄂州市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["鄂州"]
+    },
+    {
+      "id": "CHN:city:420800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420800",
+      "name": "荆门市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["荆门"]
+    },
+    {
+      "id": "CHN:city:420900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "420900",
+      "name": "孝感市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["孝感"]
+    },
+    {
+      "id": "CHN:city:421000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "421000",
+      "name": "荆州市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["荆州"]
+    },
+    {
+      "id": "CHN:city:421100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "421100",
+      "name": "黄冈市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["黄冈"]
+    },
+    {
+      "id": "CHN:city:421200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "421200",
+      "name": "咸宁市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["咸宁"]
+    },
+    {
+      "id": "CHN:city:421300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "421300",
+      "name": "随州市",
+      "parentId": "CHN:province:420000",
+      "aliases": ["随州"]
+    },
+    {
+      "id": "CHN:city:422800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "422800",
+      "name": "恩施土家族苗族自治州",
+      "parentId": "CHN:province:420000",
+      "aliases": ["恩施土家族苗族自治州"]
+    },
+    {
+      "id": "CHN:city:430100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430100",
+      "name": "长沙市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["长沙"]
+    },
+    {
+      "id": "CHN:city:430200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430200",
+      "name": "株洲市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["株洲"]
+    },
+    {
+      "id": "CHN:city:430300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430300",
+      "name": "湘潭市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["湘潭"]
+    },
+    {
+      "id": "CHN:city:430400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430400",
+      "name": "衡阳市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["衡阳"]
+    },
+    {
+      "id": "CHN:city:430500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430500",
+      "name": "邵阳市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["邵阳"]
+    },
+    {
+      "id": "CHN:city:430600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430600",
+      "name": "岳阳市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["岳阳"]
+    },
+    {
+      "id": "CHN:city:430700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430700",
+      "name": "常德市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["常德"]
+    },
+    {
+      "id": "CHN:city:430800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430800",
+      "name": "张家界市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["张家界"]
+    },
+    {
+      "id": "CHN:city:430900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "430900",
+      "name": "益阳市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["益阳"]
+    },
+    {
+      "id": "CHN:city:431000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "431000",
+      "name": "郴州市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["郴州"]
+    },
+    {
+      "id": "CHN:city:431100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "431100",
+      "name": "永州市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["永州"]
+    },
+    {
+      "id": "CHN:city:431200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "431200",
+      "name": "怀化市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["怀化"]
+    },
+    {
+      "id": "CHN:city:431300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "431300",
+      "name": "娄底市",
+      "parentId": "CHN:province:430000",
+      "aliases": ["娄底"]
+    },
+    {
+      "id": "CHN:city:433100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "433100",
+      "name": "湘西土家族苗族自治州",
+      "parentId": "CHN:province:430000",
+      "aliases": ["湘西土家族苗族自治州"]
+    },
+    {
+      "id": "CHN:city:440100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440100",
+      "name": "广州市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["广州"]
+    },
+    {
+      "id": "CHN:city:440200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440200",
+      "name": "韶关市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["韶关"]
+    },
+    {
+      "id": "CHN:city:440300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440300",
+      "name": "深圳市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["深圳"]
+    },
+    {
+      "id": "CHN:city:440400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440400",
+      "name": "珠海市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["珠海"]
+    },
+    {
+      "id": "CHN:city:440500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440500",
+      "name": "汕头市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["汕头"]
+    },
+    {
+      "id": "CHN:city:440600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440600",
+      "name": "佛山市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["佛山"]
+    },
+    {
+      "id": "CHN:city:440700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440700",
+      "name": "江门市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["江门"]
+    },
+    {
+      "id": "CHN:city:440800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440800",
+      "name": "湛江市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["湛江"]
+    },
+    {
+      "id": "CHN:city:440900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440900",
+      "name": "茂名市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["茂名"]
+    },
+    {
+      "id": "CHN:city:441200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441200",
+      "name": "肇庆市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["肇庆"]
+    },
+    {
+      "id": "CHN:city:441300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441300",
+      "name": "惠州市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["惠州"]
+    },
+    {
+      "id": "CHN:city:441400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441400",
+      "name": "梅州市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["梅州"]
+    },
+    {
+      "id": "CHN:city:441500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441500",
+      "name": "汕尾市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["汕尾"]
+    },
+    {
+      "id": "CHN:city:441600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441600",
+      "name": "河源市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["河源"]
+    },
+    {
+      "id": "CHN:city:441700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441700",
+      "name": "阳江市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["阳江"]
+    },
+    {
+      "id": "CHN:city:441800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441800",
+      "name": "清远市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["清远"]
+    },
+    {
+      "id": "CHN:city:441900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441900",
+      "name": "东莞市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["东莞"]
+    },
+    {
+      "id": "CHN:city:442000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "442000",
+      "name": "中山市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["中山"]
+    },
+    {
+      "id": "CHN:city:445100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "445100",
+      "name": "潮州市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["潮州"]
+    },
+    {
+      "id": "CHN:city:445200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "445200",
+      "name": "揭阳市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["揭阳"]
+    },
+    {
+      "id": "CHN:city:445300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "445300",
+      "name": "云浮市",
+      "parentId": "CHN:province:440000",
+      "aliases": ["云浮"]
+    },
+    {
+      "id": "CHN:city:450100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450100",
+      "name": "南宁市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["南宁"]
+    },
+    {
+      "id": "CHN:city:450200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450200",
+      "name": "柳州市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["柳州"]
+    },
+    {
+      "id": "CHN:city:450300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450300",
+      "name": "桂林市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["桂林"]
+    },
+    {
+      "id": "CHN:city:450400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450400",
+      "name": "梧州市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["梧州"]
+    },
+    {
+      "id": "CHN:city:450500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450500",
+      "name": "北海市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["北海"]
+    },
+    {
+      "id": "CHN:city:450600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450600",
+      "name": "防城港市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["防城港"]
+    },
+    {
+      "id": "CHN:city:450700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450700",
+      "name": "钦州市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["钦州"]
+    },
+    {
+      "id": "CHN:city:450800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450800",
+      "name": "贵港市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["贵港"]
+    },
+    {
+      "id": "CHN:city:450900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "450900",
+      "name": "玉林市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["玉林"]
+    },
+    {
+      "id": "CHN:city:451000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "451000",
+      "name": "百色市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["百色"]
+    },
+    {
+      "id": "CHN:city:451100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "451100",
+      "name": "贺州市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["贺州"]
+    },
+    {
+      "id": "CHN:city:451200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "451200",
+      "name": "河池市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["河池"]
+    },
+    {
+      "id": "CHN:city:451300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "451300",
+      "name": "来宾市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["来宾"]
+    },
+    {
+      "id": "CHN:city:451400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "451400",
+      "name": "崇左市",
+      "parentId": "CHN:province:450000",
+      "aliases": ["崇左"]
+    },
+    {
+      "id": "CHN:city:460100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "460100",
+      "name": "海口市",
+      "parentId": "CHN:province:460000",
+      "aliases": ["海口"]
+    },
+    {
+      "id": "CHN:city:460200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "460200",
+      "name": "三亚市",
+      "parentId": "CHN:province:460000",
+      "aliases": ["三亚"]
+    },
+    {
+      "id": "CHN:city:460300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "460300",
+      "name": "三沙市",
+      "parentId": "CHN:province:460000",
+      "aliases": ["三沙"]
+    },
+    {
+      "id": "CHN:city:460400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "460400",
+      "name": "儋州市",
+      "parentId": "CHN:province:460000",
+      "aliases": ["儋州"]
+    },
+    {
+      "id": "CHN:city:510100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510100",
+      "name": "成都市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["成都"]
+    },
+    {
+      "id": "CHN:city:510300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510300",
+      "name": "自贡市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["自贡"]
+    },
+    {
+      "id": "CHN:city:510400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510400",
+      "name": "攀枝花市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["攀枝花"]
+    },
+    {
+      "id": "CHN:city:510500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510500",
+      "name": "泸州市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["泸州"]
+    },
+    {
+      "id": "CHN:city:510600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510600",
+      "name": "德阳市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["德阳"]
+    },
+    {
+      "id": "CHN:city:510700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510700",
+      "name": "绵阳市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["绵阳"]
+    },
+    {
+      "id": "CHN:city:510800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510800",
+      "name": "广元市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["广元"]
+    },
+    {
+      "id": "CHN:city:510900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "510900",
+      "name": "遂宁市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["遂宁"]
+    },
+    {
+      "id": "CHN:city:511000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511000",
+      "name": "内江市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["内江"]
+    },
+    {
+      "id": "CHN:city:511100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511100",
+      "name": "乐山市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["乐山"]
+    },
+    {
+      "id": "CHN:city:511300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511300",
+      "name": "南充市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["南充"]
+    },
+    {
+      "id": "CHN:city:511400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511400",
+      "name": "眉山市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["眉山"]
+    },
+    {
+      "id": "CHN:city:511500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511500",
+      "name": "宜宾市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["宜宾"]
+    },
+    {
+      "id": "CHN:city:511600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511600",
+      "name": "广安市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["广安"]
+    },
+    {
+      "id": "CHN:city:511700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511700",
+      "name": "达州市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["达州"]
+    },
+    {
+      "id": "CHN:city:511800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511800",
+      "name": "雅安市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["雅安"]
+    },
+    {
+      "id": "CHN:city:511900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "511900",
+      "name": "巴中市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["巴中"]
+    },
+    {
+      "id": "CHN:city:512000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "512000",
+      "name": "资阳市",
+      "parentId": "CHN:province:510000",
+      "aliases": ["资阳"]
+    },
+    {
+      "id": "CHN:city:513200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "513200",
+      "name": "阿坝藏族羌族自治州",
+      "parentId": "CHN:province:510000",
+      "aliases": ["阿坝藏族羌族自治州"]
+    },
+    {
+      "id": "CHN:city:513300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "513300",
+      "name": "甘孜藏族自治州",
+      "parentId": "CHN:province:510000",
+      "aliases": ["甘孜藏族自治州"]
+    },
+    {
+      "id": "CHN:city:513400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "513400",
+      "name": "凉山彝族自治州",
+      "parentId": "CHN:province:510000",
+      "aliases": ["凉山彝族自治州"]
+    },
+    {
+      "id": "CHN:city:520100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "520100",
+      "name": "贵阳市",
+      "parentId": "CHN:province:520000",
+      "aliases": ["贵阳"]
+    },
+    {
+      "id": "CHN:city:520200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "520200",
+      "name": "六盘水市",
+      "parentId": "CHN:province:520000",
+      "aliases": ["六盘水"]
+    },
+    {
+      "id": "CHN:city:520300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "520300",
+      "name": "遵义市",
+      "parentId": "CHN:province:520000",
+      "aliases": ["遵义"]
+    },
+    {
+      "id": "CHN:city:520400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "520400",
+      "name": "安顺市",
+      "parentId": "CHN:province:520000",
+      "aliases": ["安顺"]
+    },
+    {
+      "id": "CHN:city:520500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "520500",
+      "name": "毕节市",
+      "parentId": "CHN:province:520000",
+      "aliases": ["毕节"]
+    },
+    {
+      "id": "CHN:city:520600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "520600",
+      "name": "铜仁市",
+      "parentId": "CHN:province:520000",
+      "aliases": ["铜仁"]
+    },
+    {
+      "id": "CHN:city:522300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "522300",
+      "name": "黔西南布依族苗族自治州",
+      "parentId": "CHN:province:520000",
+      "aliases": ["黔西南布依族苗族自治州"]
+    },
+    {
+      "id": "CHN:city:522600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "522600",
+      "name": "黔东南苗族侗族自治州",
+      "parentId": "CHN:province:520000",
+      "aliases": ["黔东南苗族侗族自治州"]
+    },
+    {
+      "id": "CHN:city:522700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "522700",
+      "name": "黔南布依族苗族自治州",
+      "parentId": "CHN:province:520000",
+      "aliases": ["黔南布依族苗族自治州"]
+    },
+    {
+      "id": "CHN:city:530100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530100",
+      "name": "昆明市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["昆明"]
+    },
+    {
+      "id": "CHN:city:530300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530300",
+      "name": "曲靖市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["曲靖"]
+    },
+    {
+      "id": "CHN:city:530400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530400",
+      "name": "玉溪市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["玉溪"]
+    },
+    {
+      "id": "CHN:city:530500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530500",
+      "name": "保山市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["保山"]
+    },
+    {
+      "id": "CHN:city:530600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530600",
+      "name": "昭通市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["昭通"]
+    },
+    {
+      "id": "CHN:city:530700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530700",
+      "name": "丽江市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["丽江"]
+    },
+    {
+      "id": "CHN:city:530800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530800",
+      "name": "普洱市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["普洱"]
+    },
+    {
+      "id": "CHN:city:530900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "530900",
+      "name": "临沧市",
+      "parentId": "CHN:province:530000",
+      "aliases": ["临沧"]
+    },
+    {
+      "id": "CHN:city:532300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "532300",
+      "name": "楚雄彝族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["楚雄彝族自治州"]
+    },
+    {
+      "id": "CHN:city:532500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "532500",
+      "name": "红河哈尼族彝族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["红河哈尼族彝族自治州"]
+    },
+    {
+      "id": "CHN:city:532600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "532600",
+      "name": "文山壮族苗族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["文山壮族苗族自治州"]
+    },
+    {
+      "id": "CHN:city:532800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "532800",
+      "name": "西双版纳傣族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["西双版纳傣族自治州"]
+    },
+    {
+      "id": "CHN:city:532900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "532900",
+      "name": "大理白族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["大理白族自治州"]
+    },
+    {
+      "id": "CHN:city:533100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "533100",
+      "name": "德宏傣族景颇族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["德宏傣族景颇族自治州"]
+    },
+    {
+      "id": "CHN:city:533300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "533300",
+      "name": "怒江傈僳族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["怒江傈僳族自治州"]
+    },
+    {
+      "id": "CHN:city:533400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "533400",
+      "name": "迪庆藏族自治州",
+      "parentId": "CHN:province:530000",
+      "aliases": ["迪庆藏族自治州"]
+    },
+    {
+      "id": "CHN:city:540100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "540100",
+      "name": "拉萨市",
+      "parentId": "CHN:province:540000",
+      "aliases": ["拉萨"]
+    },
+    {
+      "id": "CHN:city:540200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "540200",
+      "name": "日喀则市",
+      "parentId": "CHN:province:540000",
+      "aliases": ["日喀则"]
+    },
+    {
+      "id": "CHN:city:540300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "540300",
+      "name": "昌都市",
+      "parentId": "CHN:province:540000",
+      "aliases": ["昌都"]
+    },
+    {
+      "id": "CHN:city:540400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "540400",
+      "name": "林芝市",
+      "parentId": "CHN:province:540000",
+      "aliases": ["林芝"]
+    },
+    {
+      "id": "CHN:city:540500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "540500",
+      "name": "山南市",
+      "parentId": "CHN:province:540000",
+      "aliases": ["山南"]
+    },
+    {
+      "id": "CHN:city:540600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "540600",
+      "name": "那曲市",
+      "parentId": "CHN:province:540000",
+      "aliases": ["那曲"]
+    },
+    {
+      "id": "CHN:city:542500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "542500",
+      "name": "阿里地区",
+      "parentId": "CHN:province:540000",
+      "aliases": ["阿里地区"]
+    },
+    {
+      "id": "CHN:city:610100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610100",
+      "name": "西安市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["西安"]
+    },
+    {
+      "id": "CHN:city:610200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610200",
+      "name": "铜川市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["铜川"]
+    },
+    {
+      "id": "CHN:city:610300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610300",
+      "name": "宝鸡市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["宝鸡"]
+    },
+    {
+      "id": "CHN:city:610400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610400",
+      "name": "咸阳市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["咸阳"]
+    },
+    {
+      "id": "CHN:city:610500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610500",
+      "name": "渭南市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["渭南"]
+    },
+    {
+      "id": "CHN:city:610600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610600",
+      "name": "延安市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["延安"]
+    },
+    {
+      "id": "CHN:city:610700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610700",
+      "name": "汉中市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["汉中"]
+    },
+    {
+      "id": "CHN:city:610800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610800",
+      "name": "榆林市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["榆林"]
+    },
+    {
+      "id": "CHN:city:610900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "610900",
+      "name": "安康市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["安康"]
+    },
+    {
+      "id": "CHN:city:611000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "611000",
+      "name": "商洛市",
+      "parentId": "CHN:province:610000",
+      "aliases": ["商洛"]
+    },
+    {
+      "id": "CHN:city:620100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620100",
+      "name": "兰州市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["兰州"]
+    },
+    {
+      "id": "CHN:city:620200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620200",
+      "name": "嘉峪关市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["嘉峪关"]
+    },
+    {
+      "id": "CHN:city:620300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620300",
+      "name": "金昌市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["金昌"]
+    },
+    {
+      "id": "CHN:city:620400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620400",
+      "name": "白银市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["白银"]
+    },
+    {
+      "id": "CHN:city:620500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620500",
+      "name": "天水市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["天水"]
+    },
+    {
+      "id": "CHN:city:620600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620600",
+      "name": "武威市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["武威"]
+    },
+    {
+      "id": "CHN:city:620700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620700",
+      "name": "张掖市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["张掖"]
+    },
+    {
+      "id": "CHN:city:620800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620800",
+      "name": "平凉市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["平凉"]
+    },
+    {
+      "id": "CHN:city:620900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "620900",
+      "name": "酒泉市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["酒泉"]
+    },
+    {
+      "id": "CHN:city:621000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "621000",
+      "name": "庆阳市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["庆阳"]
+    },
+    {
+      "id": "CHN:city:621100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "621100",
+      "name": "定西市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["定西"]
+    },
+    {
+      "id": "CHN:city:621200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "621200",
+      "name": "陇南市",
+      "parentId": "CHN:province:620000",
+      "aliases": ["陇南"]
+    },
+    {
+      "id": "CHN:city:622900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "622900",
+      "name": "临夏回族自治州",
+      "parentId": "CHN:province:620000",
+      "aliases": ["临夏回族自治州"]
+    },
+    {
+      "id": "CHN:city:623000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "623000",
+      "name": "甘南藏族自治州",
+      "parentId": "CHN:province:620000",
+      "aliases": ["甘南藏族自治州"]
+    },
+    {
+      "id": "CHN:city:630100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "630100",
+      "name": "西宁市",
+      "parentId": "CHN:province:630000",
+      "aliases": ["西宁"]
+    },
+    {
+      "id": "CHN:city:630200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "630200",
+      "name": "海东市",
+      "parentId": "CHN:province:630000",
+      "aliases": ["海东"]
+    },
+    {
+      "id": "CHN:city:632200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "632200",
+      "name": "海北藏族自治州",
+      "parentId": "CHN:province:630000",
+      "aliases": ["海北藏族自治州"]
+    },
+    {
+      "id": "CHN:city:632300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "632300",
+      "name": "黄南藏族自治州",
+      "parentId": "CHN:province:630000",
+      "aliases": ["黄南藏族自治州"]
+    },
+    {
+      "id": "CHN:city:632500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "632500",
+      "name": "海南藏族自治州",
+      "parentId": "CHN:province:630000",
+      "aliases": ["海南藏族自治州"]
+    },
+    {
+      "id": "CHN:city:632600",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "632600",
+      "name": "果洛藏族自治州",
+      "parentId": "CHN:province:630000",
+      "aliases": ["果洛藏族自治州"]
+    },
+    {
+      "id": "CHN:city:632700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "632700",
+      "name": "玉树藏族自治州",
+      "parentId": "CHN:province:630000",
+      "aliases": ["玉树藏族自治州"]
+    },
+    {
+      "id": "CHN:city:632800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "632800",
+      "name": "海西蒙古族藏族自治州",
+      "parentId": "CHN:province:630000",
+      "aliases": ["海西蒙古族藏族自治州"]
+    },
+    {
+      "id": "CHN:city:640100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "640100",
+      "name": "银川市",
+      "parentId": "CHN:province:640000",
+      "aliases": ["银川"]
+    },
+    {
+      "id": "CHN:city:640200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "640200",
+      "name": "石嘴山市",
+      "parentId": "CHN:province:640000",
+      "aliases": ["石嘴山"]
+    },
+    {
+      "id": "CHN:city:640300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "640300",
+      "name": "吴忠市",
+      "parentId": "CHN:province:640000",
+      "aliases": ["吴忠"]
+    },
+    {
+      "id": "CHN:city:640400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "640400",
+      "name": "固原市",
+      "parentId": "CHN:province:640000",
+      "aliases": ["固原"]
+    },
+    {
+      "id": "CHN:city:640500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "640500",
+      "name": "中卫市",
+      "parentId": "CHN:province:640000",
+      "aliases": ["中卫"]
+    },
+    {
+      "id": "CHN:city:650100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "650100",
+      "name": "乌鲁木齐市",
+      "parentId": "CHN:province:650000",
+      "aliases": ["乌鲁木齐"]
+    },
+    {
+      "id": "CHN:city:650200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "650200",
+      "name": "克拉玛依市",
+      "parentId": "CHN:province:650000",
+      "aliases": ["克拉玛依"]
+    },
+    {
+      "id": "CHN:city:650400",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "650400",
+      "name": "吐鲁番市",
+      "parentId": "CHN:province:650000",
+      "aliases": ["吐鲁番"]
+    },
+    {
+      "id": "CHN:city:650500",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "650500",
+      "name": "哈密市",
+      "parentId": "CHN:province:650000",
+      "aliases": ["哈密"]
+    },
+    {
+      "id": "CHN:city:652300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "652300",
+      "name": "昌吉回族自治州",
+      "parentId": "CHN:province:650000",
+      "aliases": ["昌吉回族自治州"]
+    },
+    {
+      "id": "CHN:city:652700",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "652700",
+      "name": "博尔塔拉蒙古自治州",
+      "parentId": "CHN:province:650000",
+      "aliases": ["博尔塔拉蒙古自治州"]
+    },
+    {
+      "id": "CHN:city:652800",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "652800",
+      "name": "巴音郭楞蒙古自治州",
+      "parentId": "CHN:province:650000",
+      "aliases": ["巴音郭楞蒙古自治州"]
+    },
+    {
+      "id": "CHN:city:652900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "652900",
+      "name": "阿克苏地区",
+      "parentId": "CHN:province:650000",
+      "aliases": ["阿克苏地区"]
+    },
+    {
+      "id": "CHN:city:653000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "653000",
+      "name": "克孜勒苏柯尔克孜自治州",
+      "parentId": "CHN:province:650000",
+      "aliases": ["克孜勒苏柯尔克孜自治州"]
+    },
+    {
+      "id": "CHN:city:653100",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "653100",
+      "name": "喀什地区",
+      "parentId": "CHN:province:650000",
+      "aliases": ["喀什地区"]
+    },
+    {
+      "id": "CHN:city:653200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "653200",
+      "name": "和田地区",
+      "parentId": "CHN:province:650000",
+      "aliases": ["和田地区"]
+    },
+    {
+      "id": "CHN:city:654000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "654000",
+      "name": "伊犁哈萨克自治州",
+      "parentId": "CHN:province:650000",
+      "aliases": ["伊犁哈萨克自治州"]
+    },
+    {
+      "id": "CHN:city:654200",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "654200",
+      "name": "塔城地区",
+      "parentId": "CHN:province:650000",
+      "aliases": ["塔城地区"]
+    },
+    {
+      "id": "CHN:city:654300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "654300",
+      "name": "阿勒泰地区",
+      "parentId": "CHN:province:650000",
+      "aliases": ["阿勒泰地区"]
+    },
+    {
+      "id": "CHN:city:110000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "110000",
+      "name": "北京市",
+      "parentId": "CHN:province:110000",
+      "aliases": ["北京"],
+      "equivalent": true
+    },
+    {
+      "id": "CHN:city:120000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "120000",
+      "name": "天津市",
+      "parentId": "CHN:province:120000",
+      "aliases": ["天津"],
+      "equivalent": true
+    },
+    {
+      "id": "CHN:city:310000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "310000",
+      "name": "上海市",
+      "parentId": "CHN:province:310000",
+      "aliases": ["上海"],
+      "equivalent": true
+    },
+    {
+      "id": "CHN:city:500000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "500000",
+      "name": "重庆市",
+      "parentId": "CHN:province:500000",
+      "aliases": ["重庆"],
+      "equivalent": true
+    },
+    {
+      "id": "CHN:city:710000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "710000",
+      "name": "台湾省",
+      "parentId": "CHN:province:710000",
+      "aliases": ["台湾"],
+      "equivalent": true
+    },
+    {
+      "id": "CHN:city:810000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "810000",
+      "name": "香港特别行政区",
+      "parentId": "CHN:province:810000",
+      "aliases": ["香港"],
+      "equivalent": true
+    },
+    {
+      "id": "CHN:city:820000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "820000",
+      "name": "澳门特别行政区",
+      "parentId": "CHN:province:820000",
+      "aliases": ["澳门"],
+      "equivalent": true
+    }
+  ]
+}

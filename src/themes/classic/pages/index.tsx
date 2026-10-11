@@ -1,4 +1,9 @@
 import {
+  defaultGeographySource,
+  matchesActivityRegion,
+} from '@core/activityGeography';
+import type { GeographySource, RegionSelection } from '@core/types';
+import {
   useEffect,
   useState,
   useMemo,
@@ -32,7 +37,6 @@ import { IS_CHINESE } from '../utils/const';
 import {
   Activity,
   filterAndSortRuns,
-  filterCityRuns,
   filterTitleRuns,
   filterYearRuns,
   scrollToMap,
@@ -100,6 +104,11 @@ const Index = () => {
   const sport = searchParams.get('sport') ?? 'all';
   const themeChangeCounter = useThemeChangeCounter();
   const [year, setYear] = useState(initialYear);
+  const [regionSource, setRegionSource] = useState<GeographySource>(() =>
+    defaultGeographySource(activities)
+  );
+  const [regionSelection, setRegionSelection] =
+    useState<RegionSelection | null>(null);
   const [runIndex, setRunIndex] = useState(-1);
   const [title, setTitle] = useState('');
   // Animation states for replacing intervalIdRef
@@ -121,14 +130,28 @@ const Index = () => {
   const selectedRunDateRef = useRef<string | null>(null);
 
   // Memoize expensive calculations
-  const runs = useMemo(() => {
+  const scopedRuns = useMemo(() => {
     return filterAndSortRuns(
-      activities.filter((run) => sport === 'all' || run.type === sport),
+      activities.filter(
+        (run) =>
+          (sport === 'all' || run.type === sport) &&
+          (year === 'Total' || filterYearRuns(run, year))
+      ),
       currentFilter.item,
       currentFilter.func,
       sortDateFunc
     );
-  }, [activities, currentFilter.item, currentFilter.func, sport]);
+  }, [activities, currentFilter.item, currentFilter.func, sport, year]);
+
+  const runs = useMemo(
+    () =>
+      regionSelection?.regionId
+        ? scopedRuns.filter((run) =>
+            matchesActivityRegion(run, regionSelection)
+          )
+        : scopedRuns,
+    [scopedRuns, regionSelection]
+  );
 
   const geoData = useMemo(() => {
     void themeChangeCounter;
@@ -197,16 +220,13 @@ const Index = () => {
       name: string,
       func: (_run: Activity, _value: string) => boolean
     ) => {
-      if (name != 'Year') {
-        setYear(thisYear);
-      }
       setCurrentFilter({ item, func });
       setRunIndex(-1);
       setTitle(`${item} ${name} Running Heatmap`);
       // Reset single run state when changing filters
       clearRunHash();
     },
-    [thisYear]
+    []
   );
 
   const changeYear = useCallback(
@@ -232,13 +252,6 @@ const Index = () => {
       setIsAnimating(false);
     },
     [viewState.zoom, bounds, changeByItem, setSearchParams]
-  );
-
-  const changeCity = useCallback(
-    (city: string) => {
-      changeByItem(city, 'City', filterCityRuns);
-    },
-    [changeByItem]
   );
 
   const changeTitle = useCallback(
@@ -558,7 +571,11 @@ const Index = () => {
             <summary>按地区与时段探索</summary>
             <LocationStat
               changeYear={changeYear}
-              changeCity={changeCity}
+              activities={scopedRuns}
+              source={regionSource}
+              onSourceChange={setRegionSource}
+              selection={regionSelection}
+              onSelect={setRegionSelection}
               changeTitle={changeTitle}
             />
           </details>

@@ -1,0 +1,163 @@
+{
+  "version": "synthetic-catalog-v1",
+  "regions": [
+    {
+      "id": "country:CHN",
+      "countryCode": "CHN",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "CHN",
+      "name": "中国",
+      "parentId": null,
+      "aliases": [
+        "China",
+        "中华人民共和国",
+        "中国大陆"
+      ]
+    },
+    {
+      "id": "country:USA",
+      "countryCode": "USA",
+      "level": "country",
+      "codeNamespace": "ISO3166-1-alpha3",
+      "code": "USA",
+      "name": "美国",
+      "parentId": null,
+      "aliases": [
+        "United States",
+        "USA",
+        "美利坚合众国"
+      ]
+    },
+    {
+      "id": "CHN:province:110000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "110000",
+      "name": "北京市",
+      "parentId": "country:CHN",
+      "aliases": [
+        "北京"
+      ]
+    },
+    {
+      "id": "CHN:province:440000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "440000",
+      "name": "广东省",
+      "parentId": "country:CHN",
+      "aliases": [
+        "广东"
+      ]
+    },
+    {
+      "id": "CHN:province:810000",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "CN-adcode",
+      "code": "810000",
+      "name": "香港特别行政区",
+      "parentId": "country:CHN",
+      "aliases": [
+        "香港"
+      ]
+    },
+    {
+      "id": "CHN:city:440300",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "440300",
+      "name": "深圳市",
+      "parentId": "CHN:province:440000",
+      "aliases": [
+        "深圳"
+      ]
+    },
+    {
+      "id": "CHN:city:441900",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode",
+      "code": "441900",
+      "name": "东莞市",
+      "parentId": "CHN:province:440000",
+      "aliases": [
+        "东莞"
+      ]
+    },
+    {
+      "id": "CHN:city:110000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "110000",
+      "name": "北京市",
+      "parentId": "CHN:province:110000",
+      "aliases": [
+        "北京"
+      ],
+      "equivalent": true
+    },
+    {
+      "id": "CHN:city:810000",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "CN-adcode-equivalent-v1",
+      "code": "810000",
+      "name": "香港特别行政区",
+      "parentId": "CHN:province:810000",
+      "aliases": [
+        "香港"
+      ],
+      "equivalent": true
+    },
+    {
+      "id": "fixture:province:test-A",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "fixture",
+      "code": "test-A",
+      "name": "甲省",
+      "parentId": "country:CHN",
+      "aliases": []
+    },
+    {
+      "id": "fixture:city:test-A",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "fixture",
+      "code": "test-A",
+      "name": "同名市",
+      "parentId": "fixture:province:test-A",
+      "aliases": [
+        "同名"
+      ]
+    },
+    {
+      "id": "fixture:province:test-B",
+      "countryCode": "CHN",
+      "level": "province",
+      "codeNamespace": "fixture",
+      "code": "test-B",
+      "name": "乙省",
+      "parentId": "country:CHN",
+      "aliases": []
+    },
+    {
+      "id": "fixture:city:test-B",
+      "countryCode": "CHN",
+      "level": "city",
+      "codeNamespace": "fixture",
+      "code": "test-B",
+      "name": "同名市",
+      "parentId": "fixture:province:test-B",
+      "aliases": [
+        "同名"
+      ]
+    }
+  ]
+}

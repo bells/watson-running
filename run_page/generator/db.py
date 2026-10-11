@@ -6,10 +6,12 @@ from geopy.geocoders import options, Nominatim
 from sqlalchemy import (
     Column,
     Float,
+    ForeignKey,
     Integer,
     Interval,
     String,
     Text,
+    UniqueConstraint,
     create_engine,
     inspect,
     text,
@@ -113,6 +115,85 @@ class JoyrunDetail(Base):
     raw_list_json = Column(Text)
     raw_detail_json = Column(Text)
     fetched_at = Column(String)
+
+
+class Region(Base):
+    __tablename__ = "regions"
+    region_id = Column(String, primary_key=True)
+    country_code = Column(String, nullable=False)
+    level = Column(String, nullable=False)
+    code_namespace = Column(String, nullable=False)
+    code = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    parent_id = Column(String, ForeignKey("regions.region_id"))
+    catalog_version = Column(String, nullable=False)
+    __table_args__ = (UniqueConstraint("code_namespace", "level", "code"),)
+
+
+class RegionAlias(Base):
+    __tablename__ = "region_aliases"
+    alias = Column(String, primary_key=True)
+    region_id = Column(String, ForeignKey("regions.region_id"), primary_key=True)
+    parent_scope = Column(String, primary_key=True)
+    source = Column(String, nullable=False)
+    catalog_version = Column(String, nullable=False)
+
+
+class GeographyRun(Base):
+    __tablename__ = "geography_runs"
+    batch_id = Column(String, primary_key=True)
+    status = Column(String, nullable=False)
+    versions_json = Column(Text, nullable=False)
+    counts_json = Column(Text, nullable=False)
+    backup_json = Column(Text, nullable=False)
+    started_at = Column(String, nullable=False)
+    updated_at = Column(String, nullable=False)
+
+
+class ActivityRegionSummary(Base):
+    __tablename__ = "activity_region_summaries"
+    run_id = Column(Integer, ForeignKey("activities.run_id"), primary_key=True)
+    provider_json = Column(Text, nullable=False)
+    primary_country_id = Column(String, ForeignKey("regions.region_id"))
+    primary_province_id = Column(String, ForeignKey("regions.region_id"))
+    primary_city_id = Column(String, ForeignKey("regions.region_id"))
+    status = Column(String, nullable=False)
+    levels_json = Column(Text, nullable=False)
+    valid_gps_distance_m = Column(Float)
+    input_fingerprint = Column(String, nullable=False)
+    route_source = Column(String)
+    route_crs = Column(String)
+    catalog_version = Column(String, nullable=False)
+    boundary_version = Column(String, nullable=False)
+    rules_version = Column(String, nullable=False)
+    batch_id = Column(String, ForeignKey("geography_runs.batch_id"), nullable=False)
+    error_code = Column(String)
+    calculated_at = Column(String, nullable=False)
+
+
+class ActivityRegion(Base):
+    __tablename__ = "activity_regions"
+    run_id = Column(Integer, ForeignKey("activities.run_id"), primary_key=True)
+    region_id = Column(String, ForeignKey("regions.region_id"), primary_key=True)
+    distance_m = Column(Float, nullable=False)
+
+
+class GeographySchema(Base):
+    __tablename__ = "geography_schema"
+    version = Column(Integer, primary_key=True)
+
+
+GEOGRAPHY_TABLES = [
+    model.__table__
+    for model in (
+        Region,
+        RegionAlias,
+        GeographyRun,
+        ActivityRegionSummary,
+        ActivityRegion,
+        GeographySchema,
+    )
+]
 
 
 def update_or_create_activity(session, run_activity):
@@ -226,7 +307,11 @@ def init_db(db_path):
     engine = create_engine(
         f"sqlite:///{db_path}", connect_args={"check_same_thread": False}
     )
-    Base.metadata.create_all(engine)
+    # Geography has an explicit, backup-protected migration; ordinary export and
+    # provider sync must continue to work against the legacy schema.
+    Base.metadata.create_all(
+        engine, tables=[Activity.__table__, JoyrunDetail.__table__]
+    )
 
     # check missing columns
     add_missing_columns(engine, Activity)

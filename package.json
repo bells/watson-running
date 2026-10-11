@@ -48,9 +48,10 @@
     "format": "prettier --write \"src/main.tsx\" \"src/**/*.{css,module.css,json,ts,tsx}\" \"*.{yaml,json,ts}\" \"assets/index.tsx\" \"eslint.config.mjs\"",
     "ci": "pnpm run format && pnpm run lint && pnpm run build",
     "test:chat": "node --test tests/run-agent-chat.test.mjs",
-    "test:display": "node --test tests/activity-display.test.mjs",
+    "test:display": "node --test tests/activity-display.test.mjs tests/activity-location.test.mjs",
     "test:summary": "node --test tests/activity-summary.test.mjs",
-    "test:contracts": "node --test tests/run-agent-contract.test.mjs"
+    "test:contracts": "node --test tests/run-agent-contract.test.mjs",
+    "test:geography": "node --test tests/geography-catalog.test.mjs tests/activity-geography.test.mjs"
   },
   "engineStrict": true,
   "browserslist": "defaults, not ie 11",

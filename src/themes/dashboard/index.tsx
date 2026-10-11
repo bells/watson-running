@@ -1,10 +1,15 @@
+import { RegionExplorer } from '@core/components/RegionExplorer';
+import {
+  defaultGeographySource,
+  matchesActivityRegion,
+} from '@core/activityGeography';
+import type { GeographySource, RegionSelection } from '@core/types';
 import './index.css';
 import { useMemo, useState } from 'react';
 import type { Activity } from '@/types';
 import {
   useFilteredActivities,
   getAvailableYears,
-  extractProvince,
   getActivityData,
 } from '@/hooks/useActivities';
 import { useTheme } from '@/hooks/useTheme';
@@ -30,20 +35,24 @@ function Dashboard() {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
   );
-  const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
+  const [regionSource, setRegionSource] = useState<GeographySource>(() =>
+    defaultGeographySource(activities)
+  );
+  const [regionSelection, setRegionSelection] =
+    useState<RegionSelection | null>(null);
   const [page, setPage] = useState<Page>('home');
 
   const years = getAvailableYears(activities);
   const filtered = useFilteredActivities(activities, filter, year);
   const heatmapYear = year ?? years[0] ?? new Date().getFullYear();
 
-  // Activities filtered to the selected province (for RouteMap)
-  const provinceFiltered = useMemo(() => {
-    if (!selectedProvince) return filtered;
-    return filtered.filter(
-      (a) => extractProvince(a.location_country) === selectedProvince
-    );
-  }, [filtered, selectedProvince]);
+  const provinceFiltered = useMemo(
+    () =>
+      regionSelection?.regionId
+        ? filtered.filter((a) => matchesActivityRegion(a, regionSelection))
+        : filtered,
+    [filtered, regionSelection]
+  );
 
   if (/\/activity\/\d+\/?$/.test(window.location.pathname)) {
     return <ActivityDetailPage />;
@@ -85,7 +94,7 @@ function Dashboard() {
                 onSelectActivity={setSelectedActivity}
               />
               <ActivityLog
-                activities={filtered}
+                activities={provinceFiltered}
                 years={years}
                 year={year}
                 setYear={setYear}
@@ -97,13 +106,36 @@ function Dashboard() {
 
             {/* Right column */}
             <div className="flex min-w-0 flex-col gap-6 overflow-hidden">
-              <ProfileCard activities={activities} filter={filter} />
+              <ProfileCard
+                activities={filtered}
+                filter={filter}
+                source={regionSource}
+              />
+              <RegionExplorer
+                activities={filtered}
+                source={regionSource}
+                onSourceChange={setRegionSource}
+                selection={regionSelection}
+                onSelect={(selection) => {
+                  setRegionSelection(selection);
+                  setSelectedActivity(null);
+                }}
+              />
               <ChinaMap
                 activities={filtered}
                 filter={filter}
-                selectedProvince={selectedProvince}
+                source={regionSource}
+                selectedProvince={
+                  regionSelection?.level === 'province'
+                    ? regionSelection.regionId
+                    : null
+                }
                 onSelectProvince={(p) => {
-                  setSelectedProvince(p);
+                  setRegionSelection(
+                    p
+                      ? { source: regionSource, level: 'province', regionId: p }
+                      : null
+                  );
                   setSelectedActivity(null);
                 }}
               />

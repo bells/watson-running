@@ -48,6 +48,16 @@ class GeneratorPrivacyTests(unittest.TestCase):
                     )
                 )
             generator.session.commit()
+            from run_page.geography.catalog import load_catalog
+            from run_page.geography.repository import migrate
+            from run_page.geography.incremental import sync_incremental
+            from run_page.geography.safety import digest
+            import sqlite3
+
+            with sqlite3.connect(Path(directory) / "data.db") as connection:
+                migrate(connection, load_catalog())
+            sync_incremental(generator.session)
+            before_hash = digest(Path(directory) / "data.db")
 
             with patch.dict(
                 os.environ,
@@ -64,6 +74,8 @@ class GeneratorPrivacyTests(unittest.TestCase):
                 second = generator.load()
 
             self.assertEqual(first, second)
+            self.assertEqual(before_hash, digest(Path(directory) / "data.db"))
+            self.assertEqual(first[2]["geography"]["regions"], [])
             by_id = {activity["run_id"]: activity for activity in first}
             self.assertLess(
                 len(polyline.decode(by_id[1]["summary_polyline"])),

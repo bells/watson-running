@@ -32,7 +32,7 @@ jobs:
 
       - name: Check private data and security contracts
         run: |
-          python -m unittest test_private_data_config test_generator_privacy
+          python -m unittest test_private_data_config test_generator_privacy test_tui_app
           python -m unittest discover -s tests -p 'test_*.py'
 
       - name: Check dependency entry points
@@ -77,6 +77,7 @@ jobs:
           pnpm exec eslint src --ext .ts,.tsx
           pnpm test:chat
           pnpm test:display
+          pnpm test:geography
           pnpm test:summary
           pnpm test:contracts
           pnpm run build
