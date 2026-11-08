@@ -39,7 +39,11 @@ dependencies = [
   "pycryptodome",
   "duckdb",
   "openai==3.24.0",
-  "oauthlib>=4.0.0,<5",
+  "oauthlib>=4.0.1,<5",
+  "pillow>=13.0.0",
+  "opentelemetry-api>=1.45.1",
+  # logfire 3.x imports this at runtime without declaring it on Python 3.12+.
+  "importlib-metadata",
   "cairosvg>=2.9.1",
   "certifi==2026.10.18",
   "shapely==2.2.0",

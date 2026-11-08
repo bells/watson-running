@@ -75,6 +75,7 @@ jobs:
           pnpm run check
           pnpm exec tsc --noEmit
           pnpm exec eslint src --ext .ts,.tsx
+          pnpm test:dependencies
           pnpm test:chat
           pnpm test:display
           pnpm test:geography

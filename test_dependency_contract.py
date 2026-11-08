@@ -51,7 +51,7 @@ class DependencyContractTest(unittest.TestCase):
 
     def test_oauthlib_security_floor_in_both_locks(self):
         self.assertEqual(
-            ">=4.0.0,<5",
+            ">=4.0.1,<5",
             self.declarations["oauthlib"],
         )
         for lock_name, packages in self.locks.items():
@@ -64,6 +64,20 @@ class DependencyContractTest(unittest.TestCase):
                 self.assertTrue(versions)
                 for version in versions:
                     self.assertEqual(4, int(version.split(".")[0]))
+
+    def test_security_updates_in_both_locks(self):
+        minimum_versions = {
+            "certifi": (2026, 10, 18),
+            "oauthlib": (4, 0, 1),
+            "opentelemetry-api": (1, 45, 1),
+            "pillow": (13, 0, 0),
+        }
+        for lock_name, packages in self.locks.items():
+            versions = {package["name"]: package["version"] for package in packages}
+            for name, minimum in minimum_versions.items():
+                with self.subTest(package=name, lock=lock_name):
+                    version = tuple(int(part) for part in versions[name].split("."))
+                    self.assertGreaterEqual(version, minimum)
 
 
 if __name__ == "__main__":
