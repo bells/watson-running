@@ -19,7 +19,7 @@
     "mapbox-gl": "^3.23.0",
     "maplibre-gl": "^6.11.2",
     "rc-virtual-list": "^3.19.2",
-    "react": "^19.2.5",
+    "react": "^19.3.1",
     "react-dom": "^19.2.5",
     "react-ga4": "^3.0.1",
     "react-helmet-async": "^3.0.0",
