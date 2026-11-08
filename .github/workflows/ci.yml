@@ -61,7 +61,7 @@ jobs:
         uses: pnpm/action-setup@v6
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
@@ -75,6 +75,7 @@ jobs:
           pnpm run check
           pnpm exec tsc --noEmit
           pnpm exec eslint src --ext .ts,.tsx
+          pnpm test:dependencies
           pnpm test:chat
           pnpm test:display
           pnpm test:geography
