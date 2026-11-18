@@ -2,7 +2,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useRunAgentChat } from '@core/hooks/useRunAgentChat';
-import { CHAT_MAX_LENGTH } from '@core/services/runAgentChat';
+import {
+  CHAT_MAX_LENGTH,
+  isPrivateChatToken,
+} from '@core/services/runAgentChat';
 import styles from './style.module.css';
 import { StatusPanel } from '@core/components/StatusPanel';
 
@@ -22,8 +25,15 @@ const markdownComponents = {
 };
 const markdownPlugins = [remarkGfm];
 
-export default function ChatAssistant() {
-  const chat = useRunAgentChat();
+export default function ChatAssistant({
+  privateChat = false,
+}: {
+  privateChat?: boolean;
+}) {
+  const [accessToken, setAccessToken] = useState('');
+  const chat = useRunAgentChat(privateChat ? accessToken : undefined);
+  const accessTokenRef = useRef<HTMLInputElement>(null);
+  const canSend = !privateChat || isPrivateChatToken(accessToken);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -75,7 +85,7 @@ export default function ChatAssistant() {
         onClick={() => {
           dialogRef.current?.showModal();
           setOpen(true);
-          inputRef.current?.focus();
+          (canSend ? inputRef.current : accessTokenRef.current)?.focus();
         }}
       >
         <span aria-hidden="true">✦</span> AI 跑步助手
@@ -91,7 +101,7 @@ export default function ChatAssistant() {
           if (event.key !== 'Tab') return;
           const controls = Array.from(
             event.currentTarget.querySelectorAll<HTMLElement>(
-              'button:not(:disabled), textarea, a[href], [tabindex="0"]'
+              'button:not(:disabled), input:not(:disabled), textarea, a[href], [tabindex="0"]'
             )
           ).filter((element) => element.getClientRects().length > 0);
           const first = controls[0];
@@ -134,8 +144,9 @@ export default function ChatAssistant() {
             </div>
           </header>
           <p id="runagent-notice" className={styles.notice}>
-            开发环境 ·
-            每次仅发送当前问题，对话仅保留在本页。个人数据是否可用由服务端决定。
+            {privateChat
+              ? '私有试用 · 每次仅发送当前问题，对话和访问令牌仅保留在本页。'
+              : '开发环境 · 每次仅发送当前问题，对话仅保留在本页。个人数据是否可用由服务端决定。'}
           </p>
           <div
             ref={listRef}
@@ -230,7 +241,7 @@ export default function ChatAssistant() {
             className={styles.composer}
             onSubmit={(event) => {
               event.preventDefault();
-              void chat.send();
+              if (canSend) void chat.send();
             }}
           >
             {chat.error && (
@@ -240,6 +251,25 @@ export default function ChatAssistant() {
                 description={chat.error}
               />
             )}
+            {privateChat && (
+              <>
+                <label htmlFor="runagent-token" className={styles.inputLabel}>
+                  访问令牌
+                </label>
+                <input
+                  ref={accessTokenRef}
+                  id="runagent-token"
+                  type="password"
+                  autoComplete="off"
+                  placeholder="输入 RunAgent 访问令牌"
+                  value={accessToken}
+                  readOnly={chat.pending}
+                  onChange={(event) =>
+                    setAccessToken(event.target.value.trim())
+                  }
+                />
+              </>
+            )}
             <label htmlFor="runagent-question" className={styles.inputLabel}>
               你的问题
             </label>
@@ -247,7 +277,7 @@ export default function ChatAssistant() {
               ref={inputRef}
               id="runagent-question"
               rows={3}
-              maxLength={CHAT_MAX_LENGTH}
+              maxLength={privateChat ? CHAT_MAX_LENGTH * 2 : CHAT_MAX_LENGTH}
               value={chat.draft}
               readOnly={chat.pending}
               placeholder="输入跑步相关的问题…"
@@ -268,7 +298,7 @@ export default function ChatAssistant() {
                   event.keyCode !== 229
                 ) {
                   event.preventDefault();
-                  void chat.send();
+                  if (canSend) void chat.send();
                 }
               }}
             />
@@ -279,7 +309,7 @@ export default function ChatAssistant() {
               <button
                 type="submit"
                 className={styles.send}
-                disabled={chat.pending || !chat.draft.trim()}
+                disabled={chat.pending || !canSend || !chat.draft.trim()}
               >
                 {chat.error ? '重试' : '发送'} <span aria-hidden="true">↑</span>
               </button>

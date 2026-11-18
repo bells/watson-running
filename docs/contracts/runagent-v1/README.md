@@ -1,6 +1,6 @@
 # RunAgent v1 契约草案
 
-**拟议、未发布、未启用。** 本目录只存接口设计和合成 fixtures，不被浏览器客户端导入。2026-10-07 复核独立 `run-agent` 当前 controller、model、RunAgentService、RunningDataService、RunningTools 与 RAG 配置；后端源码包含本地 v0.5 RAG 改动，原 v0.4 路径保留。这里的校验不证明后端已实现 v1，也不是双仓库共享契约已经完成。
+私有试用实现了 `POST /api/v1/chat`，使用服务端颁发的访问令牌。以下 Agent 和 SSE 约定仍为草案。目录中的 JSON Schema 和合成 fixtures 用于契约测试。
 
 ## 字段与接口差异
 

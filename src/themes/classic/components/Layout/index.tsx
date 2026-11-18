@@ -3,9 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import Header from '../Header';
 import getSiteMetadata from '@core/hooks/useSiteMetadata';
 
-const ChatAssistant = import.meta.env.DEV
-  ? lazy(() => import('../ChatAssistant'))
-  : null;
+const privateChat = import.meta.env.VITE_RUN_AGENT_PRIVATE_CHAT === 'true';
+const ChatAssistant =
+  import.meta.env.DEV || privateChat
+    ? lazy(() => import('../ChatAssistant'))
+    : null;
 
 const Layout = ({ children }: React.PropsWithChildren) => {
   const { siteTitle, description } = getSiteMetadata();
@@ -25,7 +27,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
       <Header />
       {ChatAssistant && (
         <Suspense fallback={null}>
-          <ChatAssistant />
+          <ChatAssistant privateChat={privateChat} />
         </Suspense>
       )}
       <div className="mx-auto mb-16 max-w-screen-2xl p-4 lg:px-16 lg:py-8">

@@ -249,7 +249,8 @@
   font-size: 0.8rem;
 }
 
-.composer textarea {
+.composer textarea,
+.composer input {
   display: block;
   width: 100%;
   resize: none;
@@ -262,7 +263,8 @@
   line-height: 1.5;
 }
 
-.composer textarea::placeholder {
+.composer textarea::placeholder,
+.composer input::placeholder {
   color: inherit;
   color: var(--running-muted);
 }

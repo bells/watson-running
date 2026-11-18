@@ -19,6 +19,7 @@
         "RUNNING_DATA_UNAVAILABLE",
         "UNAUTHORIZED",
         "FORBIDDEN",
+        "RATE_LIMITED",
         "INTERNAL_ERROR"
       ]
     },
