@@ -39,6 +39,28 @@ test('rejects blank and oversized input without fetch', async () => {
   }
 });
 
+test('private chat sends the access token only in the header and validates the v1 response', async () => {
+  const token = 'a'.repeat(48);
+  globalThis.fetch = async (url, options) => {
+    assert.equal(url, '/api/v1/chat');
+    assert.equal(options.headers.Authorization, `Bearer ${token}`);
+    assert.deepEqual(JSON.parse(options.body), { message: 'test' });
+    return Response.json({ content: 'answer', requestId: 'request-1' });
+  };
+  assert.deepEqual(
+    await requestChat({ message: 'test' }, signal(), undefined, token),
+    {
+      content: 'answer',
+      requestId: 'request-1',
+    }
+  );
+  globalThis.fetch = async () => Response.json({ content: 'answer' });
+  await rejectsKind(
+    requestChat({ message: 'test' }, signal(), undefined, token),
+    'invalid'
+  );
+});
+
 test('rejects non-2xx without exposing the response body or retrying', async () => {
   let calls = 0;
   globalThis.fetch = async () => {

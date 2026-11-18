@@ -11,7 +11,7 @@ export interface ChatMessage {
   content: string;
 }
 
-export function useRunAgentChat() {
+export function useRunAgentChat(accessToken?: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState('');
   const [pending, setPending] = useState(false);
@@ -45,7 +45,10 @@ export function useRunAgentChat() {
   async function send() {
     const message = draft.trim();
     if (activeRef.current || !message) return;
-    if (message.length > CHAT_MAX_LENGTH) {
+    if (
+      (accessToken !== undefined ? [...message].length : message.length) >
+      CHAT_MAX_LENGTH
+    ) {
       setError(new ChatError('input').message);
       return;
     }
@@ -62,7 +65,12 @@ export function useRunAgentChat() {
       ];
     });
     try {
-      const response = await requestChat({ message }, controller.signal);
+      const response = await requestChat(
+        { message },
+        controller.signal,
+        undefined,
+        accessToken
+      );
       if (activeRef.current !== controller) return;
       setMessages((previous) => [
         ...previous,

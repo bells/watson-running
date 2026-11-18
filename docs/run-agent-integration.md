@@ -2,6 +2,8 @@
 
 ## Status
 
+`VITE_RUN_AGENT_PRIVATE_CHAT=true` enables the Classic assistant for a private Vercel rollout. In this mode the browser sends a single question to same-origin `POST /api/v1/chat`, with the access token in the Authorization header. Vercel forwards that route to the HTTPS origin. The token and transcript remain in page memory. The private API answers general running questions. Production builds with the flag disabled continue to hide the assistant.
+
 `bells/run-agent` is Watson Running's corresponding backend, maintained as a separate repository. Classic has a **development-only ordinary chat UI**. Existing activity pages still load generated static data. The browser sends only the current question; if RunAgent is configured with `RUNNING_DATA_PATH`, its Running Tools can read a separate, generated `activities.json` on the server.
 
 The frontend milestone is POST `/api/chat`, not the future `/api/v1` REST/SSE design below. Frontend and backend records were checked directly: request `{ "message": string }`, response `{ "content": string }`, with a 4000-character question limit. Only the current question is sent. The visible transcript is page memory, not backend conversation context; reloads or route changes can discard it.
@@ -22,7 +24,7 @@ The current local RunAgent source includes v0.5 RAG alongside the retained v0.4 
 3. Open the Vite URL and click **AI 跑步助手**. Type a question or select an example, then send. Enter sends; Shift+Enter inserts a newline; IME confirmation does not send.
 4. To use another backend address, copy `.env.development.example` to the gitignored `.env`, set `RUN_AGENT_PROXY_TARGET`, and restart Vite. A shell variable with the same name also works. This is a Vite-server variable, not a `VITE_*` client variable.
 
-The browser always sends same-origin `POST /api/chat`; the Vite development server proxies `/api` to RunAgent. Existing `PATH_PREFIX` / `BASE_URL` behavior is preserved. The proxy works **only with the development server**. Production builds hide the entry and exclude its lazy module; static hosting and `vite preview` do not provide this development proxy. Production integration requires a separate backend deployment, same-origin reverse proxy, authentication/access policy and review before enabling the UI.
+For regular local development the browser sends same-origin `POST /api/chat`. The Vite development server proxies `/api` to RunAgent. Existing `PATH_PREFIX` / `BASE_URL` behavior is preserved. The development proxy is available in Vite dev mode. Vercel uses its own rewrite for the authenticated `/api/v1/chat` endpoint.
 
 Requests time out after 60 seconds, including response-body reading. Empty input and duplicate sends are prevented. Failure retains the editable question; retry requires an explicit user action. Clear removes draft/transcript/errors and cancels the browser wait. Close/Escape cancels the wait while retaining the question and transcript, then restores entry focus. Cancellation does **not** guarantee that backend/provider work or billing stops.
 
