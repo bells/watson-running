@@ -77,6 +77,7 @@ jobs:
           pnpm exec eslint src --ext .ts,.tsx
           pnpm test:dependencies
           pnpm test:chat
+          pnpm test:training
           pnpm test:display
           pnpm test:geography
           pnpm test:summary
@@ -84,3 +85,9 @@ jobs:
           pnpm run build
         env:
           VITE_MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+
+      - name: Install Chromium for the private assistant regression
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Exercise the private assistant with synthetic API responses
+        run: pnpm test:training:browser

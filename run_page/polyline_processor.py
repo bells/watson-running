@@ -87,8 +87,8 @@ def start_end_hiding(polyline: List[Tuple[float]], distance: int) -> List[Tuple[
             break
 
     if start_index >= end_index:
-        # Keep short routes visible when clipping both ends would remove the route.
-        return polyline
+        # A sparse or short route can have fewer than two points past both privacy offsets.
+        return [] if distance > 0 else polyline
 
     return polyline[start_index : end_index + 1]
 

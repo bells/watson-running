@@ -17,6 +17,7 @@
         "AGENT_TIMEOUT",
         "AGENT_TOOL_LIMIT",
         "RUNNING_DATA_UNAVAILABLE",
+        "TRAINING_DATA_UNAVAILABLE",
         "UNAUTHORIZED",
         "FORBIDDEN",
         "RATE_LIMITED",
@@ -28,10 +29,6 @@
       "minLength": 1
     }
   },
-  "required": [
-    "requestId",
-    "code",
-    "message"
-  ],
+  "required": ["requestId", "code", "message"],
   "additionalProperties": false
 }

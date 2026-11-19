@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RunAgent v1 training request",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "SUMMARY"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": ["kind", "startDate", "endDate"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "PERSONAL_BEST"
+        },
+        "distanceType": {
+          "enum": ["FIVE_K", "TEN_K", "HALF_MARATHON", "MARATHON"]
+        }
+      },
+      "required": ["kind", "distanceType"],
+      "additionalProperties": false
+    }
+  ]
+}

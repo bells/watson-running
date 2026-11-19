@@ -9,6 +9,10 @@
       "source": "/api/v1/chat",
       "destination": "https://run-api.watsonzhu.cn/api/v1/chat"
     },
+    {
+      "source": "/api/v1/training/stats",
+      "destination": "https://run-api.watsonzhu.cn/api/v1/training/stats"
+    },
     { "source": "/(.*)", "destination": "/" }
   ]
 }

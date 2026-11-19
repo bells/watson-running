@@ -14,6 +14,8 @@ export const CHAT_TIMEOUT_MS = 60_000;
 export const CHAT_MAX_LENGTH = 4_000;
 export const isPrivateChatToken = (value: string) =>
   /^[a-f0-9]{48}$/.test(value);
+export const isRunAgentRequestId = (value: unknown): value is string =>
+  typeof value === 'string' && /^[A-Za-z0-9_-]{1,100}$/.test(value);
 
 type ChatErrorKind =
   | 'input'
@@ -106,11 +108,7 @@ export async function requestChat(
       throw new ChatError('invalid');
     }
     if (!privateChat) return { content: data.content };
-    if (
-      !('requestId' in data) ||
-      typeof data.requestId !== 'string' ||
-      !/^[A-Za-z0-9_-]{1,100}$/.test(data.requestId)
-    ) {
+    if (!('requestId' in data) || !isRunAgentRequestId(data.requestId)) {
       throw new ChatError('invalid');
     }
     const privateResponse: PrivateChatResponse = {

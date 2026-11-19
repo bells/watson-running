@@ -1,0 +1,11 @@
+{
+  "kind": "SUMMARY",
+  "startDate": "2026-11-01",
+  "endDate": "2026-11-07",
+  "requestId": "synthetic-summary",
+  "dataThrough": "2026-11-19",
+  "runCount": 2,
+  "totalDistanceKm": 12.5,
+  "totalDurationSeconds": 4500,
+  "averagePaceSecondsPerKm": 360
+}

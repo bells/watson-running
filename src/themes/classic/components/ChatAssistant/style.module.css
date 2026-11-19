@@ -250,7 +250,7 @@
 }
 
 .composer textarea,
-.composer input {
+.tokenField input {
   display: block;
   width: 100%;
   resize: none;
@@ -264,7 +264,7 @@
 }
 
 .composer textarea::placeholder,
-.composer input::placeholder {
+.tokenField input::placeholder {
   color: inherit;
   color: var(--running-muted);
 }
@@ -336,4 +336,34 @@
 .tableScroll th {
   background: var(--running-surface-raised);
   font-weight: 600;
+}
+
+.trainingHeader {
+  flex: 0 0 auto;
+  padding: 0.75rem 1.25rem 0;
+}
+
+.modes {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  border-bottom: 1px solid var(--running-border);
+}
+
+.modes button {
+  padding-inline: 0.75rem;
+  color: var(--running-muted);
+  font-size: 0.875rem;
+}
+
+.modes button[aria-pressed='true'] {
+  color: var(--running-text);
+  background: var(--running-surface-raised);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .trainingHeader {
+    padding-inline: 1rem;
+  }
 }

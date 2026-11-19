@@ -159,12 +159,17 @@ class JoyrunDetailTest(unittest.TestCase):
         session.close()
         engine.dispose()
 
-    def test_short_route_remains_visible_when_endpoint_clipping_overlaps(self):
+    def test_short_route_is_hidden_when_endpoint_clipping_overlaps(self):
         points = [(0.0, 0.0), (0.0, 0.005), (0.0, 0.01)]
         with patch.object(polyline_processor, "IGNORE_START_END_RANGE", 0.5):
+            self.assertIsNone(polyline_processor.filter_out(polyline.encode(points)))
+
+    def test_long_route_keeps_only_the_middle_after_endpoint_clipping(self):
+        points = [(0.0, index / 1000) for index in range(21)]
+        with patch.object(polyline_processor, "IGNORE_START_END_RANGE", 0.5):
             self.assertEqual(
-                polyline.encode(points),
-                polyline_processor.filter_out(polyline.encode(points)),
+                points[5:16],
+                polyline.decode(polyline_processor.filter_out(polyline.encode(points))),
             )
 
     def test_summary_export_rejects_route_changes(self):

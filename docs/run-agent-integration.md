@@ -2,18 +2,18 @@
 
 ## Status
 
-`VITE_RUN_AGENT_PRIVATE_CHAT=true` enables the Classic assistant for a private Vercel rollout. In this mode the browser sends a single question to same-origin `POST /api/v1/chat`, with the access token in the Authorization header. Vercel forwards that route to the HTTPS origin. The token and transcript remain in page memory. The private API answers general running questions. Production builds with the flag disabled continue to hide the assistant.
+`VITE_RUN_AGENT_PRIVATE_CHAT=true` enables the Classic assistant for a private Vercel deployment. General chat sends only the current question to same-origin `POST /api/v1/chat` with a bearer token. Vercel forwards the exact route to RunAgent. The token and transcript live in page memory.
 
-`bells/run-agent` is Watson Running's corresponding backend, maintained as a separate repository. Classic has a **development-only ordinary chat UI**. Existing activity pages still load generated static data. The browser sends only the current question; if RunAgent is configured with `RUNNING_DATA_PATH`, its Running Tools can read a separate, generated `activities.json` on the server.
+The **我的训练** view also requires `VITE_RUN_AGENT_PRIVATE_TRAINING=true` at build time. It reuses the same in-memory token and uses a separate same-origin `POST /api/v1/training/stats` route. **日期汇总** supports the last 7 or 30 calendar days, including today in the browser's timezone, or a custom inclusive range up to 366 days. **个人最佳** queries an estimated whole-activity result for the selected distance. Results show the latest activity date in the snapshot when known. The view clears private results when closed, when returning to chat, or when the token changes. Training queries send only their dates or distance selector. RunAgent computes results from the private MCP data path without a model call.
 
-The frontend milestone is POST `/api/chat`, not the future `/api/v1` REST/SSE design below. Frontend and backend records were checked directly: request `{ "message": string }`, response `{ "content": string }`, with a 4000-character question limit. Only the current question is sent. The visible transcript is page memory, not backend conversation context; reloads or route changes can discard it.
+Both production build flags default to off. Keep the training flag off until the backend route and selected dataset have completed the release smoke test. The existing activity pages continue to load the separately published static snapshot. The development-only chat path remains `POST /api/chat`.
 
-The current local RunAgent source includes v0.5 RAG alongside the retained v0.4 APIs. It also implements the following **unversioned backend APIs**, which Watson Running has not integrated:
+The application also implements these unversioned backend APIs for separate use:
 
-| Backend API | Current source contract | Frontend status |
-| --- | --- | --- |
-| `GET /api/chat/stream` | `message` query parameter (1–4000 characters); UTF-8 SSE `token` data fragments or a safe `error` event; no explicit completion event or event ID | No stream client or entry |
-| `POST /api/agent` | `{ "conversationId"?: string, "message": string }` → `{ "conversationId": string, "executionId": string, "toolCallCount": number, "content": string }`; `conversationId` is at most 100 characters and limited to letters, digits, `_` and `-` | No Agent client or entry |
+| Backend API            | Current source contract                                                                                                                                                                                                                        | Frontend status           |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `GET /api/chat/stream` | `message` query parameter (1–4000 characters); UTF-8 SSE `token` data fragments or a safe `error` event; no explicit completion event or event ID                                                                                              | No stream client or entry |
+| `POST /api/agent`      | `{ "conversationId"?: string, "message": string }` → `{ "conversationId": string, "executionId": string, "toolCallCount": number, "content": string }`; `conversationId` is at most 100 characters and limited to letters, digits, `_` and `-` | No Agent client or entry  |
 
 `/api/agent` has bounded, process-local conversation Memory and Running Tools for summary, recent runs and personal best. `/api/chat` and `/api/chat/stream` remain stateless across requests, although they can invoke a Running Tool during one request. A `conversationId` is neither authentication nor authorization. The backend's `docs/watson-running-integration.md` still uses a v0.2 status table; the current controller, model and Memory sources are the status authority until that document is updated in its own repository.
 
@@ -34,7 +34,9 @@ Markdown uses `react-markdown` with `remark-gfm` for tables, skips raw HTML, kee
 
 - `pnpm test:chat`: isolated Node 24 HTTP-boundary tests (no model requests), covering payload/privacy, input, HTTP/network failures, invalid JSON/content, timeout and cancellation.
 - Frontend gates: `pnpm run check`, `pnpm exec tsc --noEmit`, `pnpm exec eslint src --ext .ts,.tsx`, `pnpm run build`; build both Classic and Dashboard after shared-layer changes, restoring config afterwards.
-- Isolated browser regression: with a Classic dev page open in a Playwright CLI session, run `playwright-cli -s=runagent run-code --filename tests/run-agent-chat.browser.js`. Every chat request in this script is intercepted; it never calls RunAgent. Screenshots go to `/tmp/runagent-*.png`.
+- Training contracts: `pnpm test:training` covers payload minimization, authentication, dates, error mapping, freshness, and cancellation. `pnpm test:contracts` also validates the synthetic JSON fixtures.
+- Private assistant browser regression: install Chromium with `pnpm exec playwright install chromium`, then run `pnpm test:training:browser`. The suite starts a loopback Vite server, exercises both private queries and general chat on desktop and mobile, and intercepts API responses with synthetic fixtures.
+- Development chat browser regression: with a Classic dev page open in a Playwright CLI session, run `playwright-cli -s=runagent run-code --filename tests/run-agent-chat.browser.js`. Every chat request in this script is intercepted; it never calls RunAgent. Screenshots go to `/tmp/runagent-*.png`.
 - Browser smoke: open, submit “一周大概跑几次比较合适”, check same-origin request and real answer. Separately simulate failure/slow responses for retries, duplicate sends and clear/close races. Check desktop/narrow layouts, light/dark, focus, composition and scroll preservation. Synthetic composition does not replace physical IME/device checks.
 - Run evidence and any remaining limitations are recorded in `openspec/changes/add-runagent-chat-ui/verification.md`.
 
@@ -117,7 +119,6 @@ Not in v0.1:
 - Sending platform credentials to the browser or LLM
 - Combining both repositories into a monorepo
 
-
 ## 2026-10-07 source review and proposed v1 fixtures
 
 See [v1 contract draft](contracts/runagent-v1/README.md) for field-by-field differences, draft-07 schemas, synthetic JSON/SSE fixtures, terminal events, safe errors, timeout/cancellation, manual retry and reconnect limits. Run `pnpm test:contracts` to validate these local examples. No v1 client or public entry is enabled; Java DTO adoption and cross-repository fixture tests are still prerequisites.
@@ -126,16 +127,16 @@ v0.5 RAG is kept in separate Knowledge controllers/services. `QuestionAnswerAdvi
 
 ### Running Tool read-only data contract
 
-| Boundary | Current source behavior |
-| --- | --- |
-| Input | Explicit server-side `RUNNING_DATA_PATH` to generated `activities.json`, reread per query; no browser upload |
+| Boundary       | Current source behavior                                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Input          | Explicit server-side `RUNNING_DATA_PATH` to generated `activities.json`, reread per query; no browser upload                                        |
 | Minimal fields | `run_id`, `type`, `distance` (metres), `moving_time` (H:MM:SS or N days, H:MM:SS), `start_date_local` (local calendar date); unknown fields ignored |
-| Sports/range | Only `type=Run`; summary/recent use inclusive date ranges capped at 366 days, recent limit 1–20 |
-| Summary | Count, kilometres and seconds; deterministic server calculation |
-| Recent | ID, date, kilometres, seconds and average pace seconds/km; newest first |
-| PB | Whole activities within ±5% of the target distance; fastest average pace, explicitly approximate; no exact split/race PB claim |
-| Read-only | No SQLite/GPX/TCX/FIT/SVG writes or sync; missing/invalid data must produce an unavailable result, never invented personal history |
-| Memory | Only `/api/agent`, bounded process-local messages; conversationId is not authentication or authorization |
+| Sports/range   | Only `type=Run`; summary/recent use inclusive date ranges capped at 366 days, recent limit 1–20                                                     |
+| Summary        | Count, kilometres and seconds; deterministic server calculation                                                                                     |
+| Recent         | ID, date, kilometres, seconds and average pace seconds/km; newest first                                                                             |
+| PB             | Whole activities within ±5% of the target distance; fastest average pace, explicitly approximate; no exact split/race PB claim                      |
+| Read-only      | No SQLite/GPX/TCX/FIT/SVG writes or sync; missing/invalid data must produce an unavailable result, never invented personal history                  |
+| Memory         | Only `/api/agent`, bounded process-local messages; conversationId is not authentication or authorization                                            |
 
 The browser currently sends only `{message}`. Minimum Tool fields are a server read contract, not permission to include activity arrays in chat requests. The current backend response does not provide structured citations or prove which Tool supplied each assertion; the UI therefore does not label ordinary answers as verified personal analysis.
 

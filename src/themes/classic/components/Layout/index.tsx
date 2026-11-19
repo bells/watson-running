@@ -4,6 +4,8 @@ import Header from '../Header';
 import getSiteMetadata from '@core/hooks/useSiteMetadata';
 
 const privateChat = import.meta.env.VITE_RUN_AGENT_PRIVATE_CHAT === 'true';
+const privateTraining =
+  privateChat && import.meta.env.VITE_RUN_AGENT_PRIVATE_TRAINING === 'true';
 const ChatAssistant =
   import.meta.env.DEV || privateChat
     ? lazy(() => import('../ChatAssistant'))
@@ -27,7 +29,10 @@ const Layout = ({ children }: React.PropsWithChildren) => {
       <Header />
       {ChatAssistant && (
         <Suspense fallback={null}>
-          <ChatAssistant privateChat={privateChat} />
+          <ChatAssistant
+            privateChat={privateChat}
+            privateTraining={privateTraining}
+          />
         </Suspense>
       )}
       <div className="mx-auto mb-16 max-w-screen-2xl p-4 lg:px-16 lg:py-8">
