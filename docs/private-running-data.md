@@ -40,10 +40,10 @@ export IGNORE_START_END_RANGE=500
 to this directory. Generated website JSON remains in `src/static/`. JoyRun
 sync refuses to run without an existing private database and GPX directory
 outside the repository. It also requires at least 500 metres of route travel
-to be clipped from each end when the route is long enough. Routes with less than
-about 1 km of recorded path remain unchanged, including their original start
-and end points. Review the generated routes before publishing; this policy does
-not hide every sensitive location.
+to be clipped from each end. If fewer than two points remain after endpoint
+clipping, public output omits the route and keeps the activity statistics.
+Review the generated routes before publishing because a route can still pass
+near sensitive locations in its retained middle section.
 
 The private database keeps source routes. Indoor classification uses those
 routes before any public clipping; JSON and SVG generation apply the privacy

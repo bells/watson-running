@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RunAgent v1 training response",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "SUMMARY"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "dataThrough": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "totalDistanceKm": {
+          "type": "number",
+          "minimum": 0
+        },
+        "totalDurationSeconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "averagePaceSecondsPerKm": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "startDate",
+        "endDate",
+        "requestId",
+        "dataThrough",
+        "runCount",
+        "totalDistanceKm",
+        "totalDurationSeconds",
+        "averagePaceSecondsPerKm"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "PERSONAL_BEST"
+        },
+        "distanceType": {
+          "enum": ["FIVE_K", "TEN_K", "HALF_MARATHON", "MARATHON"]
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "dataThrough": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approximate": {
+          "const": true
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "activityDistanceKm": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "durationSeconds": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "averagePaceSecondsPerKm": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "date",
+                "activityDistanceKm",
+                "durationSeconds",
+                "averagePaceSecondsPerKm"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "distanceType",
+        "requestId",
+        "dataThrough",
+        "approximate",
+        "result"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

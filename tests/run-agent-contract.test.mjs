@@ -13,6 +13,8 @@ const validators = Object.fromEntries(
   [
     'chat-request',
     'chat-response',
+    'training-request',
+    'training-response',
     'agent-request',
     'agent-response',
     'error',
@@ -116,5 +118,46 @@ test('SSE success and error fixtures have ordered events and explicit terminatio
       message: 'error',
     }),
     false
+  );
+});
+
+test('training queries and results match the private v1 contract fixtures', () => {
+  for (const kind of ['summary', 'best']) {
+    const query = json(`fixtures/training-${kind}-request.json`);
+    const result = json(`fixtures/training-${kind}-response.json`);
+    assert.equal(validators['training-request'](query), true);
+    assert.equal(validators['training-response'](result), true);
+    assert.equal(
+      validators['training-request']({ ...query, activities: [] }),
+      false
+    );
+    assert.equal(
+      validators['training-response']({ ...result, rawActivities: [] }),
+      false
+    );
+  }
+  const best = json('fixtures/training-best-response.json');
+  assert.equal(
+    validators['training-response']({ ...best, result: null }),
+    true
+  );
+  assert.equal(
+    validators['training-response']({ ...best, approximate: false }),
+    false
+  );
+  assert.equal(
+    validators['training-request']({
+      kind: 'PERSONAL_BEST',
+      distanceType: 'UNSUPPORTED',
+    }),
+    false
+  );
+  assert.equal(
+    validators.error({
+      requestId: 'synthetic-unavailable',
+      code: 'TRAINING_DATA_UNAVAILABLE',
+      message: '训练数据暂不可用。',
+    }),
+    true
   );
 });

@@ -1,0 +1,13 @@
+{
+  "kind": "PERSONAL_BEST",
+  "distanceType": "FIVE_K",
+  "requestId": "synthetic-best",
+  "dataThrough": "2026-11-19",
+  "approximate": true,
+  "result": {
+    "date": "2026-11-06",
+    "activityDistanceKm": 5.1,
+    "durationSeconds": 1530,
+    "averagePaceSecondsPerKm": 300
+  }
+}

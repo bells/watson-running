@@ -21,10 +21,10 @@ def route(points):
 
 
 class GeneratorPrivacyTests(unittest.TestCase):
-    def test_short_route_remains_visible_when_both_ends_cannot_be_clipped(self):
+    def test_short_route_is_hidden_when_both_ends_cannot_be_clipped(self):
         source = route(31)
         with patch.object(polyline_processor, "IGNORE_START_END_RANGE", 0.5):
-            self.assertEqual(polyline_processor.filter_out(source), source)
+            self.assertIsNone(polyline_processor.filter_out(source))
 
     def test_public_clipping_does_not_change_source_or_misclassify_short_run(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -8,6 +8,7 @@ import {
 } from '@core/services/runAgentChat';
 import styles from './style.module.css';
 import { StatusPanel } from '@core/components/StatusPanel';
+import TrainingStatsPanel from '../TrainingStatsPanel';
 
 const examples = ['一周跑几次比较合适？', '跑前热身应该怎么做？'];
 const markdownComponents = {
@@ -27,12 +28,22 @@ const markdownPlugins = [remarkGfm];
 
 export default function ChatAssistant({
   privateChat = false,
+  privateTraining = false,
 }: {
   privateChat?: boolean;
+  privateTraining?: boolean;
 }) {
-  const [accessToken, setAccessToken] = useState('');
+  const [credential, setCredential] = useState({
+    accessToken: '',
+    tokenRevision: 0,
+  });
+  const { accessToken, tokenRevision } = credential;
+  const [mode, setMode] = useState<'chat' | 'training'>('chat');
+  const trainingEnabled = privateChat && privateTraining;
+  const showTraining = trainingEnabled && mode === 'training';
   const chat = useRunAgentChat(privateChat ? accessToken : undefined);
   const accessTokenRef = useRef<HTMLInputElement>(null);
+  const trainingModeRef = useRef<HTMLButtonElement>(null);
   const canSend = !privateChat || isPrivateChatToken(accessToken);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
@@ -73,6 +84,34 @@ export default function ChatAssistant({
     launcherRef.current?.focus();
   }
 
+  const tokenField = privateChat ? (
+    <div className={styles.tokenField}>
+      <label htmlFor="runagent-token" className={styles.inputLabel}>
+        访问令牌
+      </label>
+      <input
+        ref={accessTokenRef}
+        id="runagent-token"
+        type="password"
+        autoComplete="off"
+        placeholder="输入 RunAgent 访问令牌"
+        value={accessToken}
+        readOnly={chat.pending}
+        onChange={(event) => {
+          const nextToken = event.target.value.trim();
+          setCredential((previous) =>
+            nextToken === previous.accessToken
+              ? previous
+              : {
+                  accessToken: nextToken,
+                  tokenRevision: previous.tokenRevision + 1,
+                }
+          );
+        }}
+      />
+    </div>
+  ) : null;
+
   return (
     <>
       <button
@@ -85,7 +124,12 @@ export default function ChatAssistant({
         onClick={() => {
           dialogRef.current?.showModal();
           setOpen(true);
-          (canSend ? inputRef.current : accessTokenRef.current)?.focus();
+          const initialFocus = !canSend
+            ? accessTokenRef.current
+            : showTraining
+              ? trainingModeRef.current
+              : inputRef.current;
+          initialFocus?.focus();
         }}
       >
         <span aria-hidden="true">✦</span> AI 跑步助手
@@ -101,7 +145,7 @@ export default function ChatAssistant({
           if (event.key !== 'Tab') return;
           const controls = Array.from(
             event.currentTarget.querySelectorAll<HTMLElement>(
-              'button:not(:disabled), input:not(:disabled), textarea, a[href], [tabindex="0"]'
+              'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea, a[href], [tabindex="0"]'
             )
           ).filter((element) => element.getClientRects().length > 0);
           const first = controls[0];
@@ -123,16 +167,18 @@ export default function ChatAssistant({
           <header className={styles.header}>
             <h2 id="runagent-title">AI 跑步助手</h2>
             <div className={styles.actions}>
-              <button
-                type="button"
-                onClick={() => {
-                  chat.clear();
-                  scrollToLatest();
-                  inputRef.current?.focus();
-                }}
-              >
-                清空对话
-              </button>
+              {!showTraining && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    chat.clear();
+                    scrollToLatest();
+                    inputRef.current?.focus();
+                  }}
+                >
+                  清空对话
+                </button>
+              )}
               <button
                 type="button"
                 className={styles.close}
@@ -145,176 +191,204 @@ export default function ChatAssistant({
           </header>
           <p id="runagent-notice" className={styles.notice}>
             {privateChat
-              ? '私有试用 · 每次仅发送当前问题，对话和访问令牌仅保留在本页。'
+              ? '私有试用 · 对话、训练结果和访问令牌仅保留在本页。'
               : '开发环境 · 每次仅发送当前问题，对话仅保留在本页。个人数据是否可用由服务端决定。'}
           </p>
-          <div
-            ref={listRef}
-            className={styles.messages}
-            role="region"
-            aria-label="对话消息"
-            tabIndex={0}
-            onScroll={() => {
-              const element = listRef.current;
-              if (!element) return;
-              const nearBottom =
-                element.scrollHeight -
-                  element.scrollTop -
-                  element.clientHeight <
-                48;
-              followBottomRef.current = nearBottom;
-              setReadingEarlier(!nearBottom);
-            }}
-          >
-            {chat.messages.length === 0 && (
-              <div className={styles.empty}>
-                <span className={styles.spark} aria-hidden="true">
-                  ✦
-                </span>
-                <h3>聊聊跑步吧</h3>
-                <p>从一个小问题开始</p>
-                {examples.map((question) => (
-                  <button
-                    key={question}
-                    type="button"
-                    onClick={() => {
-                      chat.setDraft(question);
-                      inputRef.current?.focus();
-                    }}
-                  >
-                    {question}
-                    <span aria-hidden="true">↗</span>
-                  </button>
-                ))}
-              </div>
-            )}
-            {chat.messages.map((message) => (
-              <article
-                key={message.id}
-                className={
-                  message.role === 'user' ? styles.user : styles.assistant
-                }
-                aria-label={message.role === 'user' ? '你' : '助手'}
-              >
-                <p className={styles.role}>
-                  {message.role === 'user' ? '你' : 'AI 跑步助手'}
-                </p>
-                <div className={styles.content}>
-                  {message.role === 'assistant' ? (
-                    <Markdown
-                      skipHtml
-                      components={markdownComponents}
-                      remarkPlugins={markdownPlugins}
-                    >
-                      {message.content}
-                    </Markdown>
-                  ) : (
-                    <p className={styles.question}>{message.content}</p>
-                  )}
-                </div>
-              </article>
-            ))}
-            {chat.pending ? (
-              <StatusPanel
-                kind="loading"
-                title="正在思考…"
-                description="最长等待 60 秒。可以取消等待后编辑问题。"
-                actionLabel="取消等待"
-                onAction={chat.cancel}
-              />
-            ) : (
-              <p role="status" className={styles.status}>
-                {chat.messages.at(-1)?.role === 'assistant' ? '回答已就绪' : ''}
-              </p>
-            )}
-          </div>
-          {readingEarlier && (
-            <button
-              type="button"
-              className={styles.latest}
-              onClick={scrollToLatest}
-            >
-              查看最新消息 ↓
-            </button>
+          {trainingEnabled && (
+            <div className={styles.trainingHeader}>
+              {tokenField}
+              <nav className={styles.modes} aria-label="助手模式">
+                <button
+                  type="button"
+                  aria-pressed={!showTraining}
+                  onClick={() => setMode('chat')}
+                >
+                  通用问答
+                </button>
+                <button
+                  ref={trainingModeRef}
+                  type="button"
+                  aria-pressed={showTraining}
+                  onClick={() => {
+                    chat.cancel();
+                    setMode('training');
+                  }}
+                >
+                  我的训练
+                </button>
+              </nav>
+            </div>
           )}
-          <form
-            className={styles.composer}
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (canSend) void chat.send();
-            }}
-          >
-            {chat.error && (
-              <StatusPanel
-                kind="error"
-                title="回答暂不可用"
-                description={chat.error}
+          {showTraining ? (
+            open && (
+              // Invalidate prior results and pending requests when the credential changes.
+              <TrainingStatsPanel
+                key={tokenRevision}
+                accessToken={accessToken}
+                authorizedToSend={canSend}
               />
-            )}
-            {privateChat && (
-              <>
-                <label htmlFor="runagent-token" className={styles.inputLabel}>
-                  访问令牌
-                </label>
-                <input
-                  ref={accessTokenRef}
-                  id="runagent-token"
-                  type="password"
-                  autoComplete="off"
-                  placeholder="输入 RunAgent 访问令牌"
-                  value={accessToken}
-                  readOnly={chat.pending}
-                  onChange={(event) =>
-                    setAccessToken(event.target.value.trim())
-                  }
-                />
-              </>
-            )}
-            <label htmlFor="runagent-question" className={styles.inputLabel}>
-              你的问题
-            </label>
-            <textarea
-              ref={inputRef}
-              id="runagent-question"
-              rows={3}
-              maxLength={privateChat ? CHAT_MAX_LENGTH * 2 : CHAT_MAX_LENGTH}
-              value={chat.draft}
-              readOnly={chat.pending}
-              placeholder="输入跑步相关的问题…"
-              aria-describedby="runagent-input-hint"
-              onChange={(event) => chat.setDraft(event.target.value)}
-              onCompositionStart={() => {
-                composingRef.current = true;
-              }}
-              onCompositionEnd={() => {
-                composingRef.current = false;
-              }}
-              onKeyDown={(event) => {
-                if (
-                  event.key === 'Enter' &&
-                  !event.shiftKey &&
-                  !composingRef.current &&
-                  !event.nativeEvent.isComposing &&
-                  event.keyCode !== 229
-                ) {
+            )
+          ) : (
+            <>
+              <div
+                ref={listRef}
+                className={styles.messages}
+                role="region"
+                aria-label="对话消息"
+                tabIndex={0}
+                onScroll={() => {
+                  const element = listRef.current;
+                  if (!element) return;
+                  const nearBottom =
+                    element.scrollHeight -
+                      element.scrollTop -
+                      element.clientHeight <
+                    48;
+                  followBottomRef.current = nearBottom;
+                  setReadingEarlier(!nearBottom);
+                }}
+              >
+                {chat.messages.length === 0 && (
+                  <div className={styles.empty}>
+                    <span className={styles.spark} aria-hidden="true">
+                      ✦
+                    </span>
+                    <h3>聊聊跑步吧</h3>
+                    <p>从一个小问题开始</p>
+                    {examples.map((question) => (
+                      <button
+                        key={question}
+                        type="button"
+                        onClick={() => {
+                          chat.setDraft(question);
+                          inputRef.current?.focus();
+                        }}
+                      >
+                        {question}
+                        <span aria-hidden="true">↗</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {chat.messages.map((message) => (
+                  <article
+                    key={message.id}
+                    className={
+                      message.role === 'user' ? styles.user : styles.assistant
+                    }
+                    aria-label={message.role === 'user' ? '你' : '助手'}
+                  >
+                    <p className={styles.role}>
+                      {message.role === 'user' ? '你' : 'AI 跑步助手'}
+                    </p>
+                    <div className={styles.content}>
+                      {message.role === 'assistant' ? (
+                        <Markdown
+                          skipHtml
+                          components={markdownComponents}
+                          remarkPlugins={markdownPlugins}
+                        >
+                          {message.content}
+                        </Markdown>
+                      ) : (
+                        <p className={styles.question}>{message.content}</p>
+                      )}
+                    </div>
+                  </article>
+                ))}
+                {chat.pending ? (
+                  <StatusPanel
+                    kind="loading"
+                    title="正在思考…"
+                    description="最长等待 60 秒。可以取消等待后编辑问题。"
+                    actionLabel="取消等待"
+                    onAction={chat.cancel}
+                  />
+                ) : (
+                  <p role="status" className={styles.status}>
+                    {chat.messages.at(-1)?.role === 'assistant'
+                      ? '回答已就绪'
+                      : ''}
+                  </p>
+                )}
+              </div>
+              {readingEarlier && (
+                <button
+                  type="button"
+                  className={styles.latest}
+                  onClick={scrollToLatest}
+                >
+                  查看最新消息 ↓
+                </button>
+              )}
+              <form
+                className={styles.composer}
+                onSubmit={(event) => {
                   event.preventDefault();
                   if (canSend) void chat.send();
-                }
-              }}
-            />
-            <div className={styles.composerFooter}>
-              <span id="runagent-input-hint">
-                Enter 发送 · Shift+Enter 换行
-              </span>
-              <button
-                type="submit"
-                className={styles.send}
-                disabled={chat.pending || !canSend || !chat.draft.trim()}
+                }}
               >
-                {chat.error ? '重试' : '发送'} <span aria-hidden="true">↑</span>
-              </button>
-            </div>
-          </form>
+                {chat.error && (
+                  <StatusPanel
+                    kind="error"
+                    title="回答暂不可用"
+                    description={chat.error}
+                  />
+                )}
+                {trainingEnabled ? null : tokenField}
+                <label
+                  htmlFor="runagent-question"
+                  className={styles.inputLabel}
+                >
+                  你的问题
+                </label>
+                <textarea
+                  ref={inputRef}
+                  id="runagent-question"
+                  rows={3}
+                  maxLength={
+                    privateChat ? CHAT_MAX_LENGTH * 2 : CHAT_MAX_LENGTH
+                  }
+                  value={chat.draft}
+                  readOnly={chat.pending}
+                  placeholder="输入跑步相关的问题…"
+                  aria-describedby="runagent-input-hint"
+                  onChange={(event) => chat.setDraft(event.target.value)}
+                  onCompositionStart={() => {
+                    composingRef.current = true;
+                  }}
+                  onCompositionEnd={() => {
+                    composingRef.current = false;
+                  }}
+                  onKeyDown={(event) => {
+                    if (
+                      event.key === 'Enter' &&
+                      !event.shiftKey &&
+                      !composingRef.current &&
+                      !event.nativeEvent.isComposing &&
+                      event.keyCode !== 229
+                    ) {
+                      event.preventDefault();
+                      if (canSend) void chat.send();
+                    }
+                  }}
+                />
+                <div className={styles.composerFooter}>
+                  <span id="runagent-input-hint">
+                    Enter 发送 · Shift+Enter 换行
+                  </span>
+                  <button
+                    type="submit"
+                    className={styles.send}
+                    disabled={chat.pending || !canSend || !chat.draft.trim()}
+                  >
+                    {chat.error ? '重试' : '发送'}{' '}
+                    <span aria-hidden="true">↑</span>
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
       </dialog>
     </>
