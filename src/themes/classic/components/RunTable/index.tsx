@@ -13,7 +13,7 @@ import {
   formatPace,
   formatRunTime,
 } from '../../utils/utils';
-import { Link, useLocation } from 'react-router-dom';
+import RunDetailLink from './RunDetailLink';
 import { sportDisplayName, routeDisplayStatus } from '@core/activityDisplay';
 
 import RunRow from './RunRow';
@@ -41,7 +41,6 @@ const RunTable = ({
   runIndex,
   setRunIndex,
 }: IRunTableProperties) => {
-  const location = useLocation();
   const [sortState, setSortState] = useState<SortState | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
@@ -251,19 +250,7 @@ const RunTable = ({
                     ? '没有公开路线'
                     : '有公开路线'}
                 </span>
-                {run.detail_available ? (
-                  <Link
-                    to={`/activity/${run.run_id}`}
-                    state={{
-                      returnTo: `${import.meta.env.BASE_URL.replace(/\/$/, '')}${location.pathname}${location.search}#run_${run.run_id}`,
-                    }}
-                    className={styles.detailLink}
-                  >
-                    查看详情 ↗
-                  </Link>
-                ) : (
-                  <span>暂无详细数据</span>
-                )}
+                <RunDetailLink run={run} compact />
               </div>
             </article>
           );

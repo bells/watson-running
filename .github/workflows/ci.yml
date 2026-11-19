@@ -78,6 +78,8 @@ jobs:
           pnpm test:dependencies
           pnpm test:chat
           pnpm test:training
+          pnpm test:run-review:evidence
+          pnpm test:run-review:ui
           pnpm test:display
           pnpm test:geography
           pnpm test:summary
@@ -90,4 +92,6 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Exercise the private assistant with synthetic API responses
-        run: pnpm test:training:browser
+        run: |
+          pnpm test:training:browser
+          pnpm test:run-review:browser

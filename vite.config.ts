@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import yaml from '@modyfi/vite-plugin-yaml';
 import svgr from 'vite-plugin-svgr';
+import { runReviewEvidence } from './plugins/runReviewEvidence';
 
 const colorClassMapping: { [key: string]: string } = {
   '#1a1a1a': 'svg-color-bg',
@@ -28,6 +29,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'RUN_AGENT_');
   return {
     plugins: [
+      runReviewEvidence(),
       react(),
       tailwindcss(),
       yaml(),

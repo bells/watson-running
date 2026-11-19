@@ -1,5 +1,6 @@
 import { ActivityGeographySummary } from '@core/components/ActivityGeographySummary';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Area,
   AreaChart,
@@ -205,7 +206,11 @@ function returnPath(defaultPath: string): string {
     : defaultPath;
 }
 
-export default function ActivityDetailPage() {
+export default function ActivityDetailPage({
+  renderReview,
+}: {
+  renderReview?: (_runId: number) => ReactNode;
+}) {
   const { dark, toggle } = useTheme();
   const runId = getRunId();
   const [state, setState] = useState<DetailState>({
@@ -258,7 +263,13 @@ export default function ActivityDetailPage() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <nav className={styles.nav} aria-label="页面导航">
-          <a href={homeUrl}>← 返回跑步记录</a>
+          {renderReview ? (
+            <Link to={`/${homeUrl.slice(import.meta.env.BASE_URL.length)}`}>
+              ← 返回跑步记录
+            </Link>
+          ) : (
+            <a href={homeUrl}>← 返回跑步记录</a>
+          )}
           <button
             type="button"
             onClick={toggle}
@@ -279,6 +290,7 @@ export default function ActivityDetailPage() {
                 <ActivityOverview runId={runId} />
               </Suspense>
             )}
+            {runId !== null && renderReview?.(runId)}
             <StatusPanel
               kind="error"
               title={runId === null ? '无效的运动记录' : '运动详情暂不可用'}
@@ -360,6 +372,7 @@ export default function ActivityDetailPage() {
               </div>
             </section>
 
+            {runId !== null && renderReview?.(runId)}
             <section className={styles.section}>
               <div className={styles.sectionHeading}>
                 <h2>每公里配速</h2>

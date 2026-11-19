@@ -9,6 +9,7 @@ import {
 import styles from './style.module.css';
 import { StatusPanel } from '@core/components/StatusPanel';
 import TrainingStatsPanel from '../TrainingStatsPanel';
+import { useRunAgentAccess } from '../../runAgentAccess';
 
 const examples = ['一周跑几次比较合适？', '跑前热身应该怎么做？'];
 const markdownComponents = {
@@ -33,11 +34,7 @@ export default function ChatAssistant({
   privateChat?: boolean;
   privateTraining?: boolean;
 }) {
-  const [credential, setCredential] = useState({
-    accessToken: '',
-    tokenRevision: 0,
-  });
-  const { accessToken, tokenRevision } = credential;
+  const { accessToken, tokenRevision, setAccessToken } = useRunAgentAccess();
   const [mode, setMode] = useState<'chat' | 'training'>('chat');
   const trainingEnabled = privateChat && privateTraining;
   const showTraining = trainingEnabled && mode === 'training';
@@ -97,17 +94,7 @@ export default function ChatAssistant({
         placeholder="输入 RunAgent 访问令牌"
         value={accessToken}
         readOnly={chat.pending}
-        onChange={(event) => {
-          const nextToken = event.target.value.trim();
-          setCredential((previous) =>
-            nextToken === previous.accessToken
-              ? previous
-              : {
-                  accessToken: nextToken,
-                  tokenRevision: previous.tokenRevision + 1,
-                }
-          );
-        }}
+        onChange={(event) => setAccessToken(event.target.value)}
       />
     </div>
   ) : null;
