@@ -1,0 +1,112 @@
+.card {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+  justify-items: start;
+  margin-top: 32px;
+  padding: clamp(16px, 3.4vw, 28px);
+  border: 1px solid var(--running-border);
+  border-inline-start: 3px solid var(--running-accent);
+  border-radius: 12px;
+  background: var(--running-surface-raised);
+  color: var(--running-text);
+  scroll-margin-top: 20px;
+}
+.card:focus-visible {
+  outline: 2px solid var(--running-focus);
+  outline-offset: 4px;
+}
+.card h2 {
+  margin: 0 0 7px;
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 650;
+  line-height: 1.25;
+}
+.card p {
+  margin: 0;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.note {
+  color: var(--running-muted);
+  font-size: 13px;
+}
+.action,
+.tokenForm input {
+  min-height: 44px;
+  padding: 7px 12px;
+  border: 1px solid var(--running-border);
+  border-radius: 6px;
+  color: var(--running-text);
+  background: var(--running-surface);
+}
+.action {
+  border-color: var(--running-accent);
+  font-weight: 650;
+  cursor: pointer;
+}
+.action:focus-visible,
+.tokenForm input:focus-visible {
+  outline: 2px solid var(--running-focus);
+  outline-offset: 3px;
+}
+.action:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.tokenForm {
+  display: grid;
+  gap: 6px;
+  width: min(100%, 460px);
+}
+.tokenForm label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tokenForm input {
+  flex: 1 1 13rem;
+  min-width: 0;
+}
+.report {
+  display: grid;
+  gap: 16px;
+}
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px clamp(18px, 3vw, 28px);
+  margin: 0;
+  padding: 14px 0;
+  border-block: 1px solid var(--running-border);
+  font-variant-numeric: tabular-nums;
+}
+.facts dt {
+  color: var(--running-muted);
+  font-size: 12px;
+}
+.facts dd {
+  margin: 4px 0 0;
+  font: 600 17px var(--running-font-mono);
+}
+.findings {
+  display: grid;
+  gap: 10px 26px;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+}
+.findings h3 {
+  margin: 0 0 5px;
+  font-weight: 650;
+}
+.findings ul {
+  margin: 0;
+  padding-inline-start: 1.2em;
+  list-style-type: disc;
+}
+.findings li {
+  overflow-wrap: anywhere;
+}

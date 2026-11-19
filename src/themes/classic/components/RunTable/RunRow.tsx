@@ -8,7 +8,7 @@ import {
 import { SHOW_ELEVATION_GAIN } from '../../utils/const';
 import { M_TO_DIST, M_TO_ELEV } from '../../utils/utils';
 import styles from './style.module.css';
-import { Link, useLocation } from 'react-router-dom';
+import RunDetailLink from './RunDetailLink';
 import { isWatchSource } from '@core/activityDetail';
 
 interface IRunRowProperties {
@@ -26,7 +26,6 @@ const RunRow = ({
   runIndex,
   setRunIndex,
 }: IRunRowProperties) => {
-  const location = useLocation();
   const distance = (run.distance / M_TO_DIST).toFixed(2);
   const paceParts = formatPace(run.average_speed);
   const heartRate = run.average_heartrate;
@@ -77,20 +76,7 @@ const RunRow = ({
       <td>{runTime}</td>
       <td className={styles.runDate}>{run.start_date_local}</td>
       <td>
-        {run.detail_available ? (
-          <Link
-            to={`/activity/${run.run_id}`}
-            state={{
-              returnTo: `${import.meta.env.BASE_URL.replace(/\/$/, '')}${location.pathname}${location.search}#run_${run.run_id}`,
-            }}
-            className={styles.detailLink}
-            onClick={(event) => event.stopPropagation()}
-          >
-            查看详情
-          </Link>
-        ) : (
-          <span>—</span>
-        )}
+        <RunDetailLink run={run} />
       </td>
     </tr>
   );

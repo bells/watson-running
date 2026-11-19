@@ -50,6 +50,7 @@ import {
   type IViewState,
 } from '../utils/geoUtils';
 import { useTheme, useThemeChangeCounter } from '../hooks/useTheme';
+import { canReviewRun, RUN_REVIEW_ANCHOR } from '../runReviewRoutes';
 
 const HASH_RUN_CHANGE_EVENT = 'running-page-hash-run-change';
 
@@ -482,15 +483,27 @@ const Index = () => {
               最近一次跑步 · {latestRun.start_date_local.slice(0, 16)}
             </span>
             <strong>{formatDistanceMeters(latestRun.distance)} km</strong>
-            {latestRun.detail_available ? (
-              <Link
-                to={`/activity/${latestRun.run_id}`}
-                state={{
-                  returnTo: `${window.location.pathname}${window.location.search}`,
-                }}
-              >
-                查看详情 ↗
-              </Link>
+            {latestRun.detail_available || canReviewRun(latestRun) ? (
+              <div className={styles.latestActions}>
+                <Link
+                  to={`/activity/${latestRun.run_id}`}
+                  state={{
+                    returnTo: `${window.location.pathname}${window.location.search}`,
+                  }}
+                >
+                  查看详情 ↗
+                </Link>
+                {canReviewRun(latestRun) && (
+                  <Link
+                    to={`/activity/${latestRun.run_id}#${RUN_REVIEW_ANCHOR}`}
+                    state={{
+                      returnTo: `${window.location.pathname}${window.location.search}`,
+                    }}
+                  >
+                    AI 跑后复盘
+                  </Link>
+                )}
+              </div>
             ) : (
               <span>暂无详细数据</span>
             )}

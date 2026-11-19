@@ -17,6 +17,15 @@ The application also implements these unversioned backend APIs for separate use:
 
 `/api/agent` has bounded, process-local conversation Memory and Running Tools for summary, recent runs and personal best. `/api/chat` and `/api/chat/stream` remain stateless across requests, although they can invoke a Running Tool during one request. A `conversationId` is neither authentication nor authorization. The backend's `docs/watson-running-integration.md` still uses a v0.2 status table; the current controller, model and Memory sources are the status authority until that document is updated in its own repository.
 
+
+## Classic post-run review
+
+`VITE_RUN_AGENT_RUN_REVIEW=true` enables the private review entry on Classic. Use the activity detail page to query a saved report with `GET /api/v1/runs/{runId}/review` or explicitly start one with `POST` on the same path. Both calls use the existing in-memory Bearer token. The browser submits the activity ID in the path and an empty body.
+
+Vite publishes the corresponding numeric evidence at `run-review-evidence/{runId}.json` from the same existing activity snapshot. The projection contains distance, moving duration and eligible split numbers. RunAgent verifies the projection, computes the comparison and stores the private report. The UI uses the backend state to show available, generating, already saved, or failed.
+
+Run `pnpm test:run-review:evidence`, `pnpm test:run-review:ui` and `pnpm test:run-review:browser` for the local fixture suite. Enable the production feature only after confirming the exact proxy routes and approved model inputs.
+
 ## Local development chat
 
 1. Keep RunAgent running at `http://localhost:8080` with its existing server-side model configuration. No model credentials belong in this frontend.

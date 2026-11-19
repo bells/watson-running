@@ -164,6 +164,12 @@
 .latest strong {
   font-family: var(--running-font-mono);
 }
+.latestActions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
 .latest a {
   min-height: 44px;
   display: inline-flex;
