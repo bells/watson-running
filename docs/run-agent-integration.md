@@ -1,6 +1,14 @@
 # RunAgent integration boundary
 
-## Status
+## Classic public experience
+
+Set `VITE_RUN_AGENT_PUBLIC_API=true` after RunAgent enables public access to the existing v1 routes. Visitors can open the Classic assistant and run book or weather examples, query training statistics for published runs, and use the curated public review entry without signing in. The owner can still enter a token through **站主访问**.
+
+Set `VITE_RUN_AGENT_PUBLIC_REVIEW_IDS` to the comma-separated activity IDs configured in RunAgent's public review allowlist. Classic links only to matching eligible activities from the site's published snapshot. If those IDs or the published snapshot change, rebuild the frontend after coordinating the backend allowlist.
+
+Chat can send an optional city and planned local start time. Training statistics can include a goal, city and planned local start time when the visitor requests supporting evidence. For a saved review, the visitor can request weather separately using the existing review POST path. The interface displays book titles and weather validity returned by RunAgent.
+
+## Private assistant
 
 `VITE_RUN_AGENT_PRIVATE_CHAT=true` enables the Classic assistant for a private Vercel deployment. General chat sends only the current question to same-origin `POST /api/v1/chat` with a bearer token. Vercel forwards the exact route to RunAgent. The token and transcript live in page memory.
 
@@ -16,7 +24,6 @@ The application also implements these unversioned backend APIs for separate use:
 | `POST /api/agent`      | `{ "conversationId"?: string, "message": string }` → `{ "conversationId": string, "executionId": string, "toolCallCount": number, "content": string }`; `conversationId` is at most 100 characters and limited to letters, digits, `_` and `-` | No Agent client or entry  |
 
 `/api/agent` has bounded, process-local conversation Memory and Running Tools for summary, recent runs and personal best. `/api/chat` and `/api/chat/stream` remain stateless across requests, although they can invoke a Running Tool during one request. A `conversationId` is neither authentication nor authorization. The backend's `docs/watson-running-integration.md` still uses a v0.2 status table; the current controller, model and Memory sources are the status authority until that document is updated in its own repository.
-
 
 ## Classic post-run review
 

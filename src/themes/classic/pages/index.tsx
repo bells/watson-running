@@ -50,7 +50,13 @@ import {
   type IViewState,
 } from '../utils/geoUtils';
 import { useTheme, useThemeChangeCounter } from '../hooks/useTheme';
-import { canReviewRun, RUN_REVIEW_ANCHOR } from '../runReviewRoutes';
+import {
+  canReviewRun,
+  canReviewRunPublicly,
+  publicRunAgentEnabled,
+  RUN_REVIEW_ANCHOR,
+} from '../runReviewRoutes';
+import { useRunAgentAccess } from '../runAgentAccess';
 
 const HASH_RUN_CHANGE_EVENT = 'running-page-hash-run-change';
 
@@ -449,11 +455,22 @@ const Index = () => {
     () => totalSummary.activities.find((run) => run.type === 'Run'),
     [totalSummary]
   );
+  const { accessToken } = useRunAgentAccess();
+  const latestHasReview =
+    latestRun &&
+    canReviewRun(latestRun, !publicRunAgentEnabled || Boolean(accessToken));
+  const publicReviewRuns = useMemo(
+    () =>
+      publicRunAgentEnabled
+        ? totalSummary.activities.filter(canReviewRunPublicly)
+        : [],
+    [totalSummary]
+  );
   const rangeSummary = useMemo(() => summarizeActivities(runs), [runs]);
   const sports = [...new Set(activities.map((run) => run.type))];
 
   return (
-    <Layout>
+    <Layout trainingThrough={latestRun?.start_date_local.slice(0, 10)}>
       <Helmet>
         <html lang="en" data-theme={theme} />
       </Helmet>
@@ -483,7 +500,7 @@ const Index = () => {
               最近一次跑步 · {latestRun.start_date_local.slice(0, 16)}
             </span>
             <strong>{formatDistanceMeters(latestRun.distance)} km</strong>
-            {latestRun.detail_available || canReviewRun(latestRun) ? (
+            {latestRun.detail_available || latestHasReview ? (
               <div className={styles.latestActions}>
                 <Link
                   to={`/activity/${latestRun.run_id}`}
@@ -493,7 +510,7 @@ const Index = () => {
                 >
                   查看详情 ↗
                 </Link>
-                {canReviewRun(latestRun) && (
+                {latestHasReview && (
                   <Link
                     to={`/activity/${latestRun.run_id}#${RUN_REVIEW_ANCHOR}`}
                     state={{
@@ -507,6 +524,25 @@ const Index = () => {
             ) : (
               <span>暂无详细数据</span>
             )}
+          </section>
+        )}
+        {publicReviewRuns.length > 0 && (
+          <section className={styles.latest} aria-label="体验 AI 跑后复盘">
+            <strong>体验 AI 跑后复盘</strong>
+            <div className={styles.latestActions}>
+              {publicReviewRuns.map((run) => (
+                <Link
+                  key={run.run_id}
+                  to={`/activity/${run.run_id}#${RUN_REVIEW_ANCHOR}`}
+                  state={{
+                    returnTo: `${window.location.pathname}${window.location.search}`,
+                  }}
+                >
+                  {run.start_date_local.slice(0, 10)} ·{' '}
+                  {formatDistanceMeters(run.distance, 2)} km
+                </Link>
+              ))}
+            </div>
           </section>
         )}
         <section className={styles.filters} aria-label="记录筛选">

@@ -1,9 +1,17 @@
+import {
+  readRunningEvidence,
+  type RunningAdviceContext,
+  type RunningEvidence,
+} from './runAgentEvidence';
+
 export interface ChatRequest {
   message: string;
+  context?: Pick<RunningAdviceContext, 'city' | 'runningAt'>;
 }
 
 export interface ChatResponse {
   content: string;
+  evidence?: RunningEvidence;
 }
 
 export interface PrivateChatResponse extends ChatResponse {
@@ -52,16 +60,17 @@ export async function requestChat(
   request: ChatRequest,
   signal: AbortSignal,
   timeoutMs = CHAT_TIMEOUT_MS,
-  accessToken?: string
+  accessToken?: string,
+  publicApi = false
 ): Promise<ChatResponse> {
   const message = request.message.trim();
-  const privateChat = accessToken !== undefined;
+  const versioned = publicApi || accessToken !== undefined;
   if (
     !message ||
-    (privateChat ? [...message].length : message.length) > CHAT_MAX_LENGTH
+    (versioned ? [...message].length : message.length) > CHAT_MAX_LENGTH
   )
     throw new ChatError('input');
-  if (privateChat && !isPrivateChatToken(accessToken))
+  if (accessToken !== undefined && !isPrivateChatToken(accessToken))
     throw new ChatError('unauthorized');
 
   const controller = new AbortController();
@@ -78,18 +87,23 @@ export async function requestChat(
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    if (privateChat) headers.Authorization = `Bearer ${accessToken}`;
-    const response = await fetch(privateChat ? '/api/v1/chat' : '/api/chat', {
+    if (accessToken !== undefined)
+      headers.Authorization = `Bearer ${accessToken}`;
+    const context = versioned ? request.context : undefined;
+    const response = await fetch(versioned ? '/api/v1/chat' : '/api/chat', {
       method: 'POST',
       headers,
-      body: JSON.stringify({ message } satisfies ChatRequest),
+      body: JSON.stringify({
+        message,
+        ...(context && { context }),
+      } satisfies ChatRequest),
       signal: controller.signal,
       credentials: 'omit',
       redirect: 'error',
     });
-    if (privateChat && response.status === 401)
+    if (versioned && response.status === 401)
       throw new ChatError('unauthorized');
-    if (privateChat && response.status === 429)
+    if (versioned && response.status === 429)
       throw new ChatError('rateLimited');
     if (!response.ok) throw new ChatError('http');
     let data: unknown;
@@ -107,15 +121,18 @@ export async function requestChat(
     ) {
       throw new ChatError('invalid');
     }
-    if (!privateChat) return { content: data.content };
+    if (!versioned) return { content: data.content };
     if (!('requestId' in data) || !isRunAgentRequestId(data.requestId)) {
       throw new ChatError('invalid');
     }
-    const privateResponse: PrivateChatResponse = {
+    const evidence =
+      'evidence' in data ? readRunningEvidence(data.evidence) : undefined;
+    const versionedResponse: PrivateChatResponse = {
       content: data.content,
       requestId: data.requestId,
+      ...(evidence && { evidence }),
     };
-    return privateResponse;
+    return versionedResponse;
   } catch (error: unknown) {
     if (signal.aborted) throw new ChatError('cancelled');
     if (timedOut) throw new ChatError('timeout');

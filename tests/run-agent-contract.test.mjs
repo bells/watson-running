@@ -9,6 +9,7 @@ const Ajv = createRequire(require.resolve('eslint'))('ajv');
 const ajv = new Ajv({ allErrors: true });
 const root = new URL('../docs/contracts/runagent-v1/', import.meta.url);
 const json = (path) => JSON.parse(readFileSync(new URL(path, root), 'utf8'));
+ajv.addSchema(json('advice.schema.json'));
 const validators = Object.fromEntries(
   [
     'chat-request',
@@ -159,5 +160,57 @@ test('training queries and results match the private v1 contract fixtures', () =
       message: '训练数据暂不可用。',
     }),
     true
+  );
+});
+
+test('public v1 contracts allow bounded context and projected evidence', () => {
+  const context = { city: '上海', runningAt: '2026-11-21T07:00' };
+  const evidence = {
+    knowledge: { status: 'READY', sources: [{ title: '合成训练书' }] },
+    weather: { status: 'READY', city: '上海', temperatureC: 16 },
+  };
+  const chatRequest = json('fixtures/chat-request.json');
+  const chatResponse = json('fixtures/chat-response.json');
+  const trainingRequest = json('fixtures/training-summary-request.json');
+  const trainingResponse = json('fixtures/training-summary-response.json');
+  assert.equal(validators['chat-request']({ ...chatRequest, context }), true);
+  assert.equal(
+    validators['chat-response']({ ...chatResponse, evidence }),
+    true
+  );
+  assert.equal(
+    validators['training-request']({
+      ...trainingRequest,
+      adviceContext: { ...context, goal: '恢复跑' },
+    }),
+    true
+  );
+  assert.equal(
+    validators['training-response']({
+      ...trainingResponse,
+      evidence,
+      advice: '用轻松配速恢复。',
+    }),
+    true
+  );
+  assert.equal(
+    validators['chat-request']({
+      ...chatRequest,
+      context: { city: '上海', latitude: 31.2 },
+    }),
+    false
+  );
+  assert.equal(
+    validators['chat-response']({
+      ...chatResponse,
+      evidence: {
+        ...evidence,
+        knowledge: {
+          status: 'READY',
+          sources: [{ title: '合成训练书', excerpt: '这里是未投影的正文' }],
+        },
+      },
+    }),
+    false
   );
 });

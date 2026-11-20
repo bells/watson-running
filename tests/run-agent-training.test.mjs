@@ -196,3 +196,30 @@ test('calendar presets are inclusive in local time and the range caps at 366 day
   assert.equal(isValidTrainingRange('2024-03-01', '2024-02-29'), false);
   assert.equal(isValidTrainingRange('2024-02-29', '2024-02-29'), true);
 });
+
+test('visitor can request training advice with a location without sending a token', async (t) => {
+  const adviceContext = { city: '上海', goal: '恢复跑' };
+  const advice = '用轻松的节奏开始，按体感调整。';
+  const evidence = {
+    knowledge: { status: 'NO_MATCH', sources: [] },
+    weather: { status: 'READY', city: '上海', temperatureC: 18 },
+  };
+  const fetch = t.mock.method(globalThis, 'fetch', async () =>
+    Response.json({ ...summary, evidence, advice })
+  );
+  assert.deepEqual(
+    await requestTrainingStats(
+      { ...summaryQuery, adviceContext },
+      undefined,
+      signal()
+    ),
+    { ...summary, evidence, advice }
+  );
+  const [[url, options]] = fetch.mock.calls.map((call) => call.arguments);
+  assert.equal(url, '/api/v1/training/stats');
+  assert.equal(new Headers(options.headers).has('authorization'), false);
+  assert.deepEqual(JSON.parse(options.body), {
+    ...summaryQuery,
+    adviceContext,
+  });
+});

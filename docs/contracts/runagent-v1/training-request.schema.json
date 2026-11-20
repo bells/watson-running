@@ -15,6 +15,9 @@
         "endDate": {
           "type": "string",
           "format": "date"
+        },
+        "adviceContext": {
+          "$ref": "https://run.watsonzhu.cn/contracts/runagent-v1/advice.schema.json#/definitions/context"
         }
       },
       "required": ["kind", "startDate", "endDate"],
@@ -28,6 +31,9 @@
         },
         "distanceType": {
           "enum": ["FIVE_K", "TEN_K", "HALF_MARATHON", "MARATHON"]
+        },
+        "adviceContext": {
+          "$ref": "https://run.watsonzhu.cn/contracts/runagent-v1/advice.schema.json#/definitions/context"
         }
       },
       "required": ["kind", "distanceType"],

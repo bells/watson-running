@@ -4,14 +4,19 @@ import {
   ChatError,
   requestChat,
 } from '../services/runAgentChat';
+import type {
+  RunningAdviceContext,
+  RunningEvidence,
+} from '../services/runAgentEvidence';
 
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  evidence?: RunningEvidence;
 }
 
-export function useRunAgentChat(accessToken?: string) {
+export function useRunAgentChat(accessToken?: string, publicApi = false) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState('');
   const [pending, setPending] = useState(false);
@@ -42,12 +47,13 @@ export function useRunAgentChat(accessToken?: string) {
     setError(null);
   }
 
-  async function send() {
-    const message = draft.trim();
+  async function send(context?: RunningAdviceContext, question = draft) {
+    const message = question.trim();
     if (activeRef.current || !message) return;
     if (
-      (accessToken !== undefined ? [...message].length : message.length) >
-      CHAT_MAX_LENGTH
+      (publicApi || accessToken !== undefined
+        ? [...message].length
+        : message.length) > CHAT_MAX_LENGTH
     ) {
       setError(new ChatError('input').message);
       return;
@@ -66,10 +72,11 @@ export function useRunAgentChat(accessToken?: string) {
     });
     try {
       const response = await requestChat(
-        { message },
+        { message, context },
         controller.signal,
         undefined,
-        accessToken
+        accessToken,
+        publicApi
       );
       if (activeRef.current !== controller) return;
       setMessages((previous) => [
@@ -78,6 +85,7 @@ export function useRunAgentChat(accessToken?: string) {
           id: crypto.randomUUID(),
           role: 'assistant',
           content: response.content,
+          evidence: response.evidence,
         },
       ]);
       setDraft('');

@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import { canReviewRun } from '../../runReviewRoutes';
+import { canReviewRun, publicRunAgentEnabled } from '../../runReviewRoutes';
+import { useRunAgentAccess } from '../../runAgentAccess';
 import type { Activity } from '../../utils/utils';
 import styles from './style.module.css';
 
@@ -11,7 +12,11 @@ export default function RunDetailLink({
   compact?: boolean;
 }) {
   const location = useLocation();
-  const review = canReviewRun(run);
+  const { accessToken } = useRunAgentAccess();
+  const review = canReviewRun(
+    run,
+    !publicRunAgentEnabled || Boolean(accessToken)
+  );
   if (!run.detail_available && !review)
     return <span>{compact ? '暂无详细数据' : '—'}</span>;
 

@@ -1,4 +1,11 @@
 import { isPrivateChatToken, isRunAgentRequestId } from './runAgentChat';
+import {
+  readKnowledgeEvidence,
+  readWeatherEvidence,
+  type KnowledgeEvidence,
+  type RunningAdviceContext,
+  type WeatherEvidence,
+} from './runAgentEvidence';
 
 interface SummaryFacts {
   distanceMeters: number;
@@ -20,6 +27,7 @@ interface ReviewContent {
   observations: string[];
   improvement: string;
   nextRun: string;
+  knowledge?: KnowledgeEvidence;
 }
 
 export type RunReviewReport = ReviewContent &
@@ -29,7 +37,12 @@ export type RunReviewReport = ReviewContent &
   );
 
 export type RunReviewResponse =
-  | { status: 'READY'; requestId: string; report: RunReviewReport }
+  | {
+      status: 'READY';
+      requestId: string;
+      report: RunReviewReport;
+      weather?: WeatherEvidence;
+    }
   | {
       status: 'MISSING' | 'GENERATING' | 'FAILED' | 'DISABLED';
       requestId: string;
@@ -156,8 +169,17 @@ function readReviewResponse(
     (status === 200 || status === 201) &&
     payload.status === 'READY' &&
     isReport(payload.report, runId)
-  )
-    return { status: 'READY', requestId, report: payload.report };
+  ) {
+    const { knowledge: rawKnowledge, ...report } = payload.report;
+    const knowledge = readKnowledgeEvidence(rawKnowledge);
+    const weather = readWeatherEvidence(payload.weather);
+    return {
+      status: 'READY',
+      requestId,
+      report: { ...report, ...(knowledge && { knowledge }) },
+      ...(weather && { weather }),
+    };
+  }
 
   throw new RunReviewError(
     status >= 400 ? 'unavailable' : 'invalidResponse',
@@ -168,11 +190,12 @@ function readReviewResponse(
 export async function requestRunReview(
   runId: number,
   method: 'GET' | 'POST',
-  accessToken: string,
+  accessToken: string | undefined,
   signal: AbortSignal,
-  timeoutMs = 35_000
+  timeoutMs = 35_000,
+  adviceContext?: RunningAdviceContext
 ): Promise<RunReviewResponse> {
-  if (!isPrivateChatToken(accessToken))
+  if (accessToken !== undefined && !isPrivateChatToken(accessToken))
     throw new RunReviewError('unauthorized');
   if (!Number.isSafeInteger(runId) || runId <= 0)
     throw new RunReviewError('invalidRequest');
@@ -187,14 +210,19 @@ export async function requestRunReview(
     controller.abort();
   }, timeoutMs);
   try {
+    const sendContext = method === 'POST' && adviceContext !== undefined;
     const response = await fetch(`/api/v1/runs/${runId}/review`, {
       method,
       signal: controller.signal,
       cache: 'no-store',
       credentials: 'omit',
       redirect: 'error',
+      ...(sendContext && { body: JSON.stringify({ adviceContext }) }),
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        ...(accessToken !== undefined && {
+          Authorization: `Bearer ${accessToken}`,
+        }),
+        ...(sendContext && { 'Content-Type': 'application/json' }),
         Accept: 'application/json',
       },
     });

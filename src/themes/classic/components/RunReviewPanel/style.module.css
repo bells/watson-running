@@ -110,3 +110,16 @@
 .findings li {
   overflow-wrap: anywhere;
 }
+.weatherForm {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--running-border);
+}
+
+.weatherForm > div,
+.weatherForm > aside {
+  width: 100%;
+}

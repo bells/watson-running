@@ -234,3 +234,172 @@ test('Classic review discovers both records, requires consentful generation and 
     });
   }
 });
+
+test('a visitor can use the live site paths for chat, published stats and a listed review without a token', async (t) => {
+  process.env.VITE_RUN_AGENT_PRIVATE_CHAT = 'false';
+  process.env.VITE_RUN_AGENT_PRIVATE_TRAINING = 'false';
+  process.env.VITE_RUN_AGENT_RUN_REVIEW = 'false';
+  process.env.VITE_RUN_AGENT_PUBLIC_API = 'true';
+  process.env.VITE_RUN_AGENT_PUBLIC_REVIEW_IDS = String(latestId);
+
+  const vite = await createServer({
+    logLevel: 'error',
+    server: { host: '127.0.0.1', port: 0 },
+  });
+  t.after(() => vite.close());
+  await vite.listen();
+  const origin = 'http://127.0.0.1:' + vite.httpServer.address().port;
+  const browser = await chromium.launch();
+  t.after(() => browser.close());
+
+  const knowledge = { status: 'READY', sources: [{ title: '合成训练书' }] };
+  const weather = {
+    status: 'READY',
+    city: '上海',
+    timezone: 'Asia/Shanghai',
+    validAt: '2026-11-20T19:00',
+    temperatureC: 16,
+  };
+  for (const [surface, width, height] of [
+    ['desktop', 1280, 800],
+    ['mobile', 390, 844],
+  ]) {
+    await t.test(surface, async () => {
+      const page = await browser.newPage({ viewport: { width, height } });
+      try {
+        page.setDefaultTimeout(10_000);
+        const requests = [];
+        let generated = false;
+        await page.route('**/*', async (route) => {
+          const request = route.request();
+          const url = new URL(request.url());
+          if (url.origin !== origin) return route.abort();
+          if (
+            url.pathname === '/src/static/activities.json' &&
+            request.resourceType() === 'fetch'
+          )
+            return route.fulfill({ json: activities });
+          if (url.pathname === '/activity-details/' + latestId + '.json')
+            return route.fulfill({ json: detail });
+          if (!url.pathname.startsWith('/api/')) return route.continue();
+
+          assert.equal(request.headers().authorization, undefined);
+          const body = request.postDataJSON();
+          const method = request.method();
+          requests.push({ path: url.pathname, method, body });
+          if (url.pathname === '/api/v1/chat') {
+            assert.deepEqual(body.context, { city: '上海' });
+            return route.fulfill({
+              json: {
+                requestId: 'visitor-chat',
+                content: '合成跑步建议',
+                evidence: { knowledge, weather },
+              },
+            });
+          }
+          if (url.pathname === '/api/v1/training/stats') {
+            return route.fulfill({
+              json: {
+                kind: body.kind,
+                startDate: body.startDate,
+                endDate: body.endDate,
+                requestId: 'visitor-stats',
+                dataThrough: '2026-11-19',
+                runCount: 2,
+                totalDistanceKm: 8,
+                totalDurationSeconds: 2520,
+                averagePaceSecondsPerKm: 315,
+                evidence: { knowledge, weather },
+                advice: '先轻松跑，再看体感。',
+              },
+            });
+          }
+
+          assert.equal(url.pathname, '/api/v1/runs/' + latestId + '/review');
+          if (!generated && method === 'GET') {
+            return route.fulfill({
+              status: 404,
+              json: {
+                requestId: 'visitor-not-generated',
+                code: 'REVIEW_NOT_FOUND',
+                generationEnabled: true,
+              },
+            });
+          }
+          generated = true;
+          const ready = completedReport(latestId);
+          return route.fulfill({
+            json: {
+              ...ready,
+              report: { ...ready.report, knowledge },
+              ...(body?.adviceContext && { weather }),
+            },
+          });
+        });
+
+        await page.goto(origin);
+        await page.getByRole('button', { name: 'AI 跑步助手' }).click();
+        assert.equal(
+          await page.getByRole('textbox', { name: '你的问题' }).isEnabled(),
+          true
+        );
+        await page
+          .getByRole('button', { name: /我在上海，现在出门跑步/ })
+          .click();
+        await page.getByText('合成跑步建议').waitFor();
+        await page.getByText('《合成训练书》', { exact: true }).waitFor();
+        await page.getByText(/上海 · 2026-11-20 19:00/).waitFor();
+        assert.equal(
+          await page
+            .getByRole('link', { name: 'Open-Meteo' })
+            .getAttribute('href'),
+          'https://open-meteo.com/'
+        );
+        await page
+          .getByRole('button', { name: '训练统计', exact: true })
+          .click();
+        await page.getByText('附加训练依据', { exact: true }).click();
+        await page
+          .getByRole('checkbox', { name: '查询时附上相关书籍和天气' })
+          .check();
+        await page.getByLabel('训练目标').fill('恢复跑');
+        await page.getByRole('button', { name: '查询汇总' }).click();
+        await page.getByRole('heading', { name: '训练汇总' }).waitFor();
+        const stats = page.getByRole('region', { name: '训练统计结果' });
+        await stats.getByText('8 km', { exact: true }).waitFor();
+        await stats
+          .getByText('先轻松跑，再看体感。', { exact: true })
+          .waitFor();
+        assert.equal(requests[1].body.endDate, '2026-11-19');
+        assert.deepEqual(requests[1].body.adviceContext, {
+          city: '上海',
+          goal: '恢复跑',
+        });
+        await page.getByRole('button', { name: '关闭聊天' }).click();
+        const reviewList = page.getByRole('region', {
+          name: '体验 AI 跑后复盘',
+        });
+        assert.equal(await reviewList.getByRole('link').count(), 1);
+        await reviewList.getByRole('link').click();
+        await page.getByRole('button', { name: '生成报告' }).click();
+        await page.getByRole('button', { name: '查看报告' }).click();
+        await page.getByText('《合成训练书》', { exact: true }).waitFor();
+        await page.getByLabel('出跑城市').fill('上海');
+        await page.getByRole('button', { name: '查看当地天气' }).click();
+        await page.getByText(/上海 · 2026-11-20 19:00/).waitFor();
+        assert.deepEqual(
+          requests.map(({ path, method }) => [path, method]),
+          [
+            ['/api/v1/chat', 'POST'],
+            ['/api/v1/training/stats', 'POST'],
+            ['/api/v1/runs/' + latestId + '/review', 'GET'],
+            ['/api/v1/runs/' + latestId + '/review', 'POST'],
+            ['/api/v1/runs/' + latestId + '/review', 'POST'],
+          ]
+        );
+      } finally {
+        await page.close();
+      }
+    });
+  }
+});

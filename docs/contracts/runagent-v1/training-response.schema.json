@@ -37,6 +37,13 @@
           "type": "integer",
           "minimum": 0
         },
+        "advice": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "$ref": "https://run.watsonzhu.cn/contracts/runagent-v1/advice.schema.json#/definitions/evidence"
+        },
         "totalDistanceKm": {
           "type": "number",
           "minimum": 0
@@ -98,6 +105,13 @@
         },
         "approximate": {
           "const": true
+        },
+        "advice": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "$ref": "https://run.watsonzhu.cn/contracts/runagent-v1/advice.schema.json#/definitions/evidence"
         },
         "result": {
           "anyOf": [

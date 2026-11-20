@@ -132,3 +132,35 @@ test('list/report navigation can abort an active GET', async (t) => {
   controller.abort();
   await assert.rejects(response, { kind: 'cancelled' });
 });
+
+test('visitor can load a public review and request weather without persisting its location', async (t) => {
+  const knowledge = { status: 'READY', sources: [{ title: '训练资料' }] };
+  const weather = { status: 'READY', city: '上海', temperatureC: 18 };
+  const adviceContext = { city: '上海', runningAt: '2026-11-21T07:00' };
+  const saved = { ...ready, report: { ...report, knowledge } };
+  const fetch = t.mock.method(globalThis, 'fetch', async (_url, options) =>
+    Response.json(options.method === 'POST' ? { ...saved, weather } : saved)
+  );
+  assert.deepEqual(
+    await requestRunReview(id, 'GET', undefined, signal()),
+    saved
+  );
+  assert.deepEqual(
+    await requestRunReview(
+      id,
+      'POST',
+      undefined,
+      signal(),
+      undefined,
+      adviceContext
+    ),
+    { ...saved, weather }
+  );
+  for (const [index, call] of fetch.mock.calls.entries()) {
+    const [url, options] = call.arguments;
+    assert.equal(url, '/api/v1/runs/1001/review');
+    assert.equal(new Headers(options.headers).has('authorization'), false);
+    if (index) assert.deepEqual(JSON.parse(options.body), { adviceContext });
+    else assert.equal(options.body, undefined);
+  }
+});

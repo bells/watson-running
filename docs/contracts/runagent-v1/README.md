@@ -1,8 +1,14 @@
 # RunAgent v1 契约
 
-私有助手实现版本化 Chat 和训练统计。两条路由使用同一个服务端颁发的 Bearer 令牌。Agent 和 SSE 部分描述协议草案。目录中的 JSON Schema 和合成 fixtures 用于契约测试。
+版本化 Chat、训练统计和复盘使用同一组路径。启用公开访问后，访客省略 Authorization；站主发送服务端颁发的 Bearer 令牌。Agent 和 SSE 部分描述协议草案。目录中的 JSON Schema 和合成 fixtures 用于契约测试。
 
-## 私有训练统计
+## 运行建议与依据
+
+`POST /api/v1/chat` 接收可选的 `context`，`POST /api/v1/training/stats` 接收可选的 `adviceContext`。城市和当地计划开跑时间提供天气查询上下文，训练查询还可提供目标。服务端在可用时返回 `evidence.knowledge` 和 `evidence.weather`。训练统计可另外返回纯文本 `advice`。
+
+复盘 POST 按活动 ID 生成报告。可选 `adviceContext` 可附上当次请求的天气，响应中顶层 `weather` 只用于当前浏览器展示。报告里的 `knowledge` 可随同已保存的报告由 GET 返回。
+
+## 训练统计
 
 `POST /api/v1/training/stats` 接收 `training-request.schema.json` 中的两种请求。响应符合 `training-response.schema.json`，带 `requestId` 和 `Cache-Control: no-store`。
 

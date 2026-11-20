@@ -12,11 +12,11 @@
     "content": {
       "type": "string",
       "minLength": 1
+    },
+    "evidence": {
+      "$ref": "https://run.watsonzhu.cn/contracts/runagent-v1/advice.schema.json#/definitions/evidence"
     }
   },
-  "required": [
-    "requestId",
-    "content"
-  ],
+  "required": ["requestId", "content"],
   "additionalProperties": false
 }

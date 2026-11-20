@@ -8,10 +8,11 @@
       "minLength": 1,
       "maxLength": 4000,
       "pattern": "\\S"
+    },
+    "context": {
+      "$ref": "https://run.watsonzhu.cn/contracts/runagent-v1/advice.schema.json#/definitions/context"
     }
   },
-  "required": [
-    "message"
-  ],
+  "required": ["message"],
   "additionalProperties": false
 }

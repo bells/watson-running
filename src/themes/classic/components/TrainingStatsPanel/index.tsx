@@ -10,6 +10,12 @@ import {
   type TrainingDistance,
   type TrainingResponse,
 } from '@core/services/runAgentTraining';
+import { runningAdviceContext } from '@core/services/runAgentEvidence';
+import {
+  RunningEvidenceDetails,
+  RunningLocationFields,
+  type RunningLocation,
+} from '../RunningAdvice';
 import styles from './style.module.css';
 
 const distances: Record<TrainingDistance, string> = {
@@ -92,6 +98,13 @@ function TrainingResult({ result }: { result: TrainingResponse }) {
         </>
       )}
       <p className={styles.freshness}>{freshness}</p>
+      {result.advice && (
+        <div className={styles.trainingAdvice}>
+          <h3>训练建议</h3>
+          <p>{result.advice}</p>
+        </div>
+      )}
+      <RunningEvidenceDetails evidence={result.evidence} />
     </section>
   );
 }
@@ -99,13 +112,30 @@ function TrainingResult({ result }: { result: TrainingResponse }) {
 export default function TrainingStatsPanel({
   accessToken,
   authorizedToSend,
+  publicApi,
+  trainingThrough,
+  location,
+  onLocationChange,
 }: {
-  accessToken: string;
+  accessToken: string | undefined;
   authorizedToSend: boolean;
+  publicApi: boolean;
+  trainingThrough?: string;
+  location: RunningLocation;
+  onLocationChange: (_location: RunningLocation) => void;
 }) {
-  const [range, setRange] = useState(() => recentTrainingRange(7));
+  const snapshotEnd =
+    publicApi &&
+    !accessToken &&
+    trainingThrough &&
+    isValidTrainingRange(trainingThrough, trainingThrough)
+      ? new Date(`${trainingThrough}T12:00:00`)
+      : undefined;
+  const [range, setRange] = useState(() => recentTrainingRange(7, snapshotEnd));
   const [distance, setDistance] = useState<TrainingDistance>('FIVE_K');
   const [invalidRange, setInvalidRange] = useState(false);
+  const [includeAdvice, setIncludeAdvice] = useState(false);
+  const [goal, setGoal] = useState('');
   const { query, reset, state } = useTrainingStats(accessToken);
   const pending = state.status === 'pending';
   const feedbackRef = useRef<HTMLDivElement>(null);
@@ -122,10 +152,56 @@ export default function TrainingStatsPanel({
     reset();
   }
 
+  const adviceContext =
+    publicApi && includeAdvice
+      ? runningAdviceContext(location.city, location.runningAt, goal)
+      : undefined;
+
   return (
-    <section className={styles.training} aria-label="我的训练" tabIndex={0}>
+    <section
+      className={styles.training}
+      aria-label={publicApi ? '训练统计' : '我的训练'}
+      tabIndex={0}
+    >
       {authorizedToSend ? null : (
         <p className={styles.hint}>输入访问令牌后可查询训练数据。</p>
+      )}
+      {publicApi && !accessToken && (
+        <p className={styles.hint}>统计范围为 Watson 已公开的跑步记录。</p>
+      )}
+      {publicApi && (
+        <details className={styles.form}>
+          <summary>附加训练依据</summary>
+          <label className={styles.adviceToggle}>
+            <input
+              type="checkbox"
+              checked={includeAdvice}
+              onChange={(event) => setIncludeAdvice(event.target.checked)}
+              disabled={pending}
+            />
+            查询时附上相关书籍和天气
+          </label>
+          {includeAdvice && (
+            <>
+              <label>
+                训练目标
+                <input
+                  type="text"
+                  value={goal}
+                  maxLength={300}
+                  placeholder="例如提高耐力或安排恢复跑"
+                  disabled={pending}
+                  onChange={(event) => setGoal(event.target.value)}
+                />
+              </label>
+              <RunningLocationFields
+                location={location}
+                onChange={onLocationChange}
+                disabled={pending}
+              />
+            </>
+          )}
+        </details>
       )}
       <form
         className={styles.form}
@@ -138,7 +214,11 @@ export default function TrainingStatsPanel({
             return;
           }
           setInvalidRange(false);
-          void query({ kind: 'SUMMARY', ...range });
+          void query({
+            kind: 'SUMMARY',
+            ...range,
+            ...(adviceContext && { adviceContext }),
+          });
         }}
       >
         <fieldset disabled={pending}>
@@ -146,15 +226,15 @@ export default function TrainingStatsPanel({
           <div className={styles.presets}>
             <button
               type="button"
-              onClick={() => changeRange(recentTrainingRange(7))}
+              onClick={() => changeRange(recentTrainingRange(7, snapshotEnd))}
             >
-              最近 7 天
+              {snapshotEnd ? '最近有记录的 7 天' : '最近 7 天'}
             </button>
             <button
               type="button"
-              onClick={() => changeRange(recentTrainingRange(30))}
+              onClick={() => changeRange(recentTrainingRange(30, snapshotEnd))}
             >
-              最近 30 天
+              {snapshotEnd ? '最近有记录的 30 天' : '最近 30 天'}
             </button>
           </div>
           <div className={styles.dateRange}>
@@ -208,7 +288,11 @@ export default function TrainingStatsPanel({
         onSubmit={(event) => {
           event.preventDefault();
           if (authorizedToSend)
-            void query({ kind: 'PERSONAL_BEST', distanceType: distance });
+            void query({
+              kind: 'PERSONAL_BEST',
+              distanceType: distance,
+              ...(adviceContext && { adviceContext }),
+            });
         }}
       >
         <fieldset disabled={pending}>

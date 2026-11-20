@@ -131,3 +131,24 @@
     padding-inline: 1rem;
   }
 }
+.form .adviceToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+}
+
+.form .adviceToggle input {
+  width: 1rem;
+  min-height: 1rem;
+}
+
+.form summary {
+  cursor: pointer;
+}
+
+.trainingAdvice {
+  margin-top: 0.75rem;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}

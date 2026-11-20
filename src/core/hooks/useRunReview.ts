@@ -4,6 +4,7 @@ import {
   RunReviewError,
   type RunReviewResponse,
 } from '../services/runAgentReview';
+import type { RunningAdviceContext } from '../services/runAgentEvidence';
 
 type RunReviewState =
   | RunReviewResponse
@@ -25,19 +26,27 @@ function waitForPoll(signal: AbortSignal): Promise<void> {
   });
 }
 
-export function useRunReview(runId: number, accessToken: string) {
+export function useRunReview(runId: number, accessToken: string | undefined) {
   const [state, setState] = useState<RunReviewState>({ status: 'LOADING' });
   const activeRef = useRef<AbortController | null>(null);
 
   const request = useCallback(
-    async (method: 'GET' | 'POST') => {
+    async (method: 'GET' | 'POST', adviceContext?: RunningAdviceContext) => {
       if (activeRef.current) return;
       const controller = new AbortController();
       const { signal } = controller;
       activeRef.current = controller;
       try {
         const cutoff = performance.now() + 45_000;
-        let result = await requestRunReview(runId, method, accessToken, signal);
+        let result = await requestRunReview(
+          runId,
+          method,
+          accessToken,
+          signal,
+          undefined,
+          adviceContext
+        );
+        const pendingWeather = result.status === 'GENERATING' && adviceContext;
         if (result.status === 'GENERATING' && !signal.aborted) setState(result);
         while (result.status === 'GENERATING') {
           await waitForPoll(signal);
@@ -51,6 +60,19 @@ export function useRunReview(runId: number, accessToken: string) {
             signal,
             Math.min(remaining, 10_000)
           );
+        }
+        if (pendingWeather && result.status === 'READY') {
+          const remaining = Math.floor(cutoff - performance.now());
+          if (remaining > 0) {
+            result = await requestRunReview(
+              runId,
+              'POST',
+              accessToken,
+              signal,
+              remaining,
+              pendingWeather
+            );
+          }
         }
         if (!signal.aborted) setState(result);
       } catch (error: unknown) {
@@ -81,15 +103,16 @@ export function useRunReview(runId: number, accessToken: string) {
     };
   }, [request]);
 
-  function start(method: 'GET' | 'POST') {
+  function start(method: 'GET' | 'POST', adviceContext?: RunningAdviceContext) {
     if (activeRef.current) return;
     setState({ status: method === 'POST' ? 'SUBMITTING' : 'LOADING' });
-    void request(method);
+    void request(method, adviceContext);
   }
 
   return {
     state,
-    generate: () => start('POST'),
+    generate: (adviceContext?: RunningAdviceContext) =>
+      start('POST', adviceContext),
     reload: () => start('GET'),
   };
 }

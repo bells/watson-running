@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
-import {
-  CHAT_TIMEOUT_MS,
-  requestChat,
-} from '../src/core/services/runAgentChat.ts';
+import { tsModule } from './ts-loader.mjs';
+
+const { CHAT_TIMEOUT_MS, requestChat } = await import(
+  tsModule(new URL('../src/core/services/runAgentChat.ts', import.meta.url))
+);
 
 const originalFetch = globalThis.fetch;
 afterEach(() => {
@@ -131,4 +132,37 @@ test('explicit cancellation and already cancelled requests are distinguished', a
     requestChat({ message: 'test' }, controller.signal),
     'cancelled'
   );
+});
+
+test('visitor chat keeps the versioned URL and renders server-provided evidence', async (t) => {
+  const context = { city: '上海', runningAt: '2026-11-21T07:00' };
+  const evidence = {
+    knowledge: { status: 'READY', sources: [{ title: '训练资料' }] },
+    weather: {
+      status: 'READY',
+      city: '上海',
+      timezone: 'Asia/Shanghai',
+      validAt: '2026-11-21T07:00',
+      temperatureC: 18,
+    },
+  };
+  const answer = { requestId: 'chat-public', content: '适度热身。', evidence };
+  const fetch = t.mock.method(globalThis, 'fetch', async () =>
+    Response.json(answer)
+  );
+  const message = '早上跑步应该怎么热身？';
+  assert.deepEqual(
+    await requestChat(
+      { message, context },
+      signal(),
+      undefined,
+      undefined,
+      true
+    ),
+    answer
+  );
+  const [[url, options]] = fetch.mock.calls.map((call) => call.arguments);
+  assert.equal(url, '/api/v1/chat');
+  assert.equal(new Headers(options.headers).has('authorization'), false);
+  assert.deepEqual(JSON.parse(options.body), { message, context });
 });

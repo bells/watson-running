@@ -103,6 +103,17 @@
   border-bottom: 1px solid var(--running-border);
 }
 
+.owner {
+  color: var(--running-muted);
+  font-size: 0.8125rem;
+}
+
+.owner summary {
+  min-height: 2rem;
+  padding-block: 0.4rem;
+  cursor: pointer;
+}
+
 .messages {
   flex: 1;
   min-height: 0;

@@ -12,7 +12,7 @@ type QueryState =
   | { status: 'success'; result: TrainingResponse }
   | { status: 'failure'; request: TrainingRequest; error: TrainingError };
 
-export function useTrainingStats(accessToken: string) {
+export function useTrainingStats(accessToken: string | undefined) {
   const [state, setState] = useState<QueryState>({ status: 'idle' });
   const activeRef = useRef<AbortController | null>(null);
 

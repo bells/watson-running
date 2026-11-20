@@ -1,4 +1,9 @@
 import { isPrivateChatToken, isRunAgentRequestId } from './runAgentChat';
+import {
+  readRunningEvidence,
+  type RunningAdviceContext,
+  type RunningEvidence,
+} from './runAgentEvidence';
 
 export const trainingDistances = [
   'FIVE_K',
@@ -22,11 +27,15 @@ interface TrainingBestRequest {
   distanceType: TrainingDistance;
 }
 
-export type TrainingRequest = TrainingSummaryRequest | TrainingBestRequest;
+export type TrainingRequest = (TrainingSummaryRequest | TrainingBestRequest) & {
+  adviceContext?: RunningAdviceContext;
+};
 
 interface TrainingResponseMetadata {
   requestId: string;
   dataThrough: string | null;
+  evidence?: RunningEvidence;
+  advice?: string;
 }
 
 export interface TrainingSummaryResponse
@@ -179,6 +188,12 @@ function readResult(
   if (dataThrough !== null && !isIsoDate(dataThrough)) {
     throw new TrainingError('invalidResponse', requestId);
   }
+  const evidence = readRunningEvidence(value.evidence);
+  const advice = typeof value.advice === 'string' ? value.advice.trim() : '';
+  const supportingDetails = {
+    ...(evidence && { evidence }),
+    ...(advice && { advice }),
+  };
   if (request.kind === 'PERSONAL_BEST') {
     if (
       value.distanceType !== request.distanceType ||
@@ -187,9 +202,11 @@ function readResult(
       throw new TrainingError('invalidResponse', requestId);
     }
     return {
-      ...request,
+      kind: request.kind,
+      distanceType: request.distanceType,
       requestId,
       dataThrough,
+      ...supportingDetails,
       approximate: true,
       result: readBestResult(value.result),
     };
@@ -212,9 +229,12 @@ function readResult(
     throw new TrainingError('invalidResponse', requestId);
   }
   return {
-    ...request,
+    kind: request.kind,
+    startDate: request.startDate,
+    endDate: request.endDate,
     requestId,
     dataThrough,
+    ...supportingDetails,
     runCount,
     totalDistanceKm,
     totalDurationSeconds,
@@ -223,12 +243,18 @@ function readResult(
 }
 
 function toPayload(request: TrainingRequest): TrainingRequest {
+  const { adviceContext } = request;
   if (request.kind === 'SUMMARY') {
     const { startDate, endDate } = request;
     if (!isValidTrainingRange(startDate, endDate)) {
       throw new TrainingError('invalidRequest');
     }
-    return { kind: 'SUMMARY', startDate, endDate };
+    return {
+      kind: 'SUMMARY',
+      startDate,
+      endDate,
+      ...(adviceContext && { adviceContext }),
+    };
   }
   if (
     request.kind !== 'PERSONAL_BEST' ||
@@ -236,16 +262,21 @@ function toPayload(request: TrainingRequest): TrainingRequest {
   ) {
     throw new TrainingError('invalidRequest');
   }
-  return { kind: 'PERSONAL_BEST', distanceType: request.distanceType };
+  return {
+    kind: 'PERSONAL_BEST',
+    distanceType: request.distanceType,
+    ...(adviceContext && { adviceContext }),
+  };
 }
 
 export async function requestTrainingStats(
   request: TrainingRequest,
-  accessToken: string,
+  accessToken: string | undefined,
   signal: AbortSignal,
   timeoutMs = TRAINING_TIMEOUT_MS
 ): Promise<TrainingResponse> {
-  if (!isPrivateChatToken(accessToken)) throw new TrainingError('unauthorized');
+  if (accessToken !== undefined && !isPrivateChatToken(accessToken))
+    throw new TrainingError('unauthorized');
   const payload = toPayload(request);
   const deadline = new AbortController();
   const timer = setTimeout(() => deadline.abort(), timeoutMs);
@@ -256,7 +287,9 @@ export async function requestTrainingStats(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        ...(accessToken !== undefined && {
+          Authorization: `Bearer ${accessToken}`,
+        }),
       },
       body: JSON.stringify(payload),
       signal: requestSignal,

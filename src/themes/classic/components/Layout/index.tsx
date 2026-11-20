@@ -2,16 +2,20 @@ import React, { lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '../Header';
 import getSiteMetadata from '@core/hooks/useSiteMetadata';
+import { publicRunAgentEnabled } from '../../runReviewRoutes';
 
 const privateChat = import.meta.env.VITE_RUN_AGENT_PRIVATE_CHAT === 'true';
 const privateTraining =
   privateChat && import.meta.env.VITE_RUN_AGENT_PRIVATE_TRAINING === 'true';
 const ChatAssistant =
-  import.meta.env.DEV || privateChat
+  import.meta.env.DEV || privateChat || publicRunAgentEnabled
     ? lazy(() => import('../ChatAssistant'))
     : null;
 
-const Layout = ({ children }: React.PropsWithChildren) => {
+const Layout = ({
+  children,
+  trainingThrough,
+}: React.PropsWithChildren<{ trainingThrough?: string }>) => {
   const { siteTitle, description } = getSiteMetadata();
 
   return (
@@ -32,6 +36,8 @@ const Layout = ({ children }: React.PropsWithChildren) => {
           <ChatAssistant
             privateChat={privateChat}
             privateTraining={privateTraining}
+            publicApi={publicRunAgentEnabled}
+            trainingThrough={trainingThrough}
           />
         </Suspense>
       )}

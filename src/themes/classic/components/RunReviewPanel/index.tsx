@@ -5,9 +5,19 @@ import { formatDistanceMeters } from '@core/activityDisplay';
 import { getActivityData } from '@core/hooks/useActivities';
 import { useRunReview } from '@core/hooks/useRunReview';
 import { isPrivateChatToken } from '@core/services/runAgentChat';
+import { runningAdviceContext } from '@core/services/runAgentEvidence';
 import type { RunReviewReport } from '@core/services/runAgentReview';
-import { canReviewRun, RUN_REVIEW_ANCHOR } from '../../runReviewRoutes';
+import {
+  canReviewRun,
+  canReviewRunPublicly,
+  RUN_REVIEW_ANCHOR,
+} from '../../runReviewRoutes';
 import { useRunAgentAccess } from '../../runAgentAccess';
+import {
+  emptyRunningLocation,
+  RunningEvidenceDetails,
+  RunningLocationFields,
+} from '../RunningAdvice';
 import styles from './style.module.css';
 
 const formatReviewPace = (value: number) => `${formatPace(value, 1000)}/km`;
@@ -79,6 +89,7 @@ function Report({ report }: { report: RunReviewReport }) {
           {reportDate.format(new Date(report.generatedAt))}
         </time>
       </p>
+      <RunningEvidenceDetails evidence={{ knowledge: report.knowledge }} />
     </div>
   );
 }
@@ -115,16 +126,20 @@ function TokenForm() {
   );
 }
 
-function AuthorizedReview({
+function ActiveReview({
   runId,
   accessToken,
+  publicApi,
 }: {
   runId: number;
-  accessToken: string;
+  accessToken?: string;
+  publicApi: boolean;
 }) {
   const { setAccessToken } = useRunAgentAccess();
   const { state, generate, reload } = useRunReview(runId, accessToken);
   const [expanded, setExpanded] = useState(false);
+  const [location, setLocation] = useState(emptyRunningLocation);
+  const advice = runningAdviceContext(location.city, location.runningAt);
 
   if (state.status === 'READY') {
     return (
@@ -141,6 +156,29 @@ function AuthorizedReview({
         {expanded && (
           <div id="run-review-report">
             <Report report={state.report} />
+            {publicApi && (
+              <form
+                className={styles.weatherForm}
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (advice) generate(advice);
+                }}
+              >
+                <h3>下次出跑天气</h3>
+                <RunningLocationFields
+                  location={location}
+                  onChange={setLocation}
+                />
+                <button
+                  type="submit"
+                  className={styles.action}
+                  disabled={!advice}
+                >
+                  查看当地天气
+                </button>
+                <RunningEvidenceDetails evidence={{ weather: state.weather }} />
+              </form>
+            )}
           </div>
         )}
       </>
@@ -153,7 +191,11 @@ function AuthorizedReview({
         {state.status === 'FAILED' && (
           <p role="alert">报告生成失败，可以重试。请求 ID {state.requestId}</p>
         )}
-        <button type="button" className={styles.action} onClick={generate}>
+        <button
+          type="button"
+          className={styles.action}
+          onClick={() => generate()}
+        >
           {state.status === 'FAILED' ? '重试生成' : '生成报告'}
         </button>
       </>
@@ -162,7 +204,8 @@ function AuthorizedReview({
 
   if (state.status === 'DISABLED') return <p role="status">生成暂未开放。</p>;
   if (state.status === 'ERROR') {
-    const unauthorized = state.error.kind === 'unauthorized';
+    const unauthorized =
+      state.error.kind === 'unauthorized' && accessToken !== undefined;
     return (
       <div role="alert">
         <p>{state.error.message}</p>
@@ -187,7 +230,13 @@ function AuthorizedReview({
   );
 }
 
-function RunReviewPanel({ runId }: { runId: number }) {
+function RunReviewPanel({
+  runId,
+  publicApi,
+}: {
+  runId: number;
+  publicApi: boolean;
+}) {
   const { hash } = useLocation();
   const sectionRef = useRef<HTMLElement>(null);
   const { accessToken, tokenRevision } = useRunAgentAccess();
@@ -212,14 +261,17 @@ function RunReviewPanel({ runId }: { runId: number }) {
       <header>
         <h2 id="run-review-title">AI 跑后复盘</h2>
         <p className={styles.note}>
-          回顾本次表现和节奏，获得下一次跑步建议。报告仅供本人查看。
+          {publicApi && !accessToken
+            ? '用这次公开跑步的分段表现生成训练建议。'
+            : '回顾本次表现和节奏，获得下一次跑步建议。报告仅供本人查看。'}
         </p>
       </header>
-      {isPrivateChatToken(accessToken) ? (
-        <AuthorizedReview
+      {isPrivateChatToken(accessToken) || (publicApi && !accessToken) ? (
+        <ActiveReview
           key={tokenRevision}
           runId={runId}
-          accessToken={accessToken}
+          accessToken={accessToken || undefined}
+          publicApi={publicApi}
         />
       ) : (
         <TokenForm />
@@ -231,5 +283,11 @@ function RunReviewPanel({ runId }: { runId: number }) {
 export default function RunReviewSlot({ runId }: { runId: number }) {
   const activity = getActivityData().find((run) => run.run_id === runId);
   if (!activity || !canReviewRun(activity)) return null;
-  return <RunReviewPanel key={runId} runId={runId} />;
+  return (
+    <RunReviewPanel
+      key={runId}
+      runId={runId}
+      publicApi={canReviewRunPublicly(activity)}
+    />
+  );
 }

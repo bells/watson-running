@@ -10,8 +10,16 @@ import styles from './style.module.css';
 import { StatusPanel } from '@core/components/StatusPanel';
 import TrainingStatsPanel from '../TrainingStatsPanel';
 import { useRunAgentAccess } from '../../runAgentAccess';
+import { runningAdviceContext } from '@core/services/runAgentEvidence';
+import {
+  emptyRunningLocation,
+  RunningEvidenceDetails,
+  RunningLocationFields,
+} from '../RunningAdvice';
 
 const examples = ['一周跑几次比较合适？', '跑前热身应该怎么做？'];
+const weatherExample = '我在上海，现在出门跑步，需要根据天气调整什么？';
+const knowledgeExample = '丹尼尔斯的 T 配速训练有什么用？';
 const markdownComponents = {
   img: () => null,
   table: ({ children }: { children?: ReactNode }) => (
@@ -30,18 +38,30 @@ const markdownPlugins = [remarkGfm];
 export default function ChatAssistant({
   privateChat = false,
   privateTraining = false,
+  publicApi = false,
+  trainingThrough,
 }: {
   privateChat?: boolean;
   privateTraining?: boolean;
+  publicApi?: boolean;
+  trainingThrough?: string;
 }) {
   const { accessToken, tokenRevision, setAccessToken } = useRunAgentAccess();
   const [mode, setMode] = useState<'chat' | 'training'>('chat');
-  const trainingEnabled = privateChat && privateTraining;
+  const [location, setLocation] = useState(emptyRunningLocation);
+  const trainingEnabled = publicApi || (privateChat && privateTraining);
   const showTraining = trainingEnabled && mode === 'training';
-  const chat = useRunAgentChat(privateChat ? accessToken : undefined);
+  const versionedToken = publicApi
+    ? accessToken || undefined
+    : privateChat
+      ? accessToken
+      : undefined;
+  const chat = useRunAgentChat(versionedToken, publicApi);
   const accessTokenRef = useRef<HTMLInputElement>(null);
   const trainingModeRef = useRef<HTMLButtonElement>(null);
-  const canSend = !privateChat || isPrivateChatToken(accessToken);
+  const canSend = publicApi
+    ? !accessToken || isPrivateChatToken(accessToken)
+    : !privateChat || isPrivateChatToken(accessToken);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -81,23 +101,61 @@ export default function ChatAssistant({
     launcherRef.current?.focus();
   }
 
-  const tokenField = privateChat ? (
-    <div className={styles.tokenField}>
-      <label htmlFor="runagent-token" className={styles.inputLabel}>
-        访问令牌
-      </label>
-      <input
-        ref={accessTokenRef}
-        id="runagent-token"
-        type="password"
-        autoComplete="off"
-        placeholder="输入 RunAgent 访问令牌"
-        value={accessToken}
-        readOnly={chat.pending}
-        onChange={(event) => setAccessToken(event.target.value)}
-      />
-    </div>
-  ) : null;
+  function send() {
+    if (canSend)
+      void chat.send(
+        publicApi
+          ? runningAdviceContext(location.city, location.runningAt)
+          : undefined
+      );
+  }
+
+  function tryExample(question: string) {
+    if (!publicApi) {
+      chat.setDraft(question);
+      inputRef.current?.focus();
+      return;
+    }
+    const nextLocation =
+      question === weatherExample
+        ? { city: '上海', runningAt: '' }
+        : emptyRunningLocation;
+    setLocation(nextLocation);
+    chat.setDraft(question);
+    if (canSend)
+      void chat.send(
+        runningAdviceContext(nextLocation.city, nextLocation.runningAt),
+        question
+      );
+  }
+
+  const tokenField =
+    privateChat || publicApi ? (
+      <div className={styles.tokenField}>
+        <label htmlFor="runagent-token" className={styles.inputLabel}>
+          访问令牌
+        </label>
+        <input
+          ref={accessTokenRef}
+          id="runagent-token"
+          type="password"
+          autoComplete="off"
+          placeholder="输入 RunAgent 访问令牌"
+          value={accessToken}
+          readOnly={chat.pending}
+          onChange={(event) => setAccessToken(event.target.value)}
+        />
+      </div>
+    ) : null;
+
+  const credentials = publicApi ? (
+    <details className={styles.owner}>
+      <summary>站主访问</summary>
+      {tokenField}
+    </details>
+  ) : (
+    tokenField
+  );
 
   return (
     <>
@@ -132,7 +190,7 @@ export default function ChatAssistant({
           if (event.key !== 'Tab') return;
           const controls = Array.from(
             event.currentTarget.querySelectorAll<HTMLElement>(
-              'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea, a[href], [tabindex="0"]'
+              'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea, summary, a[href], [tabindex="0"]'
             )
           ).filter((element) => element.getClientRects().length > 0);
           const first = controls[0];
@@ -177,20 +235,22 @@ export default function ChatAssistant({
             </div>
           </header>
           <p id="runagent-notice" className={styles.notice}>
-            {privateChat
-              ? '私有试用 · 对话、训练结果和访问令牌仅保留在本页。'
-              : '开发环境 · 每次仅发送当前问题，对话仅保留在本页。个人数据是否可用由服务端决定。'}
+            {publicApi
+              ? '查看公开训练统计，或结合跑步书籍与当地天气提问。'
+              : privateChat
+                ? '私有试用 · 对话、训练结果和访问令牌仅保留在本页。'
+                : '开发环境 · 每次仅发送当前问题，对话仅保留在本页。个人数据是否可用由服务端决定。'}
           </p>
           {trainingEnabled && (
             <div className={styles.trainingHeader}>
-              {tokenField}
+              {credentials}
               <nav className={styles.modes} aria-label="助手模式">
                 <button
                   type="button"
                   aria-pressed={!showTraining}
                   onClick={() => setMode('chat')}
                 >
-                  通用问答
+                  {publicApi ? '跑步问答' : '通用问答'}
                 </button>
                 <button
                   ref={trainingModeRef}
@@ -201,7 +261,7 @@ export default function ChatAssistant({
                     setMode('training');
                   }}
                 >
-                  我的训练
+                  {publicApi ? '训练统计' : '我的训练'}
                 </button>
               </nav>
             </div>
@@ -211,8 +271,12 @@ export default function ChatAssistant({
               // Invalidate prior results and pending requests when the credential changes.
               <TrainingStatsPanel
                 key={tokenRevision}
-                accessToken={accessToken}
+                accessToken={versionedToken}
                 authorizedToSend={canSend}
+                publicApi={publicApi}
+                trainingThrough={trainingThrough}
+                location={location}
+                onLocationChange={setLocation}
               />
             )
           ) : (
@@ -242,14 +306,15 @@ export default function ChatAssistant({
                     </span>
                     <h3>聊聊跑步吧</h3>
                     <p>从一个小问题开始</p>
-                    {examples.map((question) => (
+                    {(publicApi
+                      ? [knowledgeExample, weatherExample]
+                      : examples
+                    ).map((question) => (
                       <button
                         key={question}
                         type="button"
-                        onClick={() => {
-                          chat.setDraft(question);
-                          inputRef.current?.focus();
-                        }}
+                        disabled={chat.pending}
+                        onClick={() => tryExample(question)}
                       >
                         {question}
                         <span aria-hidden="true">↗</span>
@@ -281,6 +346,9 @@ export default function ChatAssistant({
                         <p className={styles.question}>{message.content}</p>
                       )}
                     </div>
+                    {message.role === 'assistant' && (
+                      <RunningEvidenceDetails evidence={message.evidence} />
+                    )}
                   </article>
                 ))}
                 {chat.pending ? (
@@ -312,7 +380,7 @@ export default function ChatAssistant({
                 className={styles.composer}
                 onSubmit={(event) => {
                   event.preventDefault();
-                  if (canSend) void chat.send();
+                  send();
                 }}
               >
                 {chat.error && (
@@ -322,7 +390,14 @@ export default function ChatAssistant({
                     description={chat.error}
                   />
                 )}
-                {trainingEnabled ? null : tokenField}
+                {trainingEnabled ? null : credentials}
+                {publicApi && (
+                  <RunningLocationFields
+                    location={location}
+                    onChange={setLocation}
+                    disabled={chat.pending}
+                  />
+                )}
                 <label
                   htmlFor="runagent-question"
                   className={styles.inputLabel}
@@ -334,7 +409,9 @@ export default function ChatAssistant({
                   id="runagent-question"
                   rows={3}
                   maxLength={
-                    privateChat ? CHAT_MAX_LENGTH * 2 : CHAT_MAX_LENGTH
+                    privateChat || publicApi
+                      ? CHAT_MAX_LENGTH * 2
+                      : CHAT_MAX_LENGTH
                   }
                   value={chat.draft}
                   readOnly={chat.pending}
@@ -356,7 +433,7 @@ export default function ChatAssistant({
                       event.keyCode !== 229
                     ) {
                       event.preventDefault();
-                      if (canSend) void chat.send();
+                      send();
                     }
                   }}
                 />
