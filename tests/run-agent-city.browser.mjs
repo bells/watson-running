@@ -113,6 +113,8 @@ test('public assistant suggests an editable city only when opened', async (t) =>
   }
   for (const scenario of [
     'device',
+    'device-live-source',
+    'device-auto-granted',
     'device-without-source',
     'device-error',
     'device-mismatched-coordinates',
@@ -132,13 +134,36 @@ test('public assistant suggests an editable city only when opened', async (t) =>
           longitude: 114.0579,
           accuracy: scenario === 'coarse-location' ? 15_000 : 30,
         });
-        if (scenario === 'permission-denied') {
-          await page.addInitScript(() => {
-            Object.defineProperty(navigator.geolocation, 'getCurrentPosition', {
-              value: (_success, fail) => fail({ code: 1 }),
+        const auto = scenario === 'device-auto-granted';
+        await page.addInitScript(
+          ({ auto, denied }) => {
+            window.permissionChecks = 0;
+            window.devicePositionRequests = 0;
+            const query = navigator.permissions.query.bind(
+              navigator.permissions
+            );
+            Object.defineProperty(navigator.permissions, 'query', {
+              value: (descriptor) => {
+                if (descriptor.name !== 'geolocation') return query(descriptor);
+                window.permissionChecks += 1;
+                return auto
+                  ? query(descriptor)
+                  : Promise.resolve({ state: denied ? 'denied' : 'prompt' });
+              },
             });
-          });
-        }
+            const getPosition = navigator.geolocation.getCurrentPosition.bind(
+              navigator.geolocation
+            );
+            Object.defineProperty(navigator.geolocation, 'getCurrentPosition', {
+              value: (success, fail, options) => {
+                window.devicePositionRequests += 1;
+                if (denied) fail({ code: 1 });
+                else getPosition(success, fail, options);
+              },
+            });
+          },
+          { auto, denied: scenario === 'permission-denied' }
+        );
         const respond = Promise.withResolvers();
         let reverseRequests = 0;
         await page.route('**/*', async (route) => {
@@ -161,14 +186,26 @@ test('public assistant suggests an editable city only when opened', async (t) =>
           return route.continue();
         });
         await page.goto(origin);
-        await page.getByRole('button', { name: 'AI 跑步助手' }).click();
+        assert.equal(
+          await page.evaluate(() => window.devicePositionRequests),
+          0
+        );
+        const launcher = page.getByRole('button', { name: 'AI 跑步助手' });
+        const nextLookup = auto
+          ? page.waitForRequest('https://api.bigdatacloud.net/**')
+          : null;
+        await launcher.click();
         const city = page.getByLabel('出跑城市', { exact: true });
         await page.waitForFunction(
           () =>
             document.querySelector('input[placeholder="例如上海"]')?.value ===
             '广州'
         );
-        assert.equal(reverseRequests, 0);
+        if (!auto)
+          assert.equal(
+            await page.evaluate(() => window.devicePositionRequests),
+            0
+          );
         const locate = page.getByRole('button', { name: '使用设备定位' });
         if (
           scenario === 'coarse-location' ||
@@ -184,11 +221,10 @@ test('public assistant suggests an editable city only when opened', async (t) =>
           assert.equal(reverseRequests, 0);
           return;
         }
-        const nextLookup = page.waitForRequest(
-          'https://api.bigdatacloud.net/**'
-        );
-        await locate.click();
-        const url = new URL((await nextLookup).url());
+        const lookup =
+          nextLookup ?? page.waitForRequest('https://api.bigdatacloud.net/**');
+        if (!auto) await locate.click();
+        const url = new URL((await lookup).url());
         assert.equal(url.searchParams.get('latitude'), '22.54');
         assert.equal(url.searchParams.get('longitude'), '114.06');
         assert.equal(url.searchParams.get('localityLanguage'), 'zh');
@@ -207,12 +243,28 @@ test('public assistant suggests an editable city only when opened', async (t) =>
             scenario === 'device-mismatched-coordinates' ? 23.13 : 22.54,
           longitude: 114.06,
           ...(scenario === 'device' && { lookupSource: 'reverseGeocoding' }),
+          ...((auto || scenario === 'device-live-source') && {
+            lookupSource: 'coordinates',
+          }),
           ...(scenario === 'device-error' && { lookupSource: 'ipGeolocation' }),
         });
         await settled;
-        if (scenario === 'device' || scenario === 'device-without-source') {
+        if (
+          auto ||
+          ['device', 'device-without-source', 'device-live-source'].includes(
+            scenario
+          )
+        ) {
           await page.getByRole('button', { name: /我在深圳，/ }).waitFor();
           assert.equal(await city.inputValue(), '深圳');
+          if (auto) {
+            assert.equal(await page.evaluate(() => window.permissionChecks), 1);
+            await city.fill('杭州');
+            await page.getByRole('button', { name: '关闭聊天' }).click();
+            await launcher.click();
+            assert.equal(await city.inputValue(), '杭州');
+            assert.equal(await page.evaluate(() => window.permissionChecks), 1);
+          }
         } else if (
           scenario === 'device-error' ||
           scenario === 'device-mismatched-coordinates'

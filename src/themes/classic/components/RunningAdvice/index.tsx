@@ -76,7 +76,7 @@ export function RunningLocationFields({
             {deviceCity.status === 'pending' ? '正在定位…' : '使用设备定位'}
           </button>
           <small id={devicePrivacyId}>
-            将公里级坐标发送给 BigDataCloud 查询城市。
+            已授权时，打开助手会向 BigDataCloud 发送公里级坐标查询城市。
           </small>
           <p role="status">{deviceLocationMessages[deviceCity.status]}</p>
         </div>

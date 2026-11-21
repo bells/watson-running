@@ -36,6 +36,7 @@ export default function ChatAssistant({
   const [mode, setMode] = useState<'chat' | 'training'>('chat');
   const [editedLocation, setEditedLocation] = useState<{
     city?: string;
+    manualCity?: boolean;
     runningAt: string;
   }>({ runningAt: '' });
   const trainingEnabled = publicApi || (privateChat && privateTraining);
@@ -61,7 +62,7 @@ export default function ChatAssistant({
   const [readingEarlier, setReadingEarlier] = useState(false);
   const suggestedCity = useSuggestedCity(publicApi && open);
   const deviceCity = useDeviceCity((city) =>
-    setEditedLocation((current) => ({ ...current, city }))
+    setEditedLocation((current) => ({ ...current, city, manualCity: false }))
   );
   const location: RunningLocation = {
     city: editedLocation.city ?? suggestedCity ?? '',
@@ -102,8 +103,15 @@ export default function ChatAssistant({
   }
 
   function changeLocation(next: RunningLocation) {
-    if (next.city !== location.city) deviceCity.cancel();
-    setEditedLocation(next);
+    if (next.city !== location.city) {
+      deviceCity.cancel();
+      setEditedLocation({ ...next, manualCity: true });
+    } else {
+      setEditedLocation((current) => ({
+        ...current,
+        runningAt: next.runningAt,
+      }));
+    }
   }
 
   function send() {
@@ -127,7 +135,7 @@ export default function ChatAssistant({
         : undefined;
     if (context && !location.city.trim()) {
       deviceCity.cancel();
-      setEditedLocation({ city: exampleCity, runningAt: '' });
+      setEditedLocation({ city: exampleCity, manualCity: true, runningAt: '' });
     }
     chat.setDraft(question);
     if (canSend) void chat.send(context, question);
@@ -173,6 +181,8 @@ export default function ChatAssistant({
         onClick={() => {
           dialogRef.current?.showModal();
           setOpen(true);
+          if (publicApi && !editedLocation.manualCity)
+            deviceCity.locateIfGranted();
           const initialFocus = !canSend
             ? accessTokenRef.current
             : showTraining

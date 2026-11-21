@@ -74,7 +74,8 @@ async function resolveDeviceCity(signal: AbortSignal): Promise<string> {
   // Older responses echo the requested coordinates without a source field.
   const fromCoordinates =
     'lookupSource' in data
-      ? data.lookupSource === 'reverseGeocoding'
+      ? data.lookupSource === 'coordinates' ||
+        data.lookupSource === 'reverseGeocoding'
       : 'latitude' in data &&
         data.latitude === Number(latitude) &&
         'longitude' in data &&
@@ -89,6 +90,17 @@ async function resolveDeviceCity(signal: AbortSignal): Promise<string> {
     : name;
 }
 
+async function canUseDeviceLocation() {
+  try {
+    const permission = await navigator.permissions?.query({
+      name: 'geolocation',
+    });
+    return permission?.state === 'granted';
+  } catch {
+    return false;
+  }
+}
+
 export function useDeviceCity(onLocated: (_city: string) => void) {
   const [status, setStatus] = useState<LookupState>('idle');
   const lookupRef = useRef<AbortController | null>(null);
@@ -101,12 +113,14 @@ export function useDeviceCity(onLocated: (_city: string) => void) {
     setStatus('idle');
   }
 
-  async function locate() {
+  async function lookup(onlyIfGranted: boolean) {
     if (lookupRef.current) return;
     const controller = new AbortController();
     lookupRef.current = controller;
-    setStatus('pending');
     try {
+      if (onlyIfGranted && !(await canUseDeviceLocation())) return;
+      if (controller.signal.aborted) return;
+      setStatus('pending');
       const city = await resolveDeviceCity(controller.signal);
       if (controller.signal.aborted) return;
       onLocated(city);
@@ -124,5 +138,10 @@ export function useDeviceCity(onLocated: (_city: string) => void) {
     }
   }
 
-  return { locate, cancel, status };
+  return {
+    locate: () => void lookup(false),
+    locateIfGranted: () => void lookup(true),
+    cancel,
+    status,
+  };
 }
