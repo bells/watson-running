@@ -25,6 +25,32 @@
   background: var(--running-surface);
 }
 
+.deviceLocation {
+  display: flex;
+  flex: 1 0 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.5rem;
+  color: var(--running-muted);
+  font-size: 0.75rem;
+}
+
+.locate {
+  min-height: 2.75rem;
+  color: var(--running-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.locate:disabled {
+  color: var(--running-muted);
+  cursor: default;
+}
+
+.deviceLocation p {
+  flex-basis: 100%;
+}
+
 .evidence {
   margin-top: 0.75rem;
   padding-top: 0.625rem;

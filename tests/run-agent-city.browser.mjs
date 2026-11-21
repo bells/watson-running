@@ -4,15 +4,22 @@ import { chromium } from 'playwright';
 import { createServer } from 'vite';
 import { GET } from '../api/visitor-city.js';
 
-test('visitor-city returns only a decoded city and prevents caching', async () => {
-  for (const [header, expected] of [
-    [encodeURIComponent('南京'), '南京'],
-    ['%E5%8D', null],
-    ['A%0AB', null],
-    [undefined, null],
+test('visitor-city returns only a localized city and prevents caching', async () => {
+  for (const [header, country, expected] of [
+    [encodeURIComponent('南京'), 'CN', '南京'],
+    ['Guangzhou', 'CN', '广州'],
+    ['Guangzhou', undefined, '广州'],
+    ['Guangzhou', 'CA', 'Guangzhou'],
+    ['Shen-zhen', 'CN', '深圳'],
+    ['%E5%8D', 'CN', null],
+    ['A%0AB', 'CN', null],
+    [undefined, 'CN', null],
   ]) {
     const request = new Request('https://example.com/api/visitor-city', {
-      headers: header ? { 'x-vercel-ip-city': header } : {},
+      headers: {
+        ...(header && { 'x-vercel-ip-city': header }),
+        ...(country && { 'x-vercel-ip-country': country }),
+      },
     });
     const response = GET(request);
     assert.deepEqual(await response.json(), { city: expected });
@@ -98,6 +105,101 @@ test('public assistant suggests an editable city only when opened', async (t) =>
           assert.equal(await city.inputValue(), expected);
           await city.fill('苏州');
           assert.equal(await city.inputValue(), '苏州');
+        }
+      } finally {
+        await page.close();
+      }
+    });
+  }
+  for (const scenario of [
+    'device',
+    'device-error',
+    'coarse-location',
+    'manual-during-lookup',
+  ]) {
+    await t.test(scenario, async () => {
+      const page = await browser.newPage({
+        viewport: { width: 390, height: 844 },
+      });
+      try {
+        page.setDefaultTimeout(5_000);
+        await page.context().grantPermissions(['geolocation'], { origin });
+        await page.context().setGeolocation({
+          latitude: 22.5431,
+          longitude: 114.0579,
+          accuracy: scenario === 'coarse-location' ? 15_000 : 30,
+        });
+        const respond = Promise.withResolvers();
+        let reverseRequests = 0;
+        await page.route('**/*', async (route) => {
+          const url = new URL(route.request().url());
+          if (
+            url.href.startsWith(
+              'https://api.bigdatacloud.net/data/reverse-geocode-client?'
+            )
+          ) {
+            reverseRequests += 1;
+            return route.fulfill({ json: await respond.promise });
+          }
+          if (url.origin !== origin) return route.abort();
+          if (url.pathname === '/api/visitor-city') {
+            return route.fulfill({ json: { city: '广州' } });
+          }
+          if (url.pathname === '/src/static/activities.json' && !url.search) {
+            return route.fulfill({ json: [] });
+          }
+          return route.continue();
+        });
+        await page.goto(origin);
+        await page.getByRole('button', { name: 'AI 跑步助手' }).click();
+        const city = page.getByLabel('出跑城市', { exact: true });
+        await page.waitForFunction(
+          () =>
+            document.querySelector('input[placeholder="例如上海"]')?.value ===
+            '广州'
+        );
+        assert.equal(reverseRequests, 0);
+        const locate = page.getByRole('button', { name: '使用设备定位' });
+        const error = page.getByText('暂时无法确定所在城市，可手动填写。');
+        if (scenario === 'coarse-location') {
+          await locate.click();
+          await error.waitFor();
+          assert.equal(await city.inputValue(), '广州');
+          assert.equal(reverseRequests, 0);
+          return;
+        }
+        const nextLookup = page.waitForRequest(
+          'https://api.bigdatacloud.net/**'
+        );
+        await locate.click();
+        const url = new URL((await nextLookup).url());
+        assert.equal(url.searchParams.get('latitude'), '22.54');
+        assert.equal(url.searchParams.get('longitude'), '114.06');
+        assert.equal(url.searchParams.get('localityLanguage'), 'zh');
+        const manual = scenario === 'manual-during-lookup';
+        const settled = manual
+          ? page.waitForEvent(
+              'requestfailed',
+              (entry) => entry.url() === url.href
+            )
+          : page.waitForResponse(url.href);
+        if (manual) await city.fill('杭州');
+        respond.resolve({
+          city: '深圳市',
+          countryCode: 'CN',
+          lookupSource:
+            scenario === 'device-error' ? 'ipGeolocation' : 'reverseGeocoding',
+        });
+        await settled;
+        if (scenario === 'device') {
+          await page.getByRole('button', { name: /我在深圳，/ }).waitFor();
+          assert.equal(await city.inputValue(), '深圳');
+        } else if (scenario === 'device-error') {
+          await error.waitFor();
+          assert.equal(await city.inputValue(), '广州');
+        } else {
+          await locate.waitFor();
+          assert.equal(await city.inputValue(), '杭州');
         }
       } finally {
         await page.close();

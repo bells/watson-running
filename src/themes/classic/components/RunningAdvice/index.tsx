@@ -1,4 +1,6 @@
+import { useId } from 'react';
 import type { RunningEvidence } from '@core/services/runAgentEvidence';
+import type { DeviceCityControl } from './useDeviceCity';
 import styles from './style.module.css';
 
 export interface RunningLocation {
@@ -15,11 +17,14 @@ export function RunningLocationFields({
   location,
   onChange,
   disabled,
+  deviceCity,
 }: {
   location: RunningLocation;
   onChange: (_location: RunningLocation) => void;
   disabled?: boolean;
+  deviceCity?: DeviceCityControl;
 }) {
+  const devicePrivacyId = useId();
   return (
     <div className={styles.location}>
       <label>
@@ -47,6 +52,27 @@ export function RunningLocationFields({
           }
         />
       </label>
+      {deviceCity && (
+        <div className={styles.deviceLocation}>
+          <button
+            type="button"
+            className={styles.locate}
+            onClick={deviceCity.locate}
+            disabled={disabled || deviceCity.status === 'pending'}
+            aria-describedby={devicePrivacyId}
+          >
+            {deviceCity.status === 'pending' ? '正在定位…' : '使用设备定位'}
+          </button>
+          <small id={devicePrivacyId}>
+            将公里级坐标发送给 BigDataCloud 查询城市。
+          </small>
+          <p role="status">
+            {deviceCity.status === 'error'
+              ? '暂时无法确定所在城市，可手动填写。'
+              : ''}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

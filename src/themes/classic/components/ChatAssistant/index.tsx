@@ -14,6 +14,7 @@ import {
   RunningLocationFields,
 } from '../RunningAdvice';
 import { useSuggestedCity } from '../RunningAdvice/useSuggestedCity';
+import { useDeviceCity } from '../RunningAdvice/useDeviceCity';
 
 const examples = ['一周跑几次比较合适？', '跑前热身应该怎么做？'];
 const knowledgeExample = '丹尼尔斯的 T 配速训练有什么用？';
@@ -59,6 +60,9 @@ export default function ChatAssistant({
   const [open, setOpen] = useState(false);
   const [readingEarlier, setReadingEarlier] = useState(false);
   const suggestedCity = useSuggestedCity(publicApi && open);
+  const deviceCity = useDeviceCity((city) =>
+    setEditedLocation((current) => ({ ...current, city }))
+  );
   const location: RunningLocation = {
     city: editedLocation.city ?? suggestedCity ?? '',
     runningAt: editedLocation.runningAt,
@@ -89,11 +93,17 @@ export default function ChatAssistant({
   }, [chat.messages, chat.pending, open]);
 
   function close() {
+    deviceCity.cancel();
     chat.cancel();
     composingRef.current = false;
     dialogRef.current?.close();
     setOpen(false);
     launcherRef.current?.focus();
+  }
+
+  function changeLocation(next: RunningLocation) {
+    if (next.city !== location.city) deviceCity.cancel();
+    setEditedLocation(next);
   }
 
   function send() {
@@ -116,6 +126,7 @@ export default function ChatAssistant({
         ? runningAdviceContext(exampleCity, '')
         : undefined;
     if (context && !location.city.trim()) {
+      deviceCity.cancel();
       setEditedLocation({ city: exampleCity, runningAt: '' });
     }
     chat.setDraft(question);
@@ -274,7 +285,8 @@ export default function ChatAssistant({
                   publicApi={publicApi}
                   trainingThrough={trainingThrough}
                   location={location}
-                  onLocationChange={setEditedLocation}
+                  onLocationChange={changeLocation}
+                  deviceCity={publicApi ? deviceCity : undefined}
                 />
               </Suspense>
             )
@@ -389,8 +401,9 @@ export default function ChatAssistant({
                 {publicApi && (
                   <RunningLocationFields
                     location={location}
-                    onChange={setEditedLocation}
+                    onChange={changeLocation}
                     disabled={chat.pending}
+                    deviceCity={deviceCity}
                   />
                 )}
                 <label

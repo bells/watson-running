@@ -16,6 +16,7 @@ import {
   RunningLocationFields,
   type RunningLocation,
 } from '../RunningAdvice';
+import type { DeviceCityControl } from '../RunningAdvice/useDeviceCity';
 import styles from './style.module.css';
 
 const distances: Record<TrainingDistance, string> = {
@@ -116,6 +117,7 @@ export default function TrainingStatsPanel({
   trainingThrough,
   location,
   onLocationChange,
+  deviceCity,
 }: {
   accessToken: string | undefined;
   authorizedToSend: boolean;
@@ -123,6 +125,7 @@ export default function TrainingStatsPanel({
   trainingThrough?: string;
   location: RunningLocation;
   onLocationChange: (_location: RunningLocation) => void;
+  deviceCity?: DeviceCityControl;
 }) {
   const snapshotEnd =
     publicApi &&
@@ -198,6 +201,7 @@ export default function TrainingStatsPanel({
                 location={location}
                 onChange={onLocationChange}
                 disabled={pending}
+                deviceCity={deviceCity}
               />
             </>
           )}

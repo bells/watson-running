@@ -10,6 +10,8 @@ Chat can send an optional city and planned local start time. Training statistics
 
 When a visitor opens the public assistant, the same-origin `/api/visitor-city` Vercel function can suggest a city from Vercel's IP geolocation. The response contains only a city name or `null` and is never cached. The city stays editable, and manual entry works with missing geolocation or static hosting. Weather examples use the displayed city when available and otherwise use Shanghai as an explicit example.
 
+The IP suggestion displays a Chinese city name when it matches the project region catalog. Visitors can select **使用设备定位** to correct a suggestion affected by a proxy. With browser permission, the browser rounds both coordinates to two decimal places and queries [BigDataCloud](https://www.bigdatacloud.com/geocoding-apis/free-reverse-geocode-to-city-api) directly. The form keeps only the resulting city. RunAgent receives the city through the existing chat or training request when the visitor submits it. Manual edits take precedence over pending lookups, and unavailable device location leaves the existing city editable.
+
 ## Private assistant
 
 `VITE_RUN_AGENT_PRIVATE_CHAT=true` enables the Classic assistant for a private Vercel deployment. General chat sends only the current question to same-origin `POST /api/v1/chat` with a bearer token. Vercel forwards the exact route to RunAgent. The token and transcript live in page memory.

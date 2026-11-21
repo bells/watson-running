@@ -201,6 +201,9 @@ importers:
       maplibre-gl:
         specifier: ^6.11.2
         version: 6.11.2
+      pinyin-pro:
+        specifier: ^3.29.5
+        version: 3.29.5
       rc-virtual-list:
         specifier: ^3.19.2
         version: 3.19.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -2232,6 +2235,9 @@ packages:
   picomatch@4.0.7:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
+
+  pinyin-pro@3.29.5:
+    resolution: {integrity: sha512-Fk5YoRmtdHqJWqAuzYVG/NzvzeCbaG+ZEwbY6Nbps3QAIrvQQEtcm49frcyCM8i2b5najnzPDtYqrHRYTTiuwQ==}
 
   playwright-core@1.61.0:
     resolution: {integrity: sha512-caX7TrY3Ml6egyDX0WUcTHDxodl/b51y5wJOdCEA36QviK/s2g081hvmGs8eaE3DWb6NYZQ6BjO/QkNRPenoPA==}
@@ -4933,6 +4939,8 @@ snapshots:
   picomatch@2.3.2: {}
 
   picomatch@4.0.7: {}
+
+  pinyin-pro@3.29.5: {}
 
   playwright-core@1.61.0: {}
 
