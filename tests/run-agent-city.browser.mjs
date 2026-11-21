@@ -113,7 +113,10 @@ test('public assistant suggests an editable city only when opened', async (t) =>
   }
   for (const scenario of [
     'device',
+    'device-without-source',
     'device-error',
+    'device-mismatched-coordinates',
+    'permission-denied',
     'coarse-location',
     'manual-during-lookup',
   ]) {
@@ -129,6 +132,13 @@ test('public assistant suggests an editable city only when opened', async (t) =>
           longitude: 114.0579,
           accuracy: scenario === 'coarse-location' ? 15_000 : 30,
         });
+        if (scenario === 'permission-denied') {
+          await page.addInitScript(() => {
+            Object.defineProperty(navigator.geolocation, 'getCurrentPosition', {
+              value: (_success, fail) => fail({ code: 1 }),
+            });
+          });
+        }
         const respond = Promise.withResolvers();
         let reverseRequests = 0;
         await page.route('**/*', async (route) => {
@@ -160,10 +170,16 @@ test('public assistant suggests an editable city only when opened', async (t) =>
         );
         assert.equal(reverseRequests, 0);
         const locate = page.getByRole('button', { name: '使用设备定位' });
-        const error = page.getByText('暂时无法确定所在城市，可手动填写。');
-        if (scenario === 'coarse-location') {
+        if (
+          scenario === 'coarse-location' ||
+          scenario === 'permission-denied'
+        ) {
           await locate.click();
-          await error.waitFor();
+          const message =
+            scenario === 'coarse-location'
+              ? '设备定位精度不足，可手动填写城市。'
+              : '定位权限未开启，请在浏览器的网站设置中允许定位，或手动填写城市。';
+          await page.getByText(message).waitFor();
           assert.equal(await city.inputValue(), '广州');
           assert.equal(reverseRequests, 0);
           return;
@@ -187,15 +203,23 @@ test('public assistant suggests an editable city only when opened', async (t) =>
         respond.resolve({
           city: '深圳市',
           countryCode: 'CN',
-          lookupSource:
-            scenario === 'device-error' ? 'ipGeolocation' : 'reverseGeocoding',
+          latitude:
+            scenario === 'device-mismatched-coordinates' ? 23.13 : 22.54,
+          longitude: 114.06,
+          ...(scenario === 'device' && { lookupSource: 'reverseGeocoding' }),
+          ...(scenario === 'device-error' && { lookupSource: 'ipGeolocation' }),
         });
         await settled;
-        if (scenario === 'device') {
+        if (scenario === 'device' || scenario === 'device-without-source') {
           await page.getByRole('button', { name: /我在深圳，/ }).waitFor();
           assert.equal(await city.inputValue(), '深圳');
-        } else if (scenario === 'device-error') {
-          await error.waitFor();
+        } else if (
+          scenario === 'device-error' ||
+          scenario === 'device-mismatched-coordinates'
+        ) {
+          await page
+            .getByText('已取得设备位置，但城市查询失败。可重试或手动填写。')
+            .waitFor();
           assert.equal(await city.inputValue(), '广州');
         } else {
           await locate.waitFor();

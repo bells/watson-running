@@ -1,33 +1,58 @@
 import { useEffect, useRef, useState } from 'react';
 
-type LookupState = 'idle' | 'pending' | 'error';
+type PositionFailure =
+  | 'permission-denied'
+  | 'position-unavailable'
+  | 'position-timeout'
+  | 'position-coarse';
+type LookupState = 'idle' | 'pending' | PositionFailure | 'city-unavailable';
 
 export interface DeviceCityControl {
   locate: () => void;
   status: LookupState;
 }
 
+class DevicePositionError extends Error {
+  constructor(readonly reason: PositionFailure) {
+    super(reason);
+  }
+}
+
+const positionFailures: Partial<Record<number, PositionFailure>> = {
+  1: 'permission-denied',
+  3: 'position-timeout',
+};
+
 async function resolveDeviceCity(signal: AbortSignal): Promise<string> {
+  if (!navigator.geolocation)
+    throw new DevicePositionError('position-unavailable');
   const { coords } = await new Promise<GeolocationPosition>(
     (resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 8_000,
-      });
+      navigator.geolocation.getCurrentPosition(
+        resolve,
+        ({ code }) =>
+          reject(
+            new DevicePositionError(
+              positionFailures[code] ?? 'position-unavailable'
+            )
+          ),
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 8_000 }
+      );
     }
   );
   signal.throwIfAborted();
   if (!Number.isFinite(coords.accuracy) || coords.accuracy > 5_000) {
-    throw new Error('Device position is too coarse');
+    throw new DevicePositionError('position-coarse');
   }
 
+  const latitude = coords.latitude.toFixed(2);
+  const longitude = coords.longitude.toFixed(2);
   const url = new URL(
     'https://api.bigdatacloud.net/data/reverse-geocode-client'
   );
   url.search = new URLSearchParams({
-    latitude: coords.latitude.toFixed(2),
-    longitude: coords.longitude.toFixed(2),
+    latitude,
+    longitude,
     localityLanguage: 'zh',
   }).toString();
   const response = await fetch(url, {
@@ -41,12 +66,21 @@ async function resolveDeviceCity(signal: AbortSignal): Promise<string> {
   if (
     !data ||
     typeof data !== 'object' ||
-    !('lookupSource' in data) ||
-    data.lookupSource !== 'reverseGeocoding' ||
     !('city' in data) ||
     typeof data.city !== 'string'
   )
     throw new Error('No city from device coordinates');
+
+  // Older responses echo the requested coordinates without a source field.
+  const fromCoordinates =
+    'lookupSource' in data
+      ? data.lookupSource === 'reverseGeocoding'
+      : 'latitude' in data &&
+        data.latitude === Number(latitude) &&
+        'longitude' in data &&
+        data.longitude === Number(longitude);
+  if (!fromCoordinates)
+    throw new Error('City did not come from device coordinates');
 
   const name = data.city.trim();
   if (!name || name.length > 80) throw new Error('Invalid city name');
@@ -77,8 +111,14 @@ export function useDeviceCity(onLocated: (_city: string) => void) {
       if (controller.signal.aborted) return;
       onLocated(city);
       setStatus('idle');
-    } catch {
-      if (!controller.signal.aborted) setStatus('error');
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setStatus(
+          error instanceof DevicePositionError
+            ? error.reason
+            : 'city-unavailable'
+        );
+      }
     } finally {
       if (lookupRef.current === controller) lookupRef.current = null;
     }

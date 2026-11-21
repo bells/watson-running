@@ -3,6 +3,18 @@ import type { RunningEvidence } from '@core/services/runAgentEvidence';
 import type { DeviceCityControl } from './useDeviceCity';
 import styles from './style.module.css';
 
+const deviceLocationMessages: Partial<
+  Record<DeviceCityControl['status'], string>
+> = {
+  'permission-denied':
+    '定位权限未开启，请在浏览器的网站设置中允许定位，或手动填写城市。',
+  'position-unavailable':
+    '浏览器暂时无法取得设备位置，请检查系统定位设置或手动填写城市。',
+  'position-timeout': '获取设备位置超时，可重试或手动填写城市。',
+  'position-coarse': '设备定位精度不足，可手动填写城市。',
+  'city-unavailable': '已取得设备位置，但城市查询失败。可重试或手动填写。',
+};
+
 export interface RunningLocation {
   city: string;
   runningAt: string;
@@ -66,11 +78,7 @@ export function RunningLocationFields({
           <small id={devicePrivacyId}>
             将公里级坐标发送给 BigDataCloud 查询城市。
           </small>
-          <p role="status">
-            {deviceCity.status === 'error'
-              ? '暂时无法确定所在城市，可手动填写。'
-              : ''}
-          </p>
+          <p role="status">{deviceLocationMessages[deviceCity.status]}</p>
         </div>
       )}
     </div>
