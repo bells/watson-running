@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { summarizeLocations } from '@core/activityLocation';
+import type { Activity as PublishedActivity } from '@core/types';
 import type { Activity } from '../utils/utils';
 import { titleForRun } from '../utils/utils';
 import { getActivityData } from '@core/hooks/useActivities';
@@ -46,32 +47,28 @@ const processActivities = (activityData: Activity[]): ProcessedActivities => {
 };
 
 let processedActivitiesCache: {
-  activityData: Activity[];
+  activityData: PublishedActivity[];
   processedActivities: ProcessedActivities;
 } | null = null;
 
-const getProcessedActivities = (activityData: Activity[]) => {
+const getProcessedActivities = (activityData: PublishedActivity[]) => {
   if (processedActivitiesCache?.activityData === activityData) {
     return processedActivitiesCache.processedActivities;
   }
 
-  const processedActivities = processActivities(activityData);
+  const processedActivities = processActivities(
+    activityData.map((activity) => ({
+      ...activity,
+      subtype: activity.subtype ?? '',
+    }))
+  );
   processedActivitiesCache = { activityData, processedActivities };
   return processedActivities;
 };
 
 const useActivities = () => {
   const activityData = getActivityData();
-  return useMemo(
-    () =>
-      getProcessedActivities(
-        activityData.map((activity) => ({
-          ...activity,
-          subtype: activity.subtype ?? '',
-        }))
-      ),
-    [activityData]
-  );
+  return useMemo(() => getProcessedActivities(activityData), [activityData]);
 };
 
 export default useActivities;

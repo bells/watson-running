@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useRunAgentChat } from '@core/hooks/useRunAgentChat';
 import {
   CHAT_MAX_LENGTH,
@@ -8,32 +6,19 @@ import {
 } from '@core/services/runAgentChat';
 import styles from './style.module.css';
 import { StatusPanel } from '@core/components/StatusPanel';
-import TrainingStatsPanel from '../TrainingStatsPanel';
 import { useRunAgentAccess } from '../../runAgentAccess';
 import { runningAdviceContext } from '@core/services/runAgentEvidence';
 import {
-  emptyRunningLocation,
+  type RunningLocation,
   RunningEvidenceDetails,
   RunningLocationFields,
 } from '../RunningAdvice';
+import { useSuggestedCity } from '../RunningAdvice/useSuggestedCity';
 
 const examples = ['一周跑几次比较合适？', '跑前热身应该怎么做？'];
-const weatherExample = '我在上海，现在出门跑步，需要根据天气调整什么？';
 const knowledgeExample = '丹尼尔斯的 T 配速训练有什么用？';
-const markdownComponents = {
-  img: () => null,
-  table: ({ children }: { children?: ReactNode }) => (
-    <div
-      className={styles.tableScroll}
-      tabIndex={0}
-      role="region"
-      aria-label="回答表格"
-    >
-      <table>{children}</table>
-    </div>
-  ),
-};
-const markdownPlugins = [remarkGfm];
+const ChatAnswer = lazy(() => import('./ChatAnswer'));
+const TrainingStatsPanel = lazy(() => import('../TrainingStatsPanel'));
 
 export default function ChatAssistant({
   privateChat = false,
@@ -48,7 +33,10 @@ export default function ChatAssistant({
 }) {
   const { accessToken, tokenRevision, setAccessToken } = useRunAgentAccess();
   const [mode, setMode] = useState<'chat' | 'training'>('chat');
-  const [location, setLocation] = useState(emptyRunningLocation);
+  const [editedLocation, setEditedLocation] = useState<{
+    city?: string;
+    runningAt: string;
+  }>({ runningAt: '' });
   const trainingEnabled = publicApi || (privateChat && privateTraining);
   const showTraining = trainingEnabled && mode === 'training';
   const versionedToken = publicApi
@@ -70,6 +58,13 @@ export default function ChatAssistant({
   const followBottomRef = useRef(true);
   const [open, setOpen] = useState(false);
   const [readingEarlier, setReadingEarlier] = useState(false);
+  const suggestedCity = useSuggestedCity(publicApi && open);
+  const location: RunningLocation = {
+    city: editedLocation.city ?? suggestedCity ?? '',
+    runningAt: editedLocation.runningAt,
+  };
+  const exampleCity = location.city.trim() || '上海';
+  const weatherExample = `我在${exampleCity}，现在出门跑步，需要根据天气调整什么？`;
 
   useEffect(() => {
     if (!open) return;
@@ -116,17 +111,15 @@ export default function ChatAssistant({
       inputRef.current?.focus();
       return;
     }
-    const nextLocation =
+    const context =
       question === weatherExample
-        ? { city: '上海', runningAt: '' }
-        : emptyRunningLocation;
-    setLocation(nextLocation);
+        ? runningAdviceContext(exampleCity, '')
+        : undefined;
+    if (context && !location.city.trim()) {
+      setEditedLocation({ city: exampleCity, runningAt: '' });
+    }
     chat.setDraft(question);
-    if (canSend)
-      void chat.send(
-        runningAdviceContext(nextLocation.city, nextLocation.runningAt),
-        question
-      );
+    if (canSend) void chat.send(context, question);
   }
 
   const tokenField =
@@ -268,16 +261,22 @@ export default function ChatAssistant({
           )}
           {showTraining ? (
             open && (
-              // Invalidate prior results and pending requests when the credential changes.
-              <TrainingStatsPanel
-                key={tokenRevision}
-                accessToken={versionedToken}
-                authorizedToSend={canSend}
-                publicApi={publicApi}
-                trainingThrough={trainingThrough}
-                location={location}
-                onLocationChange={setLocation}
-              />
+              <Suspense
+                fallback={
+                  <StatusPanel kind="loading" title="正在加载训练统计…" />
+                }
+              >
+                {/* Invalidate prior results and pending requests when the credential changes. */}
+                <TrainingStatsPanel
+                  key={tokenRevision}
+                  accessToken={versionedToken}
+                  authorizedToSend={canSend}
+                  publicApi={publicApi}
+                  trainingThrough={trainingThrough}
+                  location={location}
+                  onLocationChange={setEditedLocation}
+                />
+              </Suspense>
             )
           ) : (
             <>
@@ -335,13 +334,9 @@ export default function ChatAssistant({
                     </p>
                     <div className={styles.content}>
                       {message.role === 'assistant' ? (
-                        <Markdown
-                          skipHtml
-                          components={markdownComponents}
-                          remarkPlugins={markdownPlugins}
-                        >
-                          {message.content}
-                        </Markdown>
+                        <Suspense fallback={<p>{message.content}</p>}>
+                          <ChatAnswer content={message.content} />
+                        </Suspense>
                       ) : (
                         <p className={styles.question}>{message.content}</p>
                       )}
@@ -394,7 +389,7 @@ export default function ChatAssistant({
                 {publicApi && (
                   <RunningLocationFields
                     location={location}
-                    onChange={setLocation}
+                    onChange={setEditedLocation}
                     disabled={chat.pending}
                   />
                 )}

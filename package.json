@@ -53,7 +53,7 @@
     "test:run-review:evidence": "node --test tests/run-review-evidence.test.mjs",
     "test:run-review:ui": "node --test tests/run-review-ui.test.mjs",
     "test:run-review:browser": "node --test tests/run-review.browser.mjs",
-    "test:training:browser": "node --test tests/run-agent-training.browser.mjs",
+    "test:training:browser": "node --test tests/run-agent-training.browser.mjs tests/run-agent-city.browser.mjs",
     "test:display": "node --test tests/activity-display.test.mjs tests/activity-location.test.mjs",
     "test:summary": "node --test tests/activity-summary.test.mjs",
     "test:contracts": "node --test tests/run-agent-contract.test.mjs",

@@ -111,10 +111,7 @@ test('Classic review discovers both records, requires consentful generation and 
         await page.route('**/*', (route) => {
           const url = new URL(route.request().url());
           if (url.origin !== origin) return route.abort();
-          if (
-            url.pathname === '/src/static/activities.json' &&
-            route.request().resourceType() === 'fetch'
-          )
+          if (url.pathname === '/src/static/activities.json' && !url.search)
             return route.fulfill({ json: activities });
           if (url.pathname === '/activity-details/1002.json')
             return route.fulfill({ json: detail });
@@ -274,13 +271,12 @@ test('a visitor can use the live site paths for chat, published stats and a list
           const request = route.request();
           const url = new URL(request.url());
           if (url.origin !== origin) return route.abort();
-          if (
-            url.pathname === '/src/static/activities.json' &&
-            request.resourceType() === 'fetch'
-          )
+          if (url.pathname === '/src/static/activities.json' && !url.search)
             return route.fulfill({ json: activities });
           if (url.pathname === '/activity-details/' + latestId + '.json')
             return route.fulfill({ json: detail });
+          if (url.pathname === '/api/visitor-city')
+            return route.fulfill({ json: { city: null } });
           if (!url.pathname.startsWith('/api/')) return route.continue();
 
           assert.equal(request.headers().authorization, undefined);

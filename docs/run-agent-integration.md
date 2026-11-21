@@ -8,6 +8,8 @@ Set `VITE_RUN_AGENT_PUBLIC_REVIEW_IDS` to the comma-separated activity IDs confi
 
 Chat can send an optional city and planned local start time. Training statistics can include a goal, city and planned local start time when the visitor requests supporting evidence. For a saved review, the visitor can request weather separately using the existing review POST path. The interface displays book titles and weather validity returned by RunAgent.
 
+When a visitor opens the public assistant, the same-origin `/api/visitor-city` Vercel function can suggest a city from Vercel's IP geolocation. The response contains only a city name or `null` and is never cached. The city stays editable, and manual entry works with missing geolocation or static hosting. Weather examples use the displayed city when available and otherwise use Shanghai as an explicit example.
+
 ## Private assistant
 
 `VITE_RUN_AGENT_PRIVATE_CHAT=true` enables the Classic assistant for a private Vercel deployment. General chat sends only the current question to same-origin `POST /api/v1/chat` with a bearer token. Vercel forwards the exact route to RunAgent. The token and transcript live in page memory.
@@ -51,7 +53,7 @@ Markdown uses `react-markdown` with `remark-gfm` for tables, skips raw HTML, kee
 - `pnpm test:chat`: isolated Node 24 HTTP-boundary tests (no model requests), covering payload/privacy, input, HTTP/network failures, invalid JSON/content, timeout and cancellation.
 - Frontend gates: `pnpm run check`, `pnpm exec tsc --noEmit`, `pnpm exec eslint src --ext .ts,.tsx`, `pnpm run build`; build both Classic and Dashboard after shared-layer changes, restoring config afterwards.
 - Training contracts: `pnpm test:training` covers payload minimization, authentication, dates, error mapping, freshness, and cancellation. `pnpm test:contracts` also validates the synthetic JSON fixtures.
-- Private assistant browser regression: install Chromium with `pnpm exec playwright install chromium`, then run `pnpm test:training:browser`. The suite starts a loopback Vite server, exercises both private queries and general chat on desktop and mobile, and intercepts API responses with synthetic fixtures.
+- Assistant browser regression: install Chromium with `pnpm exec playwright install chromium`, then run `pnpm test:training:browser`. The suite starts a loopback Vite server, exercises private training and general chat on desktop and mobile, and covers public city suggestion and manual entry with synthetic API responses.
 - Development chat browser regression: with a Classic dev page open in a Playwright CLI session, run `playwright-cli -s=runagent run-code --filename tests/run-agent-chat.browser.js`. Every chat request in this script is intercepted; it never calls RunAgent. Screenshots go to `/tmp/runagent-*.png`.
 - Browser smoke: open, submit “一周大概跑几次比较合适”, check same-origin request and real answer. Separately simulate failure/slow responses for retries, duplicate sends and clear/close races. Check desktop/narrow layouts, light/dark, focus, composition and scroll preservation. Synthetic composition does not replace physical IME/device checks.
 - Run evidence and any remaining limitations are recorded in `openspec/changes/add-runagent-chat-ui/verification.md`.

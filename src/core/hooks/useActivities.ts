@@ -87,6 +87,11 @@ const loadActivityData = () => {
   return activityDataPromise;
 };
 
+export function preloadActivityData() {
+  // The reader surfaces the cached error through the existing error boundary.
+  void loadActivityData().catch(() => undefined);
+}
+
 export const getActivityData = () => {
   if (activityDataError) throw activityDataError;
   if (activityDataCache) return activityDataCache;

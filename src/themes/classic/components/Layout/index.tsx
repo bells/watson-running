@@ -12,10 +12,25 @@ const ChatAssistant =
     ? lazy(() => import('../ChatAssistant'))
     : null;
 
-const Layout = ({
-  children,
+export function LayoutAssistant({
   trainingThrough,
-}: React.PropsWithChildren<{ trainingThrough?: string }>) => {
+}: {
+  trainingThrough?: string;
+}) {
+  if (!ChatAssistant) return null;
+  return (
+    <Suspense fallback={null}>
+      <ChatAssistant
+        privateChat={privateChat}
+        privateTraining={privateTraining}
+        publicApi={publicRunAgentEnabled}
+        trainingThrough={trainingThrough}
+      />
+    </Suspense>
+  );
+}
+
+const Layout = ({ children }: React.PropsWithChildren) => {
   const { siteTitle, description } = getSiteMetadata();
 
   return (
@@ -31,16 +46,6 @@ const Layout = ({
         />
       </Helmet>
       <Header />
-      {ChatAssistant && (
-        <Suspense fallback={null}>
-          <ChatAssistant
-            privateChat={privateChat}
-            privateTraining={privateTraining}
-            publicApi={publicRunAgentEnabled}
-            trainingThrough={trainingThrough}
-          />
-        </Suspense>
-      )}
       <div className="mx-auto mb-16 max-w-screen-2xl p-4 lg:px-16 lg:py-8">
         {children}
       </div>

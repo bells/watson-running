@@ -4,6 +4,17 @@
       "gh-pages": false
     }
   },
+  "headers": [
+    {
+      "source": "/assets/:file(.*-[A-Za-z0-9_-]{8}\\.[A-Za-z0-9]+)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/v1/chat",
@@ -18,7 +29,7 @@
       "destination": "https://run-api.watsonzhu.cn/api/v1/runs/:runId/review"
     },
     {
-      "source": "/:spa((?!run-review-evidence(?:/|$)|api/v1/runs(?:/|$)).*)",
+      "source": "/:spa((?!assets(?:/|$)|run-review-evidence(?:/|$)|api/v1/runs(?:/|$)|api/visitor-city(?:/|$)).*)",
       "destination": "/"
     }
   ]

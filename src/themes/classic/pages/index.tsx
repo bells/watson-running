@@ -4,6 +4,7 @@ import {
 } from '@core/activityGeography';
 import type { GeographySource, RegionSelection } from '@core/types';
 import {
+  Suspense,
   useEffect,
   useState,
   useMemo,
@@ -13,9 +14,9 @@ import {
 } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { Helmet } from 'react-helmet-async';
-import Layout from '../components/Layout';
+import Layout, { LayoutAssistant } from '../components/Layout';
 import LocationStat from '../components/LocationStat';
-import RunMap from '../components/RunMap';
+import DeferredRunMap from '../components/RunMap/DeferredRunMap';
 import RunTable from '../components/RunTable';
 import SVGStat from '../components/SVGStat';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -103,7 +104,7 @@ const setRunHash = (runId: number) => {
 const useRunHashId = () =>
   useSyncExternalStore(subscribeToRunHash, getRunIdFromHash, () => null);
 
-const Index = () => {
+const Records = () => {
   const { siteTitle, siteUrl } = getSiteMetadata();
   const { activities, thisYear, years } = useActivities();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -470,7 +471,10 @@ const Index = () => {
   const sports = [...new Set(activities.map((run) => run.type))];
 
   return (
-    <Layout trainingThrough={latestRun?.start_date_local.slice(0, 10)}>
+    <>
+      <LayoutAssistant
+        trainingThrough={latestRun?.start_date_local.slice(0, 10)}
+      />
       <Helmet>
         <html lang="en" data-theme={theme} />
       </Helmet>
@@ -657,7 +661,7 @@ const Index = () => {
           <h2>
             路线与记录 <span>只展示公开导出的路线</span>
           </h2>
-          <RunMap
+          <DeferredRunMap
             title={title}
             viewState={viewState}
             geoData={animatedGeoData}
@@ -676,8 +680,18 @@ const Index = () => {
       </main>
       {/* Enable Audiences in Vercel Analytics: https://vercel.com/docs/concepts/analytics/audiences/quickstart */}
       {import.meta.env.VERCEL && <Analytics />}
-    </Layout>
+    </>
   );
 };
 
-export default Index;
+export default function Index() {
+  return (
+    <Layout>
+      <Suspense
+        fallback={<StatusPanel kind="loading" title="正在加载运动记录…" />}
+      >
+        <Records />
+      </Suspense>
+    </Layout>
+  );
+}

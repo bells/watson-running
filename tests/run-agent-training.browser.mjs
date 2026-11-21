@@ -42,10 +42,7 @@ test('Classic private assistant queries training stats and still sends general c
         await page.route('**/*', async (route) => {
           const url = new URL(route.request().url());
           if (url.origin !== origin) return route.abort();
-          if (
-            url.pathname === '/src/static/activities.json' &&
-            route.request().resourceType() === 'fetch'
-          ) {
+          if (url.pathname === '/src/static/activities.json' && !url.search) {
             return route.fulfill({ json: [] });
           }
           if (!url.pathname.startsWith('/api/')) return route.continue();

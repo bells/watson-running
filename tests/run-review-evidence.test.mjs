@@ -203,6 +203,8 @@ test('Vercel forwards the review route and keeps reserved paths outside SPA fall
     '/run-review-evidence',
     '/run-review-evidence/9999.json',
     '/api/v1/runs/abc/review',
+    '/api/visitor-city',
+    '/assets/missing.js',
   ]) {
     assert.doesNotMatch(route, fallbackPattern);
   }
